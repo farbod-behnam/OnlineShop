@@ -6,10 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Document(collation = "products")
 public class Product
 {
-    @Id
     private String id;
     private String name;
     private String description;
@@ -19,14 +17,15 @@ public class Product
     private boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Category category;
 
     public Product()
     {
     }
 
-    public Product(String name, String description, BigDecimal price, int quantity, String imageUrl, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt, Category category)
+
+    public Product(String id, String name, String description, BigDecimal price, int quantity, String imageUrl, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt)
     {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -35,7 +34,6 @@ public class Product
         this.active = active;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.category = category;
     }
 
     public String getId()
@@ -128,15 +126,7 @@ public class Product
         this.updatedAt = updatedAt;
     }
 
-    public Category getCategory()
-    {
-        return category;
-    }
 
-    public void setCategory(Category category)
-    {
-        this.category = category;
-    }
 
     @Override
     public String toString()
@@ -151,7 +141,6 @@ public class Product
                 ", active=" + active +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", category=" + category +
                 ']';
     }
 }
