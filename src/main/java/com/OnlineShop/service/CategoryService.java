@@ -13,4 +13,9 @@ public class CategoryService
     {
         return new ArrayList<>();
     }
+
+    public Category findById(String categoryId)
+    {
+        return new Category();
+    }
 }

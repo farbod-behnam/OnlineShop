@@ -5,6 +5,7 @@ import com.OnlineShop.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +29,13 @@ public class CategoryController
         List<Category> categories = categoryService.findAll();
 
         return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<Category> getCategory(@PathVariable String categoryId)
+    {
+        Category category = categoryService.findById(categoryId);
+
+        return new ResponseEntity<>(category, HttpStatus.OK);
     }
 }
