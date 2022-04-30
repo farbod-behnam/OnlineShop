@@ -34,7 +34,10 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -308,6 +311,25 @@ public class CategoryControllerTest
         // then
 //        verify(categoryService, times(1)).findAll();
     }
+
+    @Test
+    public void deleteCategory_returnsUpdatedCategory() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+
+//        given(categoryService.deleteCategory(anyString());)
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/categories/" + category.getId()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$").value(equalTo("Category with id: [" + category.getId() + "] is deleted")))
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+
 
     private String asJsonString(final Object obj)
     {

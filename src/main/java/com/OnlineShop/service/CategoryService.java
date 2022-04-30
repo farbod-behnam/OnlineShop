@@ -33,4 +33,10 @@ public class CategoryService implements ICategoryService
     {
         return new Category();
     }
+
+    @Override
+    public void deleteCategory(String categoryId)
+    {
+        String test = "just a test";
+    }
 }
