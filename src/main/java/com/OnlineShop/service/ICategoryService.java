@@ -1,6 +1,7 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Category;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,4 +17,5 @@ public interface ICategoryService
     @Transactional
     Category createCategory(Category category);
 
+    Category updateCategory(Category category);
 }

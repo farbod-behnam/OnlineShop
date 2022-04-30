@@ -43,4 +43,12 @@ public class CategoryController
 
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
+
+    @PutMapping
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category)
+    {
+        Category updateCategory = categoryService.updateCategory(category);
+
+        return new ResponseEntity<>(updateCategory, HttpStatus.OK);
+    }
 }

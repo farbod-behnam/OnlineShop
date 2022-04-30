@@ -25,8 +25,12 @@ public class CategoryService implements ICategoryService
     @Transactional
     public Category createCategory(Category category)
     {
-        category.setId(null);
+        return new Category();
+    }
 
-        return category;
+    @Override
+    public Category updateCategory(Category category)
+    {
+        return new Category();
     }
 }

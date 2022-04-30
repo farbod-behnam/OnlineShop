@@ -276,7 +276,31 @@ public class CategoryControllerTest
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+
+    @Test
+    public void putCategory_returnsUpdatedCategory() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+
+        given(categoryService.updateCategory(any(Category.class))).willReturn(category);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
                 .andDo(print());
