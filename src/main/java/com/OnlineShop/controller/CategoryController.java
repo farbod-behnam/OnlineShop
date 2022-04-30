@@ -1,13 +1,10 @@
 package com.OnlineShop.controller;
 
 import com.OnlineShop.entity.Category;
-import com.OnlineShop.service.CategoryService;
+import com.OnlineShop.service.ICategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,9 +12,9 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController
 {
-    private final CategoryService categoryService;
+    private final ICategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService)
+    public CategoryController(ICategoryService categoryService)
     {
         this.categoryService = categoryService;
     }
@@ -37,5 +34,13 @@ public class CategoryController
         Category category = categoryService.findById(categoryId);
 
         return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Category> createCategory(@RequestBody Category category)
+    {
+        Category createdCategory = categoryService.createCategory(category);
+
+        return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 }

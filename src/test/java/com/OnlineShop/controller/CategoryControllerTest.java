@@ -3,6 +3,7 @@ package com.OnlineShop.controller;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.service.CategoryService;
+import com.OnlineShop.service.ICategoryService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
@@ -18,9 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
@@ -46,7 +47,7 @@ public class CategoryControllerTest
     private MockMvc mockMvc;
 
     @MockBean
-    private CategoryService categoryService;
+    private ICategoryService categoryService;
 
     @BeforeEach
     void setUp()
@@ -258,5 +259,41 @@ public class CategoryControllerTest
 
         // then
 //        verify(categoryService, times(1)).findAll();
+    }
+
+    @Test
+    public void postCategory_returnsCreatedCategory() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+
+        given(categoryService.createCategory(category)).willReturn(category);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+
+    private String asJsonString(final Object obj)
+    {
+        try
+        {
+            final ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(obj);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
