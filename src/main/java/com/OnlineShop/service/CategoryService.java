@@ -1,6 +1,8 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Category;
+import com.OnlineShop.repository.ICategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,14 +12,23 @@ import java.util.List;
 @Service
 public class CategoryService implements ICategoryService
 {
-    @Transactional
-    public List<Category> findAll()
+
+    private final ICategoryRepository categoryRepository;
+
+    @Autowired
+    public CategoryService(ICategoryRepository categoryRepository)
     {
-        return new ArrayList<>();
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional
-    public Category findById(String categoryId)
+    public List<Category> getAllCategories()
+    {
+        return categoryRepository.findAll();
+    }
+
+    @Transactional
+    public Category getCategoryById(String categoryId)
     {
         return new Category();
     }
