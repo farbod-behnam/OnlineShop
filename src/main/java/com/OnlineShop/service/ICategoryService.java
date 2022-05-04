@@ -16,7 +16,12 @@ public interface ICategoryService
     @Transactional
     Category createCategory(Category category);
 
+    @Transactional
     Category updateCategory(Category category);
 
+    @Transactional
     void deleteCategory(String categoryId);
+
+    @Transactional
+    boolean categoryNameExists(String categoryName);
 }
