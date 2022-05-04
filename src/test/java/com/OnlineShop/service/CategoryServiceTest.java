@@ -1,6 +1,7 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Category;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICategoryRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -69,17 +71,45 @@ class CategoryServiceTest
     {
         // given
         String categoryId = "11";
-        given(categoryRepository.findById(categoryId)).willThrow(new NotFoundException("Category with id: [" + categoryId + "] not found"));
+        given(categoryRepository.findById(categoryId)).willThrow(new NotFoundException("Category with id: [" + categoryId + "] cannot be found"));
 
         // when
         assertThatThrownBy(() -> underTestCategoryService.getCategoryById(categoryId))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("Category with id: [" + categoryId + "] not found");
+                .hasMessageContaining("Category with id: [" + categoryId + "] cannot be found");
 
         // then
 
     }
 
+    @Test
+    void createCategory_shouldReturnACategory()
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+        given(categoryRepository.save(any(Category.class))).willReturn(category);
 
+        // when
+        Category createdCategory = underTestCategoryService.createCategory(category);
+
+        // then
+        verify(categoryRepository).save(any(Category.class));
+        assertThat(createdCategory.getId()).isEqualTo(category.getId());
+        assertThat(createdCategory.getName()).isEqualTo(category.getName());
+    }
+
+    @Test
+    void createCategory_shouldThrowAlreadyExistsException()
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+        given(categoryRepository.save(any(Category.class))).willThrow(new AlreadyExistsException("Category with name [" + category.getName() +"] already exists"));
+
+        // when
+        assertThatThrownBy(() -> underTestCategoryService.createCategory(category))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("Category with name [" + category.getName() +"] already exists");
+
+    }
 
 }

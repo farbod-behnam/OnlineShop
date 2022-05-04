@@ -1,14 +1,15 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Category;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -32,19 +33,28 @@ public class CategoryService implements ICategoryService
     @Transactional
     public Category getCategoryById(String categoryId)
     {
-        Optional<Category> category = categoryRepository.findById(categoryId);
+        Optional<Category> result = categoryRepository.findById(categoryId);
 
-        if (category.isEmpty())
-            throw new NotFoundException("Category with id: [" + categoryId + "] not found");
+        Category category;
 
-        return category.get();
+        if (result.isPresent())
+            category = result.get();
+        else
+            throw new NotFoundException("Category with id: [" + categoryId + "] cannot be found");
+
+        return category;
 
     }
 
     @Transactional
     public Category createCategory(Category category)
     {
-        return new Category();
+        if (categoryNameExists(category.getName()))
+            throw new AlreadyExistsException("Category with name [" + category.getName() +"] already exists");
+
+        category.setId(null);
+
+        return categoryRepository.save(category);
     }
 
     @Override
@@ -57,5 +67,26 @@ public class CategoryService implements ICategoryService
     public void deleteCategory(String categoryId)
     {
         String test = "just a test";
+    }
+
+
+    @Override
+    public boolean categoryNameExists(String categoryName)
+    {
+        List<Category> categoryList = categoryRepository.findAll();
+
+        categoryName = categoryName.toLowerCase(Locale.ROOT).trim();
+        boolean categoryExists = false;
+
+        for (Category c: categoryList)
+        {
+            if (c.getName().toLowerCase(Locale.ROOT).equals(categoryName))
+            {
+                categoryExists = true;
+                break;
+            }
+        }
+
+        return categoryExists;
     }
 }
