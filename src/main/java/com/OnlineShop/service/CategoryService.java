@@ -52,6 +52,8 @@ public class CategoryService implements ICategoryService
         if (categoryNameExists(category.getName()))
             throw new AlreadyExistsException("Category with name [" + category.getName() +"] already exists");
 
+        // in order to register entity as a new record
+        // the id should be null
         category.setId(null);
 
         return categoryRepository.save(category);
@@ -60,13 +62,15 @@ public class CategoryService implements ICategoryService
     @Override
     public Category updateCategory(Category category)
     {
-        return new Category();
+        return categoryRepository.save(category);
     }
 
     @Override
     public void deleteCategory(String categoryId)
     {
-        String test = "just a test";
+        Category foundCategory = getCategoryById(categoryId);
+
+        categoryRepository.delete(foundCategory);
     }
 
 

@@ -110,6 +110,30 @@ class CategoryServiceTest
                 .isInstanceOf(AlreadyExistsException.class)
                 .hasMessageContaining("Category with name [" + category.getName() +"] already exists");
 
+
+    }
+
+    @Test
+    void updateCategory_returnUpdatedCategory()
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+        // when
+        underTestCategoryService.updateCategory(category);
+        // then
+        verify(categoryRepository).save(category);
+    }
+
+    @Test
+    void deleteCategory()
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+        given(categoryRepository.findById(anyString())).willReturn(Optional.of(category));
+        // when
+        underTestCategoryService.deleteCategory(category.getId());
+        // then
+        verify(categoryRepository).delete(any(Category.class));
     }
 
 }
