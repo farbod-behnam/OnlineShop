@@ -92,7 +92,7 @@ public class CategoryControllerTest
         // given
         List<Category> categoryList = new ArrayList<>();
 
-        given(categoryService.getAllCategories()).willReturn(categoryList);
+        given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
@@ -113,7 +113,7 @@ public class CategoryControllerTest
         categoryList.add(new Category("11", "Video Games", null));
         categoryList.add(new Category("12", "Clothes", null));
 
-        given(categoryService.getAllCategories()).willReturn(categoryList);
+        given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
@@ -166,7 +166,7 @@ public class CategoryControllerTest
         categoryList.add(new Category("11", "Video Games", productList));
         categoryList.add(new Category("12", "Clothes", new ArrayList<>()));
 
-        given(categoryService.getAllCategories()).willReturn(categoryList);
+        given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))

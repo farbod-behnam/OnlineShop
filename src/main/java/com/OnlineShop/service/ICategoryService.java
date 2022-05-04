@@ -8,7 +8,7 @@ import java.util.List;
 public interface ICategoryService
 {
     @Transactional
-    List<Category> getAllCategories();
+    List<Category> getCategories();
 
     @Transactional
     Category getCategoryById(String categoryId);
