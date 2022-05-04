@@ -1,6 +1,7 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Category;
+import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService implements ICategoryService
@@ -22,7 +24,7 @@ public class CategoryService implements ICategoryService
     }
 
     @Transactional
-    public List<Category> getAllCategories()
+    public List<Category> getCategories()
     {
         return categoryRepository.findAll();
     }
@@ -30,7 +32,13 @@ public class CategoryService implements ICategoryService
     @Transactional
     public Category getCategoryById(String categoryId)
     {
-        return new Category();
+        Optional<Category> category = categoryRepository.findById(categoryId);
+
+        if (category.isEmpty())
+            throw new NotFoundException("Category with id: [" + categoryId + "] not found");
+
+        return category.get();
+
     }
 
     @Transactional
