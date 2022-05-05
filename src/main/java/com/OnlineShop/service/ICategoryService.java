@@ -8,15 +8,20 @@ import java.util.List;
 public interface ICategoryService
 {
     @Transactional
-    List<Category> findAll();
+    List<Category> getCategories();
 
     @Transactional
-    Category findById(String categoryId);
+    Category getCategoryById(String categoryId);
 
     @Transactional
     Category createCategory(Category category);
 
+    @Transactional
     Category updateCategory(Category category);
 
+    @Transactional
     void deleteCategory(String categoryId);
+
+    @Transactional
+    boolean categoryNameExists(String categoryName);
 }

@@ -2,7 +2,6 @@ package com.OnlineShop.controller;
 
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
-import com.OnlineShop.service.CategoryService;
 import com.OnlineShop.service.ICategoryService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,10 +33,7 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -96,7 +92,7 @@ public class CategoryControllerTest
         // given
         List<Category> categoryList = new ArrayList<>();
 
-        given(categoryService.findAll()).willReturn(categoryList);
+        given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
@@ -117,7 +113,7 @@ public class CategoryControllerTest
         categoryList.add(new Category("11", "Video Games", null));
         categoryList.add(new Category("12", "Clothes", null));
 
-        given(categoryService.findAll()).willReturn(categoryList);
+        given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
@@ -170,7 +166,7 @@ public class CategoryControllerTest
         categoryList.add(new Category("11", "Video Games", productList));
         categoryList.add(new Category("12", "Clothes", new ArrayList<>()));
 
-        given(categoryService.findAll()).willReturn(categoryList);
+        given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
@@ -196,7 +192,7 @@ public class CategoryControllerTest
         Category category = new Category("11", "Video Games", null);
         String categoryId = "11";
 
-        given(categoryService.findById(categoryId)).willReturn(category);
+        given(categoryService.getCategoryById(categoryId)).willReturn(category);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories/11"))
@@ -247,7 +243,7 @@ public class CategoryControllerTest
         Category category = new Category("11", "Video Games", productList);
         String categoryId = "11";
 
-        given(categoryService.findById(categoryId)).willReturn(category);
+        given(categoryService.getCategoryById(categoryId)).willReturn(category);
 
         // when
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories/11"))

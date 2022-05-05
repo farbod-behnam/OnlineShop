@@ -1,42 +1,96 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Category;
+import com.OnlineShop.exception.AlreadyExistsException;
+import com.OnlineShop.exception.NotFoundException;
+import com.OnlineShop.repository.ICategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class CategoryService implements ICategoryService
 {
-    @Transactional
-    public List<Category> findAll()
+
+    private final ICategoryRepository categoryRepository;
+
+    @Autowired
+    public CategoryService(ICategoryRepository categoryRepository)
     {
-        return new ArrayList<>();
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional
-    public Category findById(String categoryId)
+    public List<Category> getCategories()
     {
-        return new Category();
+        return categoryRepository.findAll();
+    }
+
+    @Transactional
+    public Category getCategoryById(String categoryId)
+    {
+        Optional<Category> result = categoryRepository.findById(categoryId);
+
+        Category category;
+
+        if (result.isPresent())
+            category = result.get();
+        else
+            throw new NotFoundException("Category with id: [" + categoryId + "] cannot be found");
+
+        return category;
+
     }
 
     @Transactional
     public Category createCategory(Category category)
     {
-        return new Category();
+        if (categoryNameExists(category.getName()))
+            throw new AlreadyExistsException("Category with name [" + category.getName() +"] already exists");
+
+        // in order to register entity as a new record
+        // the id should be null
+        category.setId(null);
+
+        return categoryRepository.save(category);
     }
 
     @Override
     public Category updateCategory(Category category)
     {
-        return new Category();
+        return categoryRepository.save(category);
     }
 
     @Override
     public void deleteCategory(String categoryId)
     {
-        String test = "just a test";
+        Category foundCategory = getCategoryById(categoryId);
+
+        categoryRepository.delete(foundCategory);
+    }
+
+
+    @Override
+    public boolean categoryNameExists(String categoryName)
+    {
+        List<Category> categoryList = categoryRepository.findAll();
+
+        categoryName = categoryName.toLowerCase(Locale.ROOT).trim();
+        boolean categoryExists = false;
+
+        for (Category c: categoryList)
+        {
+            if (c.getName().toLowerCase(Locale.ROOT).equals(categoryName))
+            {
+                categoryExists = true;
+                break;
+            }
+        }
+
+        return categoryExists;
     }
 }

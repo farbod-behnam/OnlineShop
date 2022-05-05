@@ -23,7 +23,7 @@ public class CategoryController
     @GetMapping
     public ResponseEntity<List<Category>> getCategories()
     {
-        List<Category> categories = categoryService.findAll();
+        List<Category> categories = categoryService.getCategories();
 
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
@@ -31,7 +31,7 @@ public class CategoryController
     @GetMapping("/{categoryId}")
     public ResponseEntity<Category> getCategory(@PathVariable String categoryId)
     {
-        Category category = categoryService.findById(categoryId);
+        Category category = categoryService.getCategoryById(categoryId);
 
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
