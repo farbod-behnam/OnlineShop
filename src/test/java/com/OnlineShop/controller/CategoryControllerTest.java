@@ -110,8 +110,8 @@ public class CategoryControllerTest
     {
         // given
         List<Category> categoryList = new ArrayList<>();
-        categoryList.add(new Category("11", "Video Games", null));
-        categoryList.add(new Category("12", "Clothes", null));
+        categoryList.add(new Category("11", "Video Games"));
+        categoryList.add(new Category("12", "Clothes"));
 
         given(categoryService.getCategories()).willReturn(categoryList);
 
@@ -132,39 +132,10 @@ public class CategoryControllerTest
     {
         // given
         List<Category> categoryList = new ArrayList<>();
-        List<Product> productList = new ArrayList<>();
 
-        BigDecimal price = new BigDecimal("69.99");
 
-        Product product1 = new Product(
-                "19",
-                "Bloodborne",
-                "A souls like game",
-                price,
-                19,
-                "http://image_url",
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        Product product2 = new Product(
-                "19",
-                "The Last of Us",
-                "A narrative game with action sequences",
-                price,
-                19,
-                "http://image_url",
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        productList.add(product1);
-        productList.add(product2);
-
-        categoryList.add(new Category("11", "Video Games", productList));
-        categoryList.add(new Category("12", "Clothes", new ArrayList<>()));
+        categoryList.add(new Category("11", "Video Games"));
+        categoryList.add(new Category("12", "Clothes"));
 
         given(categoryService.getCategories()).willReturn(categoryList);
 
@@ -173,14 +144,7 @@ public class CategoryControllerTest
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(categoryList.size()))
-                .andExpect(jsonPath("$[0].id").value(equalTo("11")))
-                .andExpect(jsonPath("$[0].products").isArray())
-                .andExpect(jsonPath("$[0].products.length()").value(productList.size()))
-                .andExpect(jsonPath("$[0].products[0].id").value(equalTo("19")))
-//                .andExpect(jsonPath("$[0].products[0].price", Matchers.comparesEqualTo(price.doubleValue())))
-                .andExpect(jsonPath("$[0].products[0].price").value(equalTo(price)))
-                .andExpect(jsonPath("$[1].products").isArray())
-                .andExpect(jsonPath("$[1].products.length()").value(0));
+                .andExpect(jsonPath("$[0].id").value(equalTo("11")));
         // then
 //        verify(categoryService, times(1)).findAll();
     }
@@ -189,7 +153,7 @@ public class CategoryControllerTest
     public void getCategory_returnsACategory() throws Exception
     {
         // given
-        Category category = new Category("11", "Video Games", null);
+        Category category = new Category("11", "Video Games");
         String categoryId = "11";
 
         given(categoryService.getCategoryById(categoryId)).willReturn(category);
@@ -205,61 +169,13 @@ public class CategoryControllerTest
 //        verify(categoryService, times(1)).findAll();
     }
 
-    @Test
-    public void getCategory_missingPathVariable_returnsACategory() throws Exception
-    {
-        // given
-        Category category = new Category("11", "Video Games", null);
-        String categoryId = "11";
-
-        given(categoryService.getCategoryById(categoryId)).willReturn(category);
-
-        // when
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/categories/"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(equalTo("11")))
-                .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
-                .andDo(print());
-
-        // then
-//        verify(categoryService, times(1)).findAll();
-    }
     @Test
     public void getCategory_returnsACategoryWithProducts() throws Exception
     {
         // given
         List<Product> productList = new ArrayList<>();
 
-        BigDecimal price = new BigDecimal("69.99");
-
-        Product product1 = new Product(
-                "19",
-                "Bloodborne",
-                "A souls like game",
-                price,
-                19,
-                "http://image_url",
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        Product product2 = new Product(
-                "19",
-                "The Last of Us",
-                "A narrative game with action sequences",
-                price,
-                19,
-                "http://image_url",
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        productList.add(product1);
-        productList.add(product2);
-
-        Category category = new Category("11", "Video Games", productList);
+        Category category = new Category("11", "Video Games");
         String categoryId = "11";
 
         given(categoryService.getCategoryById(categoryId)).willReturn(category);
@@ -269,10 +185,6 @@ public class CategoryControllerTest
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
-                .andExpect(jsonPath("$.products").isArray())
-                .andExpect(jsonPath("$.products[0].id").value(equalTo("19")))
-                .andExpect(jsonPath("$.products[0].name").value(equalTo("Bloodborne")))
-                .andExpect(jsonPath("$.products[0].price").value(equalTo(price)))
                 .andDo(print());
 
         // then
@@ -283,7 +195,7 @@ public class CategoryControllerTest
     public void postCategory_returnsCreatedCategory() throws Exception
     {
         // given
-        Category category = new Category("11", "Video Games", null);
+        Category category = new Category("11", "Video Games");
 
         given(categoryService.createCategory(any(Category.class))).willReturn(category);
 
@@ -294,7 +206,7 @@ public class CategoryControllerTest
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
                 .andDo(print());
@@ -307,7 +219,7 @@ public class CategoryControllerTest
     public void putCategory_returnsUpdatedCategory() throws Exception
     {
         // given
-        Category category = new Category("11", "Video Games", null);
+        Category category = new Category("11", "Video Games");
 
         given(categoryService.updateCategory(any(Category.class))).willReturn(category);
 
@@ -318,7 +230,7 @@ public class CategoryControllerTest
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
                 .andDo(print());
@@ -331,7 +243,7 @@ public class CategoryControllerTest
     public void deleteCategory_returnsUpdatedCategory() throws Exception
     {
         // given
-        Category category = new Category("11", "Video Games", null);
+        Category category = new Category("11", "Video Games");
 
 //        given(categoryService.deleteCategory(anyString());)
 
