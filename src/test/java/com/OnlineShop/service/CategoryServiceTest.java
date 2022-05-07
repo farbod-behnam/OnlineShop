@@ -1,7 +1,6 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Category;
-import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICategoryRepository;
@@ -9,12 +8,11 @@ import com.OnlineShop.repository.ICategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +55,7 @@ class CategoryServiceTest
     void getCategoryById_shouldReturnACategory()
     {
         // given
-        Category category = new Category("11", "Video Games", null);
+        Category category = new Category("11", "Video Games");
         given(categoryRepository.findById(anyString())).willReturn(Optional.of(category));
 
         // when
@@ -74,7 +72,6 @@ class CategoryServiceTest
     {
         // given
         String categoryId = "11";
-        given(categoryRepository.findById(categoryId)).willThrow(new NotFoundException("Category with id: [" + categoryId + "] cannot be found"));
 
         // when
         assertThatThrownBy(() -> underTestCategoryService.getCategoryById(categoryId))
@@ -89,31 +86,39 @@ class CategoryServiceTest
     void createCategory_shouldReturnACategory()
     {
         // given
-        Category category = new Category("11", "Video Games", null);
-        given(categoryRepository.save(any(Category.class))).willReturn(category);
+        Category category = new Category("11", "Video Games");
 
         // when
-        Category createdCategory = underTestCategoryService.createCategory(category);
+        underTestCategoryService.createCategory(category);
 
         // then
+        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
         verify(categoryRepository).findAll();
-        verify(categoryRepository).save(any(Category.class));
-        assertThat(createdCategory.getId()).isEqualTo(category.getId());
-        assertThat(createdCategory.getName()).isEqualTo(category.getName());
+        verify(categoryRepository).save(categoryArgumentCaptor.capture());
+        Category capturedCategory = categoryArgumentCaptor.getValue();
+        assertThat(capturedCategory).isEqualTo(category);
     }
+
 
     @Test
     void createCategory_shouldThrowAlreadyExistsException()
     {
         // given
-        Category category = new Category("11", "Video Games", null);
-        given(categoryRepository.save(any(Category.class))).willThrow(new AlreadyExistsException("Category with name [" + category.getName() +"] already exists"));
+        List<Category> categoryList = new ArrayList<>();
+
+        categoryList.add(new Category("11", "Video Games"));
+        categoryList.add(new Category("12", "Clothes"));
+
+        given(categoryRepository.findAll()).willReturn(categoryList);
+
+        Category category = new Category("134", " video games ");
 
         // when
+
+        // then
         assertThatThrownBy(() -> underTestCategoryService.createCategory(category))
                 .isInstanceOf(AlreadyExistsException.class)
                 .hasMessageContaining("Category with name [" + category.getName() +"] already exists");
-
 
     }
 
@@ -121,37 +126,43 @@ class CategoryServiceTest
     void updateCategory_returnUpdatedCategory()
     {
         // given
-        Category category = new Category("11", "Video Games", null);
+        Category category = new Category("11", "Video Games");
         // when
         underTestCategoryService.updateCategory(category);
         // then
-        verify(categoryRepository).save(category);
+        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
+        verify(categoryRepository).save(categoryArgumentCaptor.capture());
+        Category capturedCategory = categoryArgumentCaptor.getValue();
+        assertThat(capturedCategory).isEqualTo(category);
     }
 
     @Test
     void deleteCategory()
     {
         // given
-        Category category = new Category("11", "Video Games", null);
+        Category category = new Category("11", "Video Games");
         given(categoryRepository.findById(anyString())).willReturn(Optional.of(category));
         // when
         underTestCategoryService.deleteCategory(category.getId());
         // then
-        verify(categoryRepository).delete(any(Category.class));
+        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
+//        verify(categoryRepository).delete(any(Category.class));
+        verify(categoryRepository).delete(categoryArgumentCaptor.capture());
+        Category capturedCategory = categoryArgumentCaptor.getValue();
+        assertThat(capturedCategory).isEqualTo(category);
     }
 
     @Test
     void categoryNameExists_shouldReturnTrue()
     {
 
-
         // given
         List<Category> categoryList = new ArrayList<>();
 
-        categoryList.add(new Category("11", "Video Games", new ArrayList<>()));
-        categoryList.add(new Category("12", "Clothes", new ArrayList<>()));
+        categoryList.add(new Category("11", "Video Games"));
+        categoryList.add(new Category("12", "Clothes"));
 
-        String categoryName = "Video Games";
+        String categoryName = " video games ";
 
         given(categoryRepository.findAll()).willReturn(categoryList);
 
