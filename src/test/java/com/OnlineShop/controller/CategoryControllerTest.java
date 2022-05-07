@@ -206,6 +206,25 @@ public class CategoryControllerTest
     }
 
     @Test
+    public void getCategory_missingPathVariable_returnsACategory() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games", null);
+        String categoryId = "11";
+
+        given(categoryService.getCategoryById(categoryId)).willReturn(category);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/categories/"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+    @Test
     public void getCategory_returnsACategoryWithProducts() throws Exception
     {
         // given
