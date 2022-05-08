@@ -21,21 +21,21 @@ public class ProductService implements IProductService
     @Transactional
     public Product getProductById(String productId)
     {
-        return null;
+        return new Product();
     }
 
     @Override
     @Transactional
     public Product createProduct(Product product)
     {
-        return null;
+        return new Product();
     }
 
     @Override
     @Transactional
     public Product updateProduct(Product product)
     {
-        return null;
+        return new Product();
     }
 
     @Override
