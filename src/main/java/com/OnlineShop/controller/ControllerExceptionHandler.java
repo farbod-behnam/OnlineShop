@@ -1,5 +1,8 @@
-package com.OnlineShop.exception;
+package com.OnlineShop.controller;
 
+import com.OnlineShop.exception.AlreadyExistsException;
+import com.OnlineShop.exception.ErrorResponse;
+import com.OnlineShop.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
