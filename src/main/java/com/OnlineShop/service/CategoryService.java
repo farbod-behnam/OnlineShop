@@ -24,12 +24,14 @@ public class CategoryService implements ICategoryService
         this.categoryRepository = categoryRepository;
     }
 
+    @Override
     @Transactional
     public List<Category> getCategories()
     {
         return categoryRepository.findAll();
     }
 
+    @Override
     @Transactional
     public Category getCategoryById(String categoryId)
     {
@@ -46,6 +48,7 @@ public class CategoryService implements ICategoryService
 
     }
 
+    @Override
     @Transactional
     public Category createCategory(Category category)
     {
@@ -62,6 +65,7 @@ public class CategoryService implements ICategoryService
     }
 
     @Override
+    @Transactional
     public Category updateCategory(Category category)
     {
         return categoryRepository.save(category);
@@ -77,6 +81,7 @@ public class CategoryService implements ICategoryService
 
 
     @Override
+    @Transactional
     public boolean categoryNameExists(String categoryName)
     {
         List<Category> categoryList = categoryRepository.findAll();
