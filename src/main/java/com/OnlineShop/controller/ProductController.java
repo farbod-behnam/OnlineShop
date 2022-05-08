@@ -16,6 +16,7 @@ public class ProductController
 {
     private final IProductService productService;
 
+    @Autowired
     public ProductController(IProductService productService)
     {
         this.productService = productService;
@@ -51,5 +52,13 @@ public class ProductController
         Product updatedProduct = productService.updateProduct(product);
 
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable String productId)
+    {
+        productService.deleteProduct(productId);
+
+        return new ResponseEntity<>("Product with id: [" + productId + "] is deleted", HttpStatus.OK);
     }
 }

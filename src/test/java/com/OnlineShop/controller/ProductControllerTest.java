@@ -245,6 +245,8 @@ class ProductControllerTest
         given(productService.updateProduct(any(Product.class))).willReturn(product);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/products")
                         .content(asJsonString(product))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -260,8 +262,24 @@ class ProductControllerTest
                 .andExpect(jsonPath("$.active").value(equalTo(true)))
                 .andDo(print());
 
+    }
+
+    @Test
+    public void deleteProduct_ShouldReturnString() throws Exception
+    {
+        // given
+        String productId = "11";
+
+        // when
+
         // then
-//        verify(categoryService, times(1)).findAll();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/products/" + productId)
+                        .content(asJsonString("Product with id: [" + productId + "] is deleted"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.").value(equalTo("Product with id: [" + productId + "] is deleted")))
+                .andDo(print());
+
     }
 
     private String asJsonString(final Object obj)
