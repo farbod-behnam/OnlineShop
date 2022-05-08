@@ -2,6 +2,7 @@ package com.OnlineShop.controller;
 
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.service.ICategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ public class CategoryController
 {
     private final ICategoryService categoryService;
 
+    @Autowired
     public CategoryController(ICategoryService categoryService)
     {
         this.categoryService = categoryService;
