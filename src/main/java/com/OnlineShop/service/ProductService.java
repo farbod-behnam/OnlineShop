@@ -1,13 +1,14 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Product;
+import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService implements IProductService
@@ -31,7 +32,16 @@ public class ProductService implements IProductService
     @Transactional
     public Product getProductById(String productId)
     {
-        return new Product();
+        Optional<Product> result = productRepository.findById(productId);
+
+        Product product;
+
+        if (result.isPresent())
+            product = result.get();
+        else
+            throw new NotFoundException("Product with id: [" + productId + "] cannot be found");
+
+        return product;
     }
 
     @Override
