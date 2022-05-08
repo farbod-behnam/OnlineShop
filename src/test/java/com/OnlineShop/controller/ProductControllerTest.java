@@ -5,6 +5,7 @@ import com.OnlineShop.entity.Product;
 import com.OnlineShop.service.IProductService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -30,10 +32,10 @@ import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ProductController.class)
@@ -179,5 +181,61 @@ class ProductControllerTest
 
         // then
 //        verify(categoryService, times(1)).findAll();
+    }
+
+    @Test
+    public void createProduct_shouldReturnCreatedCategory() throws Exception
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productService.createProduct(any(Product.class))).willReturn(product);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/products")
+                        .content(asJsonString(product))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.name").value(equalTo("Bloodborne")))
+                .andExpect(jsonPath("$.price").value(equalTo(new BigDecimal("69.99"))))
+                .andExpect(jsonPath("$.quantity").value(equalTo(19L)))
+                .andExpect(jsonPath("$.category.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.category.name").value(equalTo("Video Games")))
+                .andExpect(jsonPath("$.active").value(equalTo(true)))
+                .andDo(print());
+
+    }
+
+    private String asJsonString(final Object obj)
+    {
+        try
+        {
+            final ObjectMapper mapper = new ObjectMapper()
+                    .registerModule(new JavaTimeModule()); // add jackson support for conversion of Date Time
+
+            return mapper.writeValueAsString(obj);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
