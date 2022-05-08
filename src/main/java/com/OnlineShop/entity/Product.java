@@ -1,19 +1,25 @@
 package com.OnlineShop.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Document(collection = "Product")
 public class Product
 {
+    @Id
     private String id;
     private String name;
     private String description;
     private BigDecimal price;
     private int quantity;
     private String imageUrl;
+
+    @DBRef
+    Category category;
     private boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -22,8 +28,7 @@ public class Product
     {
     }
 
-
-    public Product(String id, String name, String description, BigDecimal price, int quantity, String imageUrl, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt)
+    public Product(String id, String name, String description, BigDecimal price, int quantity, String imageUrl, Category category, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt)
     {
         this.id = id;
         this.name = name;
@@ -31,6 +36,7 @@ public class Product
         this.price = price;
         this.quantity = quantity;
         this.imageUrl = imageUrl;
+        this.category = category;
         this.active = active;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -96,6 +102,16 @@ public class Product
         this.imageUrl = imageUrl;
     }
 
+    public Category getCategory()
+    {
+        return category;
+    }
+
+    public void setCategory(Category category)
+    {
+        this.category = category;
+    }
+
     public boolean isActive()
     {
         return active;
@@ -138,6 +154,7 @@ public class Product
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", category=" + category +
                 ", active=" + active +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +

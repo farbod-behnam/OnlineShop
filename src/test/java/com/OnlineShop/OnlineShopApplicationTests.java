@@ -1,6 +1,7 @@
 package com.OnlineShop;
 
 import com.OnlineShop.controller.CategoryController;
+import com.OnlineShop.controller.ProductController;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,15 @@ class OnlineShopApplicationTests {
 	@Autowired
 	private CategoryController categoryController;
 
+	@Autowired
+	private ProductController productController;
+
 
 	@Test
-	void contextLoads() {
+	void contextLoads()
+	{
 		assertThat(categoryController).isNotNull();
+		assertThat(productController).isNotNull();
 	}
 
 }
