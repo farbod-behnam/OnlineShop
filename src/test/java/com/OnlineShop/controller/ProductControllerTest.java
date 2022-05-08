@@ -31,6 +31,7 @@ import java.util.Set;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -138,5 +139,45 @@ class ProductControllerTest
                 .andExpect(jsonPath("$[0].category.name").value(equalTo("Video Games")))
                 .andExpect(jsonPath("$[0].active").value(equalTo(true)));
 
+    }
+
+    @Test
+    public void getProduct_shouldReturnACategory() throws Exception
+    {
+        // given
+
+        BigDecimal price = new BigDecimal("69.99");
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        String productId = "11";
+
+        given(productService.getProductById(productId)).willReturn(product);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/products/" + productId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.name").value(equalTo("Bloodborne")))
+                .andExpect(jsonPath("$.price").value(equalTo(new BigDecimal("69.99"))))
+                .andExpect(jsonPath("$.quantity").value(equalTo(19L)))
+                .andExpect(jsonPath("$.category.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.category.name").value(equalTo("Video Games")))
+                .andExpect(jsonPath("$.active").value(equalTo(true)))
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
     }
 }
