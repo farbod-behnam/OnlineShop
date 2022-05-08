@@ -193,15 +193,17 @@ public class CategoryControllerTest
     }
 
     @Test
-    public void deleteCategory_returnsUpdatedCategory() throws Exception
+    public void deleteCategory_ShouldReturnString() throws Exception
     {
         // given
-        Category category = new Category("11", "Video Games");
+        String categoryId = "11";
 
 //        given(categoryService.deleteCategory(anyString());)
 
         // when
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/categories/" + category.getId()).contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/categories/" + categoryId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString("Category with id: [" + categoryId + "] is deleted")))
                 .andExpect(status().isOk())
 //                .andExpect(jsonPath("$").value(equalTo("Category with id: [" + category.getId() + "] is deleted")))
                 .andDo(print());
