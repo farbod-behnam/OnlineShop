@@ -1,12 +1,14 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Product;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -49,7 +51,20 @@ public class ProductService implements IProductService
     @Transactional
     public Product createProduct(Product product)
     {
-        return new Product();
+        if (productNameExists(product.getName()))
+            throw new AlreadyExistsException("Category with name [" + product.getName() +"] already exists");
+
+        // in order to register entity as a new record
+        // the id should be null
+        product.setId(null);
+
+        String trimmedName = product.getName().trim();
+        product.setName(trimmedName);
+
+        product.setCreatedAt(LocalDateTime.now());
+        product.setUpdatedAt(LocalDateTime.now());
+
+        return productRepository.save(product);
     }
 
     @Override
