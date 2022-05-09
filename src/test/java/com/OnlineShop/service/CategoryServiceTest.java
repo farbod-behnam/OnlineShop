@@ -123,34 +123,40 @@ class CategoryServiceTest
     }
 
     @Test
-    void updateCategory_returnUpdatedCategory()
+    void updateCategory_shouldReturnUpdatedCategory()
     {
         // given
-        Category category = new Category("11", "Video Games");
+        Category foundCategory = new Category("11", "Video Games");
+        given(categoryRepository.findById(anyString())).willReturn(Optional.of(foundCategory));
+
         // when
-        underTestCategoryService.updateCategory(category);
+        underTestCategoryService.updateCategory(foundCategory);
+
+
         // then
         ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
         verify(categoryRepository).save(categoryArgumentCaptor.capture());
         Category capturedCategory = categoryArgumentCaptor.getValue();
-        assertThat(capturedCategory).isEqualTo(category);
+        assertThat(capturedCategory).isEqualTo(foundCategory);
     }
 
     @Test
-    void deleteCategory()
+    void updateCategory_shouldThrowNotFoundException()
     {
         // given
-        Category category = new Category("11", "Video Games");
-        given(categoryRepository.findById(anyString())).willReturn(Optional.of(category));
+        Category notFoundCategory = new Category("11", "Video Games");
+        given(categoryRepository.findById(anyString())).willReturn(Optional.empty());
+
         // when
-        underTestCategoryService.deleteCategory(category.getId());
+
+
         // then
-        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
-//        verify(categoryRepository).delete(any(Category.class));
-        verify(categoryRepository).delete(categoryArgumentCaptor.capture());
-        Category capturedCategory = categoryArgumentCaptor.getValue();
-        assertThat(capturedCategory).isEqualTo(category);
+        assertThatThrownBy(() -> underTestCategoryService.updateCategory(notFoundCategory))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Category with id: [" + notFoundCategory.getId() + "] cannot be found");
+
     }
+
 
     @Test
     void categoryNameExists_shouldReturnTrue()

@@ -68,6 +68,14 @@ public class CategoryService implements ICategoryService
     @Transactional
     public Category updateCategory(Category category)
     {
+        Optional<Category> result = categoryRepository.findById(category.getId());
+
+        if (result.isEmpty())
+            throw new NotFoundException("Category with id: [" + category.getId() + "] cannot be found");
+
+        String trimmedName = category.getName().trim();
+        category.setName(trimmedName);
+
         return categoryRepository.save(category);
     }
 
