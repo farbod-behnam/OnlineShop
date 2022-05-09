@@ -157,6 +157,36 @@ class CategoryServiceTest
 
     }
 
+    @Test
+    void deleteCategory_shouldDeleteACategory()
+    {
+        // given
+        Category deleteCategory = new Category("11", "Video Games");
+        given(categoryRepository.findById(anyString())).willReturn(Optional.of(deleteCategory));
+
+        // when
+        underTestCategoryService.deleteCategory(deleteCategory.getId());
+
+        // then
+        verify(categoryRepository).deleteById(deleteCategory.getId());
+    }
+
+    @Test
+    void deleteCategory_shouldThrowNotFoundException()
+    {
+        // given
+        String categoryId = "11";
+        given(categoryRepository.findById(anyString())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestCategoryService.deleteCategory(categoryId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Category with id: [" + categoryId + "] cannot be found");
+
+    }
+
 
     @Test
     void categoryNameExists_shouldReturnTrue()
