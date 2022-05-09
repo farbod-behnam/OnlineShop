@@ -88,7 +88,12 @@ public class ProductService implements IProductService
     @Transactional
     public void deleteProduct(String productId)
     {
+        Optional<Product> result = productRepository.findById(productId);
 
+        if (result.isEmpty())
+            throw new NotFoundException("Product with id: [" + productId + "] cannot be found");
+
+        productRepository.deleteById(productId);
     }
 
     @Override
