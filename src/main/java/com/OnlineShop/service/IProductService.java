@@ -21,4 +21,7 @@ public interface IProductService
 
     @Transactional
     void deleteProduct(String productId);
+
+    @Transactional
+    boolean productNameExists(String productName);
 }

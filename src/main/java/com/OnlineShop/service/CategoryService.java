@@ -24,12 +24,14 @@ public class CategoryService implements ICategoryService
         this.categoryRepository = categoryRepository;
     }
 
+    @Override
     @Transactional
     public List<Category> getCategories()
     {
         return categoryRepository.findAll();
     }
 
+    @Override
     @Transactional
     public Category getCategoryById(String categoryId)
     {
@@ -46,6 +48,7 @@ public class CategoryService implements ICategoryService
 
     }
 
+    @Override
     @Transactional
     public Category createCategory(Category category)
     {
@@ -62,21 +65,34 @@ public class CategoryService implements ICategoryService
     }
 
     @Override
+    @Transactional
     public Category updateCategory(Category category)
     {
+        Optional<Category> result = categoryRepository.findById(category.getId());
+
+        if (result.isEmpty())
+            throw new NotFoundException("Category with id: [" + category.getId() + "] cannot be found");
+
+        String trimmedName = category.getName().trim();
+        category.setName(trimmedName);
+
         return categoryRepository.save(category);
     }
 
     @Override
     public void deleteCategory(String categoryId)
     {
-        Category foundCategory = getCategoryById(categoryId);
+        Optional<Category> result = categoryRepository.findById(categoryId);
 
-        categoryRepository.delete(foundCategory);
+        if (result.isEmpty())
+            throw new NotFoundException("Category with id: [" + categoryId + "] cannot be found");
+
+        categoryRepository.deleteById(categoryId);
     }
 
 
     @Override
+    @Transactional
     public boolean categoryNameExists(String categoryName)
     {
         List<Category> categoryList = categoryRepository.findAll();
