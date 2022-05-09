@@ -1,12 +1,18 @@
 package com.OnlineShop.controller;
 
 import com.OnlineShop.exception.AlreadyExistsException;
+import com.OnlineShop.exception.ErrorListResponse;
 import com.OnlineShop.exception.ErrorResponse;
 import com.OnlineShop.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ControllerAdvice
 public class ControllerExceptionHandler
@@ -33,5 +39,30 @@ public class ControllerExceptionHandler
         errorResponse.setTimeStamp(System.currentTimeMillis());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorListResponse> handleException(MethodArgumentNotValidException exception)
+    {
+        // create ErrorResponse
+        ErrorListResponse errorListResponse = new ErrorListResponse();
+
+        List<ObjectError> errorList = exception.getAllErrors();
+
+
+        List<String> errorMessageList = new ArrayList<>();
+
+        for (ObjectError objError : errorList)
+        {
+            errorMessageList.add(objError.getDefaultMessage());
+//            errorListResponse.AddMessage(objError.getDefaultMessage());
+        }
+
+        errorListResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorListResponse.setMessage(errorMessageList);
+        errorListResponse.setTimeStamp(System.currentTimeMillis());
+
+        // return ResponseEntity
+        return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
     }
 }
