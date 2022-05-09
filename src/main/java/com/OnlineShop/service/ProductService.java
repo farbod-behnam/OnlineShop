@@ -71,7 +71,17 @@ public class ProductService implements IProductService
     @Transactional
     public Product updateProduct(Product product)
     {
-        return new Product();
+        Optional<Product> result = productRepository.findById(product.getId());
+
+        if (result.isEmpty())
+            throw new NotFoundException("Product with id: [" + product.getId() + "] cannot be found");
+
+        String trimmedName = product.getName().trim();
+        product.setName(trimmedName);
+
+        product.setUpdatedAt(LocalDateTime.now());
+
+        return productRepository.save(product);
     }
 
     @Override

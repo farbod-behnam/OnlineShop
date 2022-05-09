@@ -360,4 +360,83 @@ class ProductServiceTest
                 .hasMessageContaining("Category with name [" + alreadyExistProduct.getName() +"] already exists");
 
     }
+
+    @Test
+    void updateProduct_shouldReturnAProduct()
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        Product productUpdate = new Product(
+                "11",
+                "Red Dead Redemption 2",
+                "A Wild West Sandbox",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+
+        Category category = new Category("11", "Video Games");
+
+        Product foundProduct = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(productRepository.findById(anyString())).willReturn(Optional.of(foundProduct));
+
+        // when
+        underTestProductService.updateProduct(productUpdate);
+
+        // then
+        ArgumentCaptor<Product> productArgumentCaptor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).save(productArgumentCaptor.capture());
+        Product capturedProduct = productArgumentCaptor.getValue();
+        assertThat(capturedProduct).isEqualTo(productUpdate);
+    }
+
+    @Test
+    void updateProduct_shouldThrowNotFoundException()
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        Product notFoundProduct = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                new BigDecimal("69.99"),
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(productRepository.findById(notFoundProduct.getId())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestProductService.updateProduct(notFoundProduct))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Product with id: [" + notFoundProduct.getId() + "] cannot be found");
+    }
 }
