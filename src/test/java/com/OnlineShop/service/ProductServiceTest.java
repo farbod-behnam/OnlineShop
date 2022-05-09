@@ -130,4 +130,104 @@ class ProductServiceTest
                 .hasMessageContaining("Product with id: [" + productId + "] cannot be found");
 
     }
+
+    @Test
+    void productNameExists_shouldReturnTrue()
+    {
+
+        // given
+        List<Product> productList = new ArrayList<>();
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Product product2 = new Product(
+                "19",
+                "The Last of Us",
+                "A narrative game with action sequences",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        productList.add(product1);
+        productList.add(product2);
+
+        given(productRepository.findAll()).willReturn(productList);
+
+        String productName = " bloodborne ";
+
+
+        // when
+        boolean result = underTestProductService.productNameExists(productName);
+
+        // then
+        assertThat(result).isTrue();
+
+    }
+
+
+    @Test
+    void categoryNameExists_shouldReturnFalse()
+    {
+        // given
+        List<Product> productList = new ArrayList<>();
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Product product2 = new Product(
+                "19",
+                "The Last of Us",
+                "A narrative game with action sequences",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        productList.add(product1);
+        productList.add(product2);
+
+        given(productRepository.findAll()).willReturn(productList);
+
+        String productName = " devil may cry 5 ";
+        // when
+        boolean result = underTestProductService.productNameExists(productName);
+        // then
+        assertThat(result).isFalse();
+    }
 }

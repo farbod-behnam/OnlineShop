@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -63,5 +64,27 @@ public class ProductService implements IProductService
     public void deleteProduct(String productId)
     {
 
+    }
+
+    @Override
+    @Transactional
+    public boolean productNameExists(String productName)
+    {
+        List<Product> productList = productRepository.findAll();
+
+        productName = productName.toLowerCase(Locale.ROOT).trim();
+
+        boolean categoryExists = false;
+
+        for (Product p: productList)
+        {
+            if (p.getName().toLowerCase(Locale.ROOT).equals(productName))
+            {
+                categoryExists = true;
+                break;
+            }
+        }
+
+        return categoryExists;
     }
 }
