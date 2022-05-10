@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -12,15 +13,37 @@ public class Product
 {
     @Id
     private String id;
+
+    @NotBlank(message = "name is required")
+    @Size(min = 3, max = 45, message = "name must be between 3 and 45 character")
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z0-9 ]+", message = "name should only contain chars/digits")
     private String name;
+
+    @NotBlank(message = "description is required")
+    @Size(min = 15, max = 128, message = "description must be between 15 and 128 character")
+    @Pattern(regexp = "[a-zA-Z0-9 ]+", message = "description should only contain chars/digits")
     private String description;
+
+    @NotNull(message = "price is required")
+    @DecimalMin(value = "0.00", inclusive = false, message = "price must be greater than 0.0")
+    @Digits(integer = 5, fraction = 2, message = "price must be between 0.00 and 99999.99")
     private BigDecimal price;
-    private int quantity;
+
+    @NotNull(message = "quantity is required")
+    @Min(value = 0, message = "quantity must be greater than or equal to 0")
+    @Max(value = 1000, message = "quantity must be less than or equal to 1000")
+    private Integer quantity;
+
     private String imageUrl;
 
+    @NotNull(message = "category is required")
     @DBRef
     Category category;
-    private boolean active;
+
+
+    @NotNull(message = "active is required")
+    private Boolean active;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -28,7 +51,7 @@ public class Product
     {
     }
 
-    public Product(String id, String name, String description, BigDecimal price, int quantity, String imageUrl, Category category, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt)
+    public Product(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, Category category, Boolean active, LocalDateTime createdAt, LocalDateTime updatedAt)
     {
         this.id = id;
         this.name = name;
