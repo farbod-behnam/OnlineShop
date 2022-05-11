@@ -27,43 +27,72 @@ class CategoryTest
     @Test
     public void category_validCategory()
     {
-        Category category = new Category("134", "f1");
+        Category category = new Category("134", "f12");
         Set<ConstraintViolation<Category>> violations = validator.validate(category);
         assertThat(violations.isEmpty()).isTrue();
     }
 
     @Test
-    public void category_emptyName_shouldNotValidate()
+    public void category_nullName_shouldNotValidate()
     {
-        Category category = new Category("134", " ");
+        Category category = new Category("134", null);
         Set<ConstraintViolation<Category>> violations = validator.validate(category);
         assertThat(violations.isEmpty()).isFalse();
-        assertThat(violations.size()).isEqualTo(3);
+        assertThat(violations.size()).isEqualTo(1);
 
 //        for (ConstraintViolation<Category> violation : violations)
 //        {
 //            System.out.println("Violation Message: " + violation.getMessage());
 //        }
+
+        ConstraintViolation<Category> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name is required");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo(null);
     }
 
     @Test
-    public void category_startWithNumber_shouldNotValidate()
+    public void category_blankName_shouldNotValidate()
+    {
+        Category category = new Category("   ", null);
+        Set<ConstraintViolation<Category>> violations = validator.validate(category);
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+//        for (ConstraintViolation<Category> violation : violations)
+//        {
+//            System.out.println("Violation Message: " + violation.getMessage());
+//        }
+
+        ConstraintViolation<Category> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name is required");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo(null);
+    }
+
+    @Test
+    public void category_nameStartWithNumber_shouldNotValidate()
     {
         Category category = new Category("134", "1fasdf");
         Set<ConstraintViolation<Category>> violations = validator.validate(category);
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        for (ConstraintViolation<Category> violation : violations)
-        {
-            System.out.println("Violation Message: " + violation.getMessage());
-        }
+//        for (ConstraintViolation<Category> violation : violations)
+//        {
+//            System.out.println("Violation Message: " + violation.getMessage());
+//        }
+
+        ConstraintViolation<Category> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name should only contain chars/digits and not start with digit");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("1fasdf");
     }
 
     @Test
-    public void category_startWithSpace_shouldNotValidate()
+    public void category_nameSpecialCharacter_shouldNotValidate()
     {
-        Category category = new Category("134", " fasdf");
+        Category category = new Category("134", "f@!asdf");
         Set<ConstraintViolation<Category>> violations = validator.validate(category);
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
@@ -72,6 +101,31 @@ class CategoryTest
 //        {
 //            System.out.println("Violation Message: " + violation.getMessage());
 //        }
+
+        ConstraintViolation<Category> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name should only contain chars/digits and not start with digit");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("f@!asdf");
+    }
+
+
+    @Test
+    public void category_lessThan3Chars_shouldNotValidate()
+    {
+        Category category = new Category("134", "fa");
+        Set<ConstraintViolation<Category>> violations = validator.validate(category);
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+//        for (ConstraintViolation<Category> violation : violations)
+//        {
+//            System.out.println("Violation Message: " + violation.getMessage());
+//        }
+
+        ConstraintViolation<Category> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name must be between 3 and 16 characters");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("fa");
     }
 
     @Test
@@ -86,5 +140,10 @@ class CategoryTest
 //        {
 //            System.out.println("Violation Message: " + violation.getMessage());
 //        }
+
+        ConstraintViolation<Category> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name must be between 3 and 16 characters");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("fasdf asdf lkjlk asdf lkjasd");
     }
 }
