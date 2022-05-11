@@ -6,6 +6,7 @@ import com.OnlineShop.exception.ErrorResponse;
 import com.OnlineShop.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -64,5 +65,18 @@ public class ControllerExceptionHandler
 
         // return ResponseEntity
         return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(HttpMessageNotReadableException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setMessage("JSON parse error, unexpected character.");
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

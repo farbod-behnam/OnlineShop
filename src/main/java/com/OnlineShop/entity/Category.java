@@ -18,9 +18,9 @@ public class Category
     @Id
     private String id;
 
-    @NotBlank(message = "category name is required")
-    @Size(min = 3, max = 16, message = "category name must be between 2 and 16 characters")
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z0-9 ]+", message = "name should only contain chars/digits")
+    @NotBlank(message = "name is required")
+    @Size(min = 3, max = 16, message = "name must be between 3 and 16 characters")
+    @Pattern(regexp = "[a-zA-Z ][a-zA-Z0-9 ]+", message = "name should only contain chars/digits and not start with digit")
     private String name;
 
     public Category()
