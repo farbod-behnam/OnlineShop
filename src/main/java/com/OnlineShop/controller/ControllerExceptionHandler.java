@@ -4,6 +4,7 @@ import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.ErrorListResponse;
 import com.OnlineShop.exception.ErrorResponse;
 import com.OnlineShop.exception.NotFoundException;
+import org.springframework.data.mapping.MappingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -75,6 +76,19 @@ public class ControllerExceptionHandler
 
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setMessage("JSON parse error, unexpected character.");
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(MappingException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setMessage("Cannot create a reference to an object with a NULL id.");
         errorResponse.setTimeStamp(System.currentTimeMillis());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
