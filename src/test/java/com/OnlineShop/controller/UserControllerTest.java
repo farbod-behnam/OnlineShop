@@ -17,9 +17,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,7 +46,7 @@ class UserControllerTest
     {
         // given
         List<AppUser> users = new ArrayList<>();
-        List<AppRole> roles = new ArrayList<>();
+        Set<AppRole> roles = new HashSet<>();
 
         Country country = new Country("10", CountryEnum.Germany.name());
         AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
@@ -98,5 +101,49 @@ class UserControllerTest
                 .andExpect(jsonPath("$[0].country.id").value(equalTo("10")))
                 .andExpect(jsonPath("$[0].country.name").value(equalTo(CountryEnum.Germany.name())))
                 .andExpect(jsonPath("$[0].address").value(equalTo("This is an address")));
+    }
+
+    @Test
+    void getUser_shouldReturnAUser() throws Exception
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address"
+        );
+
+
+        given(userService.getUserById(anyString())).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/" + "19"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.firstName").value(equalTo("John")))
+                .andExpect(jsonPath("$.lastName").value(equalTo("Wick")))
+                .andExpect(jsonPath("$.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.phoneNumber").value(equalTo("001666666666")))
+                .andExpect(jsonPath("$.email").value(equalTo("john.wick@gmail.com")))
+                .andExpect(jsonPath("$.roles[0].name").value(equalTo(RoleEnum.ROLE_USER.name())))
+                .andExpect(jsonPath("$.country.id").value(equalTo("10")))
+                .andExpect(jsonPath("$.country.name").value(equalTo(CountryEnum.Germany.name())))
+                .andExpect(jsonPath("$.address").value(equalTo("This is an address")));
     }
 }
