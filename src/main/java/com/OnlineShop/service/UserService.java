@@ -1,7 +1,8 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.AppUser;
-import com.OnlineShop.entity.Product;
+import com.OnlineShop.repository.IUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,10 +12,19 @@ import java.util.List;
 @Transactional
 public class UserService implements IUserService
 {
+
+    private final IUserRepository userRepository;
+
+    @Autowired
+    public UserService(IUserRepository userRepository)
+    {
+        this.userRepository = userRepository;
+    }
+
     @Override
     public List<AppUser> getUsers()
     {
-        return null;
+        return userRepository.findAll();
     }
 
     @Override
