@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,12 +29,14 @@ public class AppUser
     @DBRef
     private Country country;
     private String address;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public AppUser()
     {
     }
 
-    public AppUser(String id, String firstName, String lastName, String phoneNumber, String email, Set<AppRole> roles, String username, String password, Country country, String address)
+    public AppUser(String id, String firstName, String lastName, String phoneNumber, String email, Set<AppRole> roles, String username, String password, Country country, String address, LocalDateTime createdAt, LocalDateTime updatedAt)
     {
         this.id = id;
         this.firstName = firstName;
@@ -45,6 +48,8 @@ public class AppUser
         this.password = password;
         this.country = country;
         this.address = address;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public String getId()
@@ -145,6 +150,26 @@ public class AppUser
     public void setAddress(String address)
     {
         this.address = address;
+    }
+
+    public LocalDateTime getCreatedAt()
+    {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt)
+    {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt()
+    {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt)
+    {
+        this.updatedAt = updatedAt;
     }
 
     public void addRole(AppRole role)
