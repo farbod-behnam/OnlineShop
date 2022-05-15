@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "User")
 public class AppUser
@@ -19,7 +21,7 @@ public class AppUser
     @Email
     private String email;
     @DBRef
-    private AppRole role;
+    private List<AppRole> roles;
     private String username;
     @JsonIgnore
     private String password;
@@ -31,14 +33,14 @@ public class AppUser
     {
     }
 
-    public AppUser(String id, String firstName, String lastName, String phoneNumber, String email, AppRole role, String username, String password, Country country, String address)
+    public AppUser(String id, String firstName, String lastName, String phoneNumber, String email, List<AppRole> roles, String username, String password, Country country, String address)
     {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.role = role;
+        this.roles = roles;
         this.username = username;
         this.password = password;
         this.country = country;
@@ -95,14 +97,14 @@ public class AppUser
         this.email = email;
     }
 
-    public AppRole getRole()
+    public List<AppRole> getRoles()
     {
-        return role;
+        return roles;
     }
 
-    public void setRole(AppRole role)
+    public void setRoles(List<AppRole> roles)
     {
-        this.role = role;
+        this.roles = roles;
     }
 
     public String getUsername()
@@ -143,6 +145,22 @@ public class AppUser
     public void setAddress(String address)
     {
         this.address = address;
+    }
+
+    public void addRole(AppRole role)
+    {
+        if (roles == null)
+            roles = new ArrayList<>();
+
+        roles.add(role);
+    }
+
+    public void removeRole(AppRole role)
+    {
+        if (roles == null)
+            roles = new ArrayList<>();
+
+        roles.remove(role);
     }
 
     @Override
