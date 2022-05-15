@@ -16,9 +16,9 @@ public interface IUserService
 
         AppUser createUser(AppUser user);
 
-        AppUser updateUser(Product product);
+        AppUser updateUser(AppUser user);
 
-        void deleteUserById(String productId);
+        void deleteUserById(String userId);
 
         boolean usernameExists(String username);
 }

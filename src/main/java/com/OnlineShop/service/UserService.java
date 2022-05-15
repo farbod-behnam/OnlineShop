@@ -3,10 +3,12 @@ package com.OnlineShop.service;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService implements IUserService
 {
     @Override
@@ -28,7 +30,7 @@ public class UserService implements IUserService
     }
 
     @Override
-    public AppUser updateUser(Product product)
+    public AppUser updateUser(AppUser user)
     {
         return null;
     }
