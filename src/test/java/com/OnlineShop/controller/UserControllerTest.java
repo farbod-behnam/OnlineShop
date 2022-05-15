@@ -1,31 +1,34 @@
 package com.OnlineShop.controller;
 
-import com.OnlineShop.entity.AppRole;
-import com.OnlineShop.entity.AppUser;
-import com.OnlineShop.entity.Country;
+import com.OnlineShop.entity.*;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.service.IUserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -63,7 +66,9 @@ class UserControllerTest
                 "john.wick",
                 "password1234",
                 country,
-                "This is an address"
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
 
@@ -77,7 +82,9 @@ class UserControllerTest
                 "peter.parker",
                 "password1234",
                 country,
-                "This is an address"
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
         users.add(user1);
@@ -124,7 +131,9 @@ class UserControllerTest
                 "john.wick",
                 "password1234",
                 country,
-                "This is an address"
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
 
@@ -145,5 +154,72 @@ class UserControllerTest
                 .andExpect(jsonPath("$.country.id").value(equalTo("10")))
                 .andExpect(jsonPath("$.country.name").value(equalTo(CountryEnum.Germany.name())))
                 .andExpect(jsonPath("$.address").value(equalTo("This is an address")));
+    }
+
+    @Test
+    public void createUser_shouldReturnCreatedUser() throws Exception
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.createUser(any(AppUser.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
+                        .content(asJsonString(user))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.firstName").value(equalTo("John")))
+                .andExpect(jsonPath("$.lastName").value(equalTo("Wick")))
+                .andExpect(jsonPath("$.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.phoneNumber").value(equalTo("001666666666")))
+                .andExpect(jsonPath("$.email").value(equalTo("john.wick@gmail.com")))
+                .andExpect(jsonPath("$.roles[0].name").value(equalTo(RoleEnum.ROLE_USER.name())))
+                .andExpect(jsonPath("$.country.id").value(equalTo("10")))
+                .andExpect(jsonPath("$.country.name").value(equalTo(CountryEnum.Germany.name())))
+                .andExpect(jsonPath("$.address").value(equalTo("This is an address")))
+                .andDo(print());
+
+    }
+
+    private String asJsonString(final Object obj)
+    {
+        try
+        {
+            final ObjectMapper mapper = new ObjectMapper()
+                    .registerModule(new JavaTimeModule()); // add jackson support for conversion of Date Time
+
+            return mapper.writeValueAsString(obj);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
