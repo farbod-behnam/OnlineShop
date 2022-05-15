@@ -38,11 +38,19 @@ public class UserController
     }
 
     @PostMapping
-    public ResponseEntity<AppUser> createUser(@RequestBody AppUser user)
+    public ResponseEntity<AppUser> postUser(@RequestBody AppUser user)
     {
         AppUser createdUser = userService.createUser(user);
 
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<AppUser> putUser(@RequestBody AppUser user)
+    {
+        AppUser updatedUser = userService.updateUser(user);
+
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
 
