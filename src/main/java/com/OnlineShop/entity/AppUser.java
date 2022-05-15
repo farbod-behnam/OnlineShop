@@ -6,8 +6,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Document(collection = "User")
 public class AppUser
@@ -21,7 +21,7 @@ public class AppUser
     @Email
     private String email;
     @DBRef
-    private List<AppRole> roles;
+    private Set<AppRole> roles;
     private String username;
     @JsonIgnore
     private String password;
@@ -33,7 +33,7 @@ public class AppUser
     {
     }
 
-    public AppUser(String id, String firstName, String lastName, String phoneNumber, String email, List<AppRole> roles, String username, String password, Country country, String address)
+    public AppUser(String id, String firstName, String lastName, String phoneNumber, String email, Set<AppRole> roles, String username, String password, Country country, String address)
     {
         this.id = id;
         this.firstName = firstName;
@@ -97,12 +97,12 @@ public class AppUser
         this.email = email;
     }
 
-    public List<AppRole> getRoles()
+    public Set<AppRole> getRoles()
     {
         return roles;
     }
 
-    public void setRoles(List<AppRole> roles)
+    public void setRoles(Set<AppRole> roles)
     {
         this.roles = roles;
     }
@@ -150,7 +150,7 @@ public class AppUser
     public void addRole(AppRole role)
     {
         if (roles == null)
-            roles = new ArrayList<>();
+            roles = new HashSet<>();
 
         roles.add(role);
     }
@@ -158,7 +158,7 @@ public class AppUser
     public void removeRole(AppRole role)
     {
         if (roles == null)
-            roles = new ArrayList<>();
+            roles = new HashSet<>();
 
         roles.remove(role);
     }
