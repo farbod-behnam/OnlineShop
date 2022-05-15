@@ -262,6 +262,24 @@ class UserControllerTest
 
     }
 
+    @Test
+    public void deleteUser_ShouldReturnString() throws Exception
+    {
+        // given
+        String userId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/" + userId)
+                        .content(asJsonString("User with id: [" + userId + "] is deleted"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(equalTo("User with id: [" + userId + "] is deleted")))
+                .andDo(print());
+
+    }
+
     private String asJsonString(final Object obj)
     {
         try
