@@ -1,7 +1,6 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.AppUser;
-import com.OnlineShop.entity.Product;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
