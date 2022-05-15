@@ -43,9 +43,12 @@ class UserControllerTest
     {
         // given
         List<AppUser> users = new ArrayList<>();
+        List<AppRole> roles = new ArrayList<>();
 
         Country country = new Country("10", CountryEnum.Germany.name());
         AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
 
         AppUser user1 = new AppUser(
                 "19",
@@ -53,7 +56,7 @@ class UserControllerTest
                 "Wick",
                 "001666666666",
                 "john.wick@gmail.com",
-                role,
+                roles,
                 "john.wick",
                 "password1234",
                 country,
@@ -67,7 +70,7 @@ class UserControllerTest
                 "Parker",
                 "00119191919",
                 "peter.parker@gmail.com",
-                role,
+                roles,
                 "peter.parker",
                 "password1234",
                 country,
@@ -91,7 +94,7 @@ class UserControllerTest
                 .andExpect(jsonPath("$[0].username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$[0].phoneNumber").value(equalTo("001666666666")))
                 .andExpect(jsonPath("$[0].email").value(equalTo("john.wick@gmail.com")))
-                .andExpect(jsonPath("$[0].role.name").value(equalTo(RoleEnum.ROLE_USER.name())))
+                .andExpect(jsonPath("$[0].roles[0].name").value(equalTo(RoleEnum.ROLE_USER.name())))
                 .andExpect(jsonPath("$[0].country.id").value(equalTo("10")))
                 .andExpect(jsonPath("$[0].country.name").value(equalTo(CountryEnum.Germany.name())))
                 .andExpect(jsonPath("$[0].address").value(equalTo("This is an address")));
