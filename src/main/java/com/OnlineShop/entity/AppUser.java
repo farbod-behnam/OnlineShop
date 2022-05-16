@@ -1,11 +1,12 @@
 package com.OnlineShop.entity;
 
+import com.OnlineShop.validation.PhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.Email;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,19 +17,47 @@ public class AppUser
     @Id
     private String id;
 
+    @NotBlank(message = "first name is required")
+    @Size(min = 3, max = 45, message = "first name must be between 3 and 45 character")
+    @Pattern(regexp = "[a-zA-Z]+", message = "first name should only contain alphabet character")
     private String firstName;
+
+    @NotBlank(message = "first name is required")
+    @Size(min = 3, max = 45, message = "first name must be between 3 and 45 character")
+    @Pattern(regexp = "[a-zA-Z]+", message = "first name should only contain alphabet character")
     private String lastName;
+
+
+    @Pattern(regexp = "[0-9]+", message = "phone number must only contain number")
+    @PhoneNumber(countryCode = {"001", "0049", "0044"}, phoneNumberLength = {13, 14, 14}, message = "phone number is invalid")
     private String phoneNumber;
+
+    @NotBlank(message = "email is required")
     @Email
     private String email;
+
     @DBRef
+    @NotNull(message = "role is required")
     private Set<AppRole> roles;
+
+    @NotBlank(message = "username is required")
+    @Pattern(regexp = "^[a-z]*\\.?[a-z]*$", message = "username is invalid")
     private String username;
+
     @JsonIgnore
+    @Size(min = 10, max = 64, message = "password must be greater than 10 character")
+    @Pattern(regexp = "^(?=.+[A-Z])(?=.+[a-z])(?=.+[0-9])(?=.+[*.!@$%^& ]).{10,}$", message = "password must at least have one upper case letter, one lower case letter and one special character")
     private String password;
+
     @DBRef
+    @NotNull(message = "country is required")
     private Country country;
+
+    @NotNull(message = "address is required")
+    @Size(min = 24, max = 256, message = "address must be between 24 and 256 character")
+    @Pattern(regexp = "[a-z0-9\\- .]+", message = "address is invalid")
     private String address;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
