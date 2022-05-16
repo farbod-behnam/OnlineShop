@@ -5,11 +5,13 @@ import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -105,8 +107,92 @@ class UserServiceTest
     }
 
     @Test
-    void createUser()
+    void createUser_shouldReturnCreatedUser()
     {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // when
+        underTestUserService.createUser(user);
+
+        // then
+        ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
+        verify(userRepository).findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+        verify(userRepository).save(userArgumentCaptor.capture());
+        AppUser capturedUser = userArgumentCaptor.getValue();
+        assertThat(capturedUser).isEqualTo(user);
+    }
+
+    @Test
+    void createUser_shouldThrowAlreadyExistsException()
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(Optional.of(user));
+
+        AppUser userToBeCreated = new AppUser(
+                null,
+                "User",
+                "ToBeCreated",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.createUser(userToBeCreated))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("User already exists.");
+
     }
 
     @Test

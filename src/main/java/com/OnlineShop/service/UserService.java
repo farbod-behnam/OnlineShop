@@ -1,13 +1,16 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.AppUser;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -47,7 +50,25 @@ public class UserService implements IUserService
     @Override
     public AppUser createUser(AppUser user)
     {
-        return null;
+        // in order to create new entity
+        user.setId(null);
+
+        user.setFirstName(user.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
+        user.setLastName(user.getLastName().trim().strip().toLowerCase(Locale.ROOT));
+        user.setPhoneNumber(user.getPhoneNumber().trim().strip().toLowerCase(Locale.ROOT));
+        user.setEmail(user.getEmail().trim().strip().toLowerCase(Locale.ROOT));
+        user.setUsername(user.getUsername().trim().strip().toLowerCase(Locale.ROOT));
+        user.setAddress(user.getAddress().trim().strip().toLowerCase(Locale.ROOT));
+
+        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+
+        if (result.isPresent())
+            throw new AlreadyExistsException("User already exists.");
+
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        return userRepository.save(user);
     }
 
     @Override
