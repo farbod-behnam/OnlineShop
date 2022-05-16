@@ -19,5 +19,4 @@ public interface IUserService
 
         void deleteUserById(String userId);
 
-        boolean usernameExists(String username);
 }
