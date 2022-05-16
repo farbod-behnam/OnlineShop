@@ -74,18 +74,33 @@ public class UserService implements IUserService
     @Override
     public AppUser updateUser(AppUser user)
     {
-        return null;
+        Optional<AppUser> result = userRepository.findById(user.getId());
+
+        if (result.isEmpty())
+            throw new NotFoundException("User with id: [" + user.getId() + "] cannot be found");
+
+        user.setFirstName(user.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
+        user.setLastName(user.getLastName().trim().strip().toLowerCase(Locale.ROOT));
+        user.setPhoneNumber(user.getPhoneNumber().trim().strip().toLowerCase(Locale.ROOT));
+        user.setEmail(user.getEmail().trim().strip().toLowerCase(Locale.ROOT));
+        // username should never change
+        user.setUsername(result.get().getUsername());
+        user.setAddress(user.getAddress().trim().strip().toLowerCase(Locale.ROOT));
+
+        user.setUpdatedAt(LocalDateTime.now());
+
+        return userRepository.save(user);
     }
 
     @Override
-    public void deleteUserById(String productId)
+    public void deleteUserById(String userId)
     {
+        Optional<AppUser> result = userRepository.findById(userId);
 
+        if (result.isEmpty())
+            throw new NotFoundException("User with id: [" + userId + "] cannot be found");
+
+        userRepository.deleteById(userId);
     }
 
-    @Override
-    public boolean usernameExists(String username)
-    {
-        return false;
-    }
 }

@@ -23,7 +23,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -196,17 +195,131 @@ class UserServiceTest
     }
 
     @Test
-    void updateUser()
+    void updateUser_shouldReturnUpdatedUser()
     {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser userToBeUpdated = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findById(anyString())).willReturn(Optional.of(userToBeUpdated));
+
+        // when
+        underTestUserService.updateUser(userToBeUpdated);
+
+        // then
+        ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
+        verify(userRepository).findById(userToBeUpdated.getId());
+        verify(userRepository).save(userArgumentCaptor.capture());
+        AppUser capturedUser = userArgumentCaptor.getValue();
+        assertThat(capturedUser).isEqualTo(userToBeUpdated);
     }
 
     @Test
-    void deleteUserById()
+    void updateUser_shouldThrowNotFoundException()
     {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser notFoundUser = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findById(anyString())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.updateUser(notFoundUser))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("User with id: [" + notFoundUser.getId() + "] cannot be found");
+
     }
 
     @Test
-    void usernameExists()
+    void deleteUserById_shouldDeleteAUser()
     {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser userToBeDeleted = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findById(anyString())).willReturn(Optional.of(userToBeDeleted));
+
+        // when
+        underTestUserService.deleteUserById(userToBeDeleted.getId());
+
+        // then
+        verify(userRepository).deleteById(userToBeDeleted.getId());
     }
+
+    @Test
+    void deleteUserById_shouldThrowNotFoundException()
+    {
+        // given
+        String userId = "11";
+
+        given(userRepository.findById(anyString())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.deleteUserById(userId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("User with id: [" + userId + "] cannot be found");
+    }
+
+
 }
