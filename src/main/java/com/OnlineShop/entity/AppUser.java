@@ -41,12 +41,13 @@ public class AppUser
     private Set<AppRole> roles;
 
     @NotBlank(message = "username is required")
-    @Pattern(regexp = "^[a-z]*\\.?[a-z]*$", message = "username is invalid")
+    @Size(min = 3, max = 24, message = "username must be between 3 and 24 character")
+    @Pattern(regexp = "^[a-z]*?[0-9]*$", message = "username is invalid")
     private String username;
 
     @JsonIgnore
     @Size(min = 10, max = 64, message = "password must be greater than 10 character")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).{10,}$", message = "password is invalid")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).+$", message = "password must contain at least one upper case letter, one lower case letter, number and special character")
     private String password;
 
     @DBRef
