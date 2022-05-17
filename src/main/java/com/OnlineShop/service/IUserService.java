@@ -13,6 +13,8 @@ public interface IUserService
 
         AppUser getUserById(String userId);
 
+        AppUser getUserByUsername(String username);
+
         AppUser createUser(AppUser user);
 
         AppUser updateUser(AppUser user);
