@@ -106,6 +106,56 @@ class UserServiceTest
     }
 
     @Test
+    void getUserByUsername_shouldReturnAppUser()
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "johnwick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+
+        // when
+        AppUser foundUser = underTestUserService.getUserByUsername(anyString());
+
+        // then
+        verify(userRepository).findByUsername(anyString());
+        assertThat(foundUser).isEqualTo(user);
+    }
+
+    @Test
+    void getUserByUsername_shouldThrowNotFoundException()
+    {
+        // given
+        String username = "johnwick";
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.getUserByUsername(username))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("User with username: [" + username + "] cannot be found");
+    }
+
+    @Test
     void createUser_shouldReturnCreatedUser()
     {
         // given

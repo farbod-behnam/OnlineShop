@@ -48,6 +48,23 @@ public class UserService implements IUserService
     }
 
     @Override
+    public AppUser getUserByUsername(String username)
+    {
+        username = username.trim().strip().toLowerCase(Locale.ROOT);
+
+        Optional<AppUser> result = userRepository.findByUsername(username);
+
+        AppUser user;
+
+        if (result.isPresent())
+            user = result.get();
+        else
+            throw new NotFoundException("User with username: [" + username + "] cannot be found");
+
+        return user;
+    }
+
+    @Override
     public AppUser createUser(AppUser user)
     {
         // in order to create new entity
@@ -55,10 +72,10 @@ public class UserService implements IUserService
 
         user.setFirstName(user.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
         user.setLastName(user.getLastName().trim().strip().toLowerCase(Locale.ROOT));
-        user.setPhoneNumber(user.getPhoneNumber().trim().strip().toLowerCase(Locale.ROOT));
+        user.setPhoneNumber(user.getPhoneNumber().trim().strip());
         user.setEmail(user.getEmail().trim().strip().toLowerCase(Locale.ROOT));
         user.setUsername(user.getUsername().trim().strip().toLowerCase(Locale.ROOT));
-        user.setAddress(user.getAddress().trim().strip().toLowerCase(Locale.ROOT));
+        user.setAddress(user.getAddress().trim().strip());
 
         Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
 
