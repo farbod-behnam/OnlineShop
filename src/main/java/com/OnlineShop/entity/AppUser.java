@@ -18,22 +18,22 @@ public class AppUser
     private String id;
 
     @NotBlank(message = "first name is required")
-    @Size(min = 3, max = 45, message = "first name must be between 3 and 45 character")
-    @Pattern(regexp = "[a-zA-Z]+", message = "first name should only contain alphabet character")
+    @Size(min = 3, max = 25, message = "first name must be between 3 and 25 character")
+    @Pattern(regexp = "^[a-zA-Z]*$", message = "first name should only contain alphabet character")
     private String firstName;
 
-    @NotBlank(message = "first name is required")
-    @Size(min = 3, max = 45, message = "first name must be between 3 and 45 character")
-    @Pattern(regexp = "[a-zA-Z]+", message = "first name should only contain alphabet character")
+    @NotBlank(message = "last name is required")
+    @Size(min = 3, max = 25, message = "last name must be between 3 and 25 character")
+    @Pattern(regexp = "^[a-zA-Z]*$", message = "last name should only contain alphabet character")
     private String lastName;
 
 
-    @Pattern(regexp = "[0-9]+", message = "phone number must only contain number")
+    @Pattern(regexp = "^[0-9]*$", message = "phone number must only contain number")
     @PhoneNumber(countryCode = {"001", "0049", "0044"}, phoneNumberLength = {13, 14, 14}, message = "phone number is invalid")
     private String phoneNumber;
 
     @NotBlank(message = "email is required")
-    @Email
+    @Email(message = "email is invalid")
     private String email;
 
     @DBRef
@@ -46,7 +46,7 @@ public class AppUser
 
     @JsonIgnore
     @Size(min = 10, max = 64, message = "password must be greater than 10 character")
-    @Pattern(regexp = "^(?=.+[A-Z])(?=.+[a-z])(?=.+[0-9])(?=.+[*.!@$%^& ]).{10,}$", message = "password must at least have one upper case letter, one lower case letter and one special character")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).{10,}$", message = "password is invalid")
     private String password;
 
     @DBRef
@@ -55,7 +55,7 @@ public class AppUser
 
     @NotNull(message = "address is required")
     @Size(min = 24, max = 256, message = "address must be between 24 and 256 character")
-    @Pattern(regexp = "[a-z0-9\\- .]+", message = "address is invalid")
+    @Pattern(regexp = "[A-Za-z0-9'.\\-\\s,()]*", message = "address is invalid")
     private String address;
 
     private LocalDateTime createdAt;
