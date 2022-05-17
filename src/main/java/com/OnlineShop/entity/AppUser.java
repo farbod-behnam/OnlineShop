@@ -55,7 +55,7 @@ public class AppUser
     private Country country;
 
     @NotNull(message = "address is required")
-    @Size(min = 24, max = 256, message = "address must be between 24 and 256 character")
+    @Size(max = 100, message = "address must be less than 100 character")
     @Pattern(regexp = "[A-Za-z0-9'.\\-\\s,()]*", message = "address is invalid")
     private String address;
 
