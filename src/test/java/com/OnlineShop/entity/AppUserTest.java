@@ -383,4 +383,93 @@ class AppUserTest
         assertThat(violation.getInvalidValue()).isEqualTo("0049999999");
     }
 
+    @Test
+    public void user_nullEmail_shouldNotValidate()
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                null,
+                roles,
+                "john.wick", // j.wick
+                "Password1234!",
+                country,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+
+        for (ConstraintViolation<AppUser> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("email is required");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("email");
+        assertThat(violation.getInvalidValue()).isEqualTo(null);
+    }
+
+    @Test
+    public void user_invalidEmail_shouldNotValidate()
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "hello!@#$@124",
+                roles,
+                "john.wick", // j.wick
+                "Password1234!",
+                country,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+
+        for (ConstraintViolation<AppUser> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("email is invalid");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("email");
+        assertThat(violation.getInvalidValue()).isEqualTo("hello!@#$@124");
+    }
 }
