@@ -108,6 +108,29 @@ class RoleControllerTest
                 .andDo(print());
     }
 
+    @Test
+    void putRole_shouldReturnUpdatedRole() throws Exception
+    {
+        // given
+
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+
+        given(roleService.updateRole(any(AppRole.class))).willReturn(role);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/roles/")
+                        .content(asJsonString(role))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.name").value(equalTo("ROLE_USER")))
+                .andDo(print());
+    }
+
     private String asJsonString(final Object obj)
     {
         try

@@ -46,4 +46,13 @@ public class RoleController
 
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
     }
+
+    @PutMapping
+    public ResponseEntity<AppRole> putRole(@RequestBody AppRole role)
+    {
+        AppRole updateRole = roleService.updateRole(role);
+
+        return new ResponseEntity<>(updateRole, HttpStatus.CREATED);
+    }
+
 }
