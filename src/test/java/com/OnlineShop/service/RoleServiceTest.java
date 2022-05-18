@@ -2,11 +2,13 @@ package com.OnlineShop.service;
 
 import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -107,8 +109,40 @@ class RoleServiceTest
     }
 
     @Test
-    void createRole()
+    void createRole_shouldReturnCreatedRole()
     {
+        // givne
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+        // when
+        underTestRoleService.createRole(role);
+
+        // then
+        ArgumentCaptor<AppRole> roleArgumentCaptor = ArgumentCaptor.forClass(AppRole.class);
+        verify(roleRepository).findByName(role.getName());
+        verify(roleRepository).save(roleArgumentCaptor.capture());
+        AppRole capturedRole = roleArgumentCaptor.getValue();
+        assertThat(capturedRole).isEqualTo(role);
+
+    }
+
+    @Test
+    void createRole_shouldThrowAlreadyExistsException()
+    {
+        // givne
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+        given(roleRepository.findByName(anyString())).willReturn(Optional.of(role));
+
+        AppRole roleToBeCreated = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestRoleService.createRole(roleToBeCreated))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("Role name already exists.");
+
     }
 
     @Test

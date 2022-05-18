@@ -7,6 +7,7 @@ import com.OnlineShop.repository.IRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -64,8 +65,21 @@ public class RoleService implements IRoleService
     @Override
     public AppRole createRole(AppRole role)
     {
-        return null;
+        // in order to create new entity
+        role.setId(null);
+
+        role.setName(role.getName().trim().strip().toUpperCase(Locale.ROOT));
+
+        Optional<AppRole> result = roleRepository.findByName(role.getName());
+
+        if (result.isPresent())
+            throw new AlreadyExistsException("Role name already exists.");
+
+
+        return roleRepository.save(role);
     }
+
+
 
     @Override
     public AppRole updateRole(@Valid AppRole role)
