@@ -78,8 +78,32 @@ class RoleServiceTest
     }
 
     @Test
-    void getRoleByName()
+    void getRoleByName_shouldReturnARole()
     {
+        // given
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+        given(roleRepository.findByName(anyString())).willReturn(Optional.of(role));
+
+        // when
+        AppRole foundRole = underTestRoleService.getRoleByName(anyString());
+
+        // then
+        verify(roleRepository).findByName(anyString());
+        assertThat(foundRole).isEqualTo(role);
+    }
+
+    @Test
+    void getRoleByName_shouldThrowNotFoundException()
+    {
+        String name = "name";
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestRoleService.getRoleByName(name))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Role with name: [" + name + "] cannot be found");
     }
 
     @Test
