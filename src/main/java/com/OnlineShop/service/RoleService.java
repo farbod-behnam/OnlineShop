@@ -30,13 +30,13 @@ public class RoleService implements IRoleService
     }
 
     @Override
-    public AppRole createUser(@Valid AppRole role)
+    public AppRole createRole(@Valid AppRole role)
     {
         return null;
     }
 
     @Override
-    public AppRole updateUser(@Valid AppRole role)
+    public AppRole updateRole(@Valid AppRole role)
     {
         return null;
     }

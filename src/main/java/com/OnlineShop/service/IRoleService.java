@@ -12,8 +12,8 @@ public interface IRoleService
 
     AppRole getRoleByName(String name);
 
-    AppRole createUser(AppRole role);
+    AppRole createRole(AppRole role);
 
-    AppRole updateUser(AppRole role);
+    AppRole updateRole(AppRole role);
 
 }
