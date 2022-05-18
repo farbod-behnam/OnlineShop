@@ -91,10 +91,20 @@ public class UserService implements IUserService
     @Override
     public AppUser updateUser(AppUser user)
     {
-        Optional<AppUser> result = userRepository.findById(user.getId());
+
+        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+
+        // see if username, email or phone number already is in use
+        if (result.isPresent())
+            throw new AlreadyExistsException("User with these descriptions already exists");
+
+        // if not then see if the user with this id already exists
+        result = userRepository.findById(user.getId());
 
         if (result.isEmpty())
             throw new NotFoundException("User with id: [" + user.getId() + "] cannot be found");
+
+
 
         user.setFirstName(user.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
         user.setLastName(user.getLastName().trim().strip().toLowerCase(Locale.ROOT));
