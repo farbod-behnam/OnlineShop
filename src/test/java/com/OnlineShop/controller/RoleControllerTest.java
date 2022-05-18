@@ -1,7 +1,6 @@
 package com.OnlineShop.controller;
 
 import com.OnlineShop.entity.AppRole;
-import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.service.IRoleService;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -62,5 +61,23 @@ class RoleControllerTest
                 .andDo(print());
     }
 
+    @Test
+    void getRole_shouldReturnARole() throws Exception
+    {
+        // given
 
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+
+        given(roleService.getRoleById(anyString())).willReturn(role);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/roles/" + "19"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.name").value(equalTo("ROLE_USER")))
+                .andDo(print());
+    }
 }
