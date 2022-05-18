@@ -187,7 +187,7 @@ class ProductServiceTest
 
 
     @Test
-    void categoryNameExists_shouldReturnFalse()
+    void productNameExists_shouldReturnFalse()
     {
         // given
         List<Product> productList = new ArrayList<>();
