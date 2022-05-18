@@ -1,6 +1,7 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.AppRole;
+import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,9 +30,18 @@ public class RoleService implements IRoleService
     }
 
     @Override
-    public AppRole getRoleById(String userId)
+    public AppRole getRoleById(String roleId)
     {
-        return null;
+        Optional<AppRole> result = roleRepository.findById(roleId);
+
+        AppRole role;
+
+        if (result.isPresent())
+            role = result.get();
+        else
+            throw new NotFoundException("Role with id: [" + roleId + "] cannot be found");
+
+        return role;
     }
 
     @Override

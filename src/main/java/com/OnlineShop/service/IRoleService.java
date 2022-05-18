@@ -8,7 +8,7 @@ public interface IRoleService
 {
     List<AppRole> getRoles();
 
-    AppRole getRoleById(String userId);
+    AppRole getRoleById(String roleId);
 
     AppRole getRoleByName(String name);
 
