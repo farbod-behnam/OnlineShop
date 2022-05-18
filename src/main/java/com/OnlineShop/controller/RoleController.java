@@ -40,7 +40,7 @@ public class RoleController
     }
 
     @PostMapping
-    public ResponseEntity<AppRole> postRole(@RequestBody AppRole role)
+    public ResponseEntity<AppRole> postRole(@Valid @RequestBody AppRole role)
     {
         AppRole createdRole = roleService.createRole(role);
 
@@ -48,7 +48,7 @@ public class RoleController
     }
 
     @PutMapping
-    public ResponseEntity<AppRole> putRole(@RequestBody AppRole role)
+    public ResponseEntity<AppRole> putRole(@Valid @RequestBody AppRole role)
     {
         AppRole updateRole = roleService.updateRole(role);
 
