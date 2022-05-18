@@ -7,11 +7,8 @@ import com.OnlineShop.repository.IRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -68,8 +65,6 @@ public class RoleService implements IRoleService
         // in order to create new entity
         role.setId(null);
 
-        role.setName(role.getName().trim().strip().toUpperCase(Locale.ROOT));
-
         Optional<AppRole> result = roleRepository.findByName(role.getName());
 
         if (result.isPresent())
@@ -82,8 +77,18 @@ public class RoleService implements IRoleService
 
 
     @Override
-    public AppRole updateRole(@Valid AppRole role)
+    public AppRole updateRole(AppRole role)
     {
-        return null;
+        Optional<AppRole> result = roleRepository.findByName(role.getName());
+
+        if (result.isPresent())
+            throw new AlreadyExistsException("Role with name: [" + role.getName() + "] already exists.");
+
+        result = roleRepository.findById(role.getId());
+
+        if (result.isEmpty())
+            throw new NotFoundException("Role with id: [" + role.getId() + "] cannot be found");
+
+        return roleRepository.save(role);
     }
 }

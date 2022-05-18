@@ -111,7 +111,7 @@ class RoleServiceTest
     @Test
     void createRole_shouldReturnCreatedRole()
     {
-        // givne
+        // given
         AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
 
         // when
@@ -129,7 +129,7 @@ class RoleServiceTest
     @Test
     void createRole_shouldThrowAlreadyExistsException()
     {
-        // givne
+        // given
         AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
 
         given(roleRepository.findByName(anyString())).willReturn(Optional.of(role));
@@ -146,7 +146,56 @@ class RoleServiceTest
     }
 
     @Test
-    void updateRole()
+    void updateRole_shouldReturnUpdatedRole()
     {
+        // given
+        AppRole roleToBeUpdated = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+//        given(roleRepository.findByName(anyString())).willReturn(Optional.of(roleToBeUpdated));
+        given(roleRepository.findById(anyString())).willReturn(Optional.of(roleToBeUpdated));
+
+        // when
+        underTestRoleService.updateRole(roleToBeUpdated);
+
+        // then
+        ArgumentCaptor<AppRole> roleArgumentCaptor = ArgumentCaptor.forClass(AppRole.class);
+        verify(roleRepository).findByName(roleToBeUpdated.getName());
+        verify(roleRepository).save(roleArgumentCaptor.capture());
+        AppRole capturedRole = roleArgumentCaptor.getValue();
+        assertThat(capturedRole).isEqualTo(roleToBeUpdated);
+    }
+
+    @Test
+    void updateRole_shouldThrowAlreadyExistsException()
+    {
+        // given
+        AppRole roleToBeUpdated = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+        given(roleRepository.findByName(anyString())).willReturn(Optional.of(roleToBeUpdated));
+//        given(roleRepository.findById(anyString())).willReturn(Optional.of(roleToBeUpdated));
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestRoleService.updateRole(roleToBeUpdated))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("Role with name: [" + roleToBeUpdated.getName() + "] already exists.");
+    }
+
+    @Test
+    void updateRole_shouldThrowNotFoundException()
+    {
+        // given
+        AppRole roleToBeUpdated = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+        given(roleRepository.findByName(anyString())).willReturn(Optional.empty());
+        given(roleRepository.findById(anyString())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestRoleService.updateRole(roleToBeUpdated))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Role with id: [" + roleToBeUpdated.getId() + "] cannot be found");
     }
 }
