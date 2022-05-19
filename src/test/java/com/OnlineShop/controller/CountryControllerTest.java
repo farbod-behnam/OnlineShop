@@ -1,12 +1,9 @@
 package com.OnlineShop.controller;
 
-import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.CountryEnum;
-import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.service.ICountryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -78,7 +74,7 @@ class CountryControllerTest
 
 
 
-        given(countryService.getCountryById(anyString())).willReturn(country);
+        given(countryService.getCountry(anyString())).willReturn(country);
 
         // when
 

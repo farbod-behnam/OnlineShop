@@ -1,12 +1,14 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.entity.Country;
+import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,9 +30,18 @@ public class CountryService implements ICountryService
     }
 
     @Override
-    public Country getCountryById(String countryId)
+    public Country getCountry(String countryId)
     {
-        return null;
+        Optional<Country> result = countryRepository.findById(countryId);
+
+        Country country;
+
+        if (result.isPresent())
+            country = result.get();
+        else
+            throw new NotFoundException("Country with id: [" + countryId + "] cannot be found");
+
+        return country;
     }
 
     @Override
