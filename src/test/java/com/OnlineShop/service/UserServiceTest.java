@@ -321,6 +321,43 @@ class UserServiceTest
     }
 
     @Test
+    void updateUser_shouldAlreadyExistsException()
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser foundUser = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(Optional.of(foundUser));
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.updateUser(foundUser))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("User with these descriptions already exists");
+
+    }
+
+    @Test
     void deleteUserById_shouldDeleteAUser()
     {
         // given
