@@ -14,5 +14,5 @@ public interface ICountryService
 
     Country updateCountry(Country country);
 
-    void deleteCountryById(String countryId);
+    void deleteCountry(String countryId);
 }
