@@ -5,12 +5,14 @@ import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.service.ICountryService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -20,6 +22,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -85,5 +88,40 @@ class CountryControllerTest
                 .andExpect(jsonPath("$.id").value(equalTo("19")))
                 .andExpect(jsonPath("$.name").value(equalTo("Germany")))
                 .andDo(print());
+    }
+
+    @Test
+    void postCountry_shouldReturnCreatedCountry() throws Exception
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryService.createCountry(any(Country.class))).willReturn(country);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/countries")
+                .content(asJsonString(country))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.name").value(equalTo("germany")))
+                .andDo(print());
+    }
+
+    private String asJsonString(final Object obj)
+    {
+        try
+        {
+            final ObjectMapper mapper = new ObjectMapper();
+
+            return mapper.writeValueAsString(obj);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
