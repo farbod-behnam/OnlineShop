@@ -1,6 +1,5 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.exception.AlreadyExistsException;
@@ -118,12 +117,87 @@ class CountryServiceTest
     }
 
     @Test
-    void updateCountry()
+    void updateCountry_shouldReturnUpdatedRole()
     {
+        // given
+        Country roleToBeUpdated = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryRepository.findCountryByName(roleToBeUpdated.getName())).willReturn(Optional.empty());
+        given(countryRepository.findById(anyString())).willReturn(Optional.of(roleToBeUpdated));
+
+        // when
+        underTestCountryService.updateCountry(roleToBeUpdated);
+
+        // then
+        ArgumentCaptor<Country> countryArgumentCaptor = ArgumentCaptor.forClass(Country.class);
+        verify(countryRepository).findCountryByName(roleToBeUpdated.getName());
+        verify(countryRepository).save(countryArgumentCaptor.capture());
+        Country capturedCountry = countryArgumentCaptor.getValue();
+        assertThat(capturedCountry).isEqualTo(roleToBeUpdated);
     }
 
     @Test
-    void deleteCountryById()
+    void updateCountry_shouldThrowAlreadyExistsException()
     {
+        // given
+        Country countryToBeUpdated = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryRepository.findCountryByName(countryToBeUpdated.getName())).willReturn(Optional.of(countryToBeUpdated));
+//        given(countryRepository.findById(anyString())).willReturn(Optional.of(countryToBeUpdated));
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestCountryService.updateCountry(countryToBeUpdated))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("Country with name: [" + countryToBeUpdated.getName() + "] already exists.");
+    }
+
+    @Test
+    void updateCountry_shouldThrowNotFoundException()
+    {
+        // given
+        Country countryToBeUpdated = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryRepository.findCountryByName(countryToBeUpdated.getName())).willReturn(Optional.empty());
+        given(countryRepository.findById(anyString())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestCountryService.updateCountry(countryToBeUpdated))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Country with id: [" + countryToBeUpdated.getId() + "] cannot be found");
+    }
+
+    @Test
+    void deleteCountry_shouldDeleteACountry()
+    {
+        // given
+        Country deleteCountry = new Country("10", CountryEnum.UK.toString());
+        given(countryRepository.findById(anyString())).willReturn(Optional.of(deleteCountry));
+
+        // when
+        underTestCountryService.deleteCountry(deleteCountry.getId());
+
+        // then
+        verify(countryRepository).deleteById(deleteCountry.getId());
+
+    }
+
+    @Test
+    void deleteCountry_shouldThrowNotFoundException()
+    {
+        // given
+        String countryId = "11";
+        given(countryRepository.findById(anyString())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestCountryService.deleteCountry(countryId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Country with id: [" + countryId + "] cannot be found");
+
     }
 }

@@ -1,6 +1,5 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
@@ -64,12 +63,27 @@ public class CountryService implements ICountryService
     @Override
     public Country updateCountry(Country country)
     {
-        return null;
+        Optional<Country> result = countryRepository.findCountryByName(country.getName());
+
+        if (result.isPresent())
+            throw new AlreadyExistsException("Country with name: [" + country.getName() + "] already exists.");
+
+        result = countryRepository.findById(country.getId());
+
+        if (result.isEmpty())
+            throw new NotFoundException("Country with id: [" + country.getId() + "] cannot be found");
+
+        return countryRepository.save(country);
     }
 
     @Override
-    public void deleteCountryById(String countryId)
+    public void deleteCountry(String countryId)
     {
+        Optional<Country> result = countryRepository.findById(countryId);
 
+        if (result.isEmpty())
+            throw new NotFoundException("Country with id: [" + countryId + "] cannot be found");
+
+        countryRepository.deleteById(countryId);
     }
 }
