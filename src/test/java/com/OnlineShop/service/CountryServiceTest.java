@@ -1,12 +1,15 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.CountryEnum;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -78,8 +81,40 @@ class CountryServiceTest
     }
 
     @Test
-    void createCountry()
+    void createCountry_shouldReturnCreatedRole()
     {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryRepository.findCountryByName(anyString())).willReturn(Optional.empty());
+
+        // when
+        underTestCountryService.createCountry(country);
+
+        // then
+        ArgumentCaptor<Country> countryArgumentCaptor = ArgumentCaptor.forClass(Country.class);
+        verify(countryRepository).findCountryByName(country.getName());
+        verify(countryRepository).save(countryArgumentCaptor.capture());
+        Country capturedCountry = countryArgumentCaptor.getValue();
+        assertThat(capturedCountry).isEqualTo(country);
+    }
+
+    @Test
+    void createCountry_shouldThrowAlreadyExistsException()
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryRepository.findCountryByName(anyString())).willReturn(Optional.of(country));
+
+        Country countryTobeCreated = new Country( null, CountryEnum.Germany.toString());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestCountryService.createCountry(countryTobeCreated))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("Country name already exists.");
     }
 
     @Test

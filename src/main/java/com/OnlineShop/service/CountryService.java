@@ -1,6 +1,8 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.Country;
+import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,16 @@ public class CountryService implements ICountryService
     @Override
     public Country createCountry(Country country)
     {
-        return null;
+        // in order to create new entity
+        country.setId(null);
+
+        Optional<Country> result = countryRepository.findCountryByName(country.getName());
+
+        if (result.isPresent())
+            throw new AlreadyExistsException("Country name already exists.");
+
+
+        return countryRepository.save(country);
     }
 
     @Override
