@@ -132,6 +132,25 @@ class CountryControllerTest
                 .andDo(print());
     }
 
+
+    @Test
+    public void deleteCountry_ShouldReturnString() throws Exception
+    {
+        // given
+        String countryId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/countries/" + countryId)
+                        .content(asJsonString("Country with id: [" + countryId + "] is deleted"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(equalTo("Country with id: [" + countryId + "] is deleted")))
+                .andDo(print());
+
+    }
+
     private String asJsonString(final Object obj)
     {
         try
