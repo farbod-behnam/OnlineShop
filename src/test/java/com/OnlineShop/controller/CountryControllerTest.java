@@ -67,4 +67,23 @@ class CountryControllerTest
     }
 
 
+    @Test
+    void getCountry_shouldReturnACountry() throws Exception
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.name());
+
+
+
+        given(countryService.getCountryById(anyString())).willReturn(country);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/countries" + "/19"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(equalTo("19")))
+                .andExpect(jsonPath("$.name").value(equalTo("Germany")))
+                .andDo(print());
+    }
 }
