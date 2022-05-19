@@ -45,4 +45,12 @@ public class CountryController
 
         return new ResponseEntity<>(createdCountry, HttpStatus.CREATED);
     }
+
+    @PutMapping
+    public ResponseEntity<Country> putCountry(@Valid @RequestBody Country country)
+    {
+        Country updateCountry = countryService.updateCountry(country);
+
+        return new ResponseEntity<>(updateCountry, HttpStatus.OK);
+    }
 }
