@@ -3,11 +3,19 @@ package com.OnlineShop.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 @Document(collection = "Country")
 public class Country
 {
     @Id
     private String id;
+
+    @NotBlank(message = "name is required")
+    @Size(min = 2, max = 56, message = "name must be between 2 and 56 character")
+    @Pattern(regexp = "^[a-z]+( [a-z]+)*$", message = "name should only contain lower case letter and space")
     private String name;
 
     public Country()
