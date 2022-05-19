@@ -45,7 +45,7 @@ class CountryTest
     }
 
     @Test
-    public void country_nullName()
+    public void country_nullName_shouldNotValidate()
     {
         // given
 //        Country country = new Country("19", CountryEnum.Germany.toString());
@@ -68,5 +68,57 @@ class CountryTest
         assertThat(violation.getMessage()).isEqualTo("name is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
+    }
+
+    @Test
+    public void country_nameLessThan2_shouldNotValidate()
+    {
+        // given
+//        Country country = new Country("19", CountryEnum.Germany.toString());
+        Country country = new Country("19", "a");
+
+        // when
+
+        // then
+        Set<ConstraintViolation<Country>> violations = validator.validate(country);
+
+        for (ConstraintViolation<Country> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<Country> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name must be between 2 and 56 character");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("a");
+    }
+
+    @Test
+    public void country_nameGreaterThan56_shouldNotValidate()
+    {
+        // given
+//        Country country = new Country("19", CountryEnum.Germany.toString());
+        Country country = new Country("19", "the united kingdom of great britain and northern ireland is long");
+
+        // when
+
+        // then
+        Set<ConstraintViolation<Country>> violations = validator.validate(country);
+
+        for (ConstraintViolation<Country> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<Country> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name must be between 2 and 56 character");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("the united kingdom of great britain and northern ireland is long");
     }
 }

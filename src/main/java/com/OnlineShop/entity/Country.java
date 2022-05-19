@@ -14,7 +14,7 @@ public class Country
     private String id;
 
     @NotBlank(message = "name is required")
-    @Size(min = 4, max = 56, message = "name must be between 4 and 56 character")
+    @Size(min = 2, max = 56, message = "name must be between 2 and 56 character")
     @Pattern(regexp = "^[a-z]+( [a-z]+)*$", message = "name should only contain lower case letter and space")
     private String name;
 
