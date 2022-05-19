@@ -15,7 +15,7 @@ public class Country
 
     @NotBlank(message = "name is required")
     @Size(min = 4, max = 56, message = "name must be between 4 and 56 character")
-    @Pattern(regexp = "^[a-z]+( [a-z]+)*$", message = "name should only contain alphabet and space")
+    @Pattern(regexp = "^[a-z]+( [a-z]+)*$", message = "name should only contain lower case letter and space")
     private String name;
 
     public Country()
