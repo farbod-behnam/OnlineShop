@@ -121,5 +121,29 @@ class AppRoleTest
         assertThat(violation.getInvalidValue()).isEqualTo("ROLE_AASDFASDFASDFASDFASDF");
     }
 
+    @Test
+    public void role_invalidRegexName_shouldNotValidate()
+    {
+        // given
+//        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+        AppRole role = new AppRole("19", "_HELLOROLE");
 
+        // when
+
+        // then
+        Set<ConstraintViolation<AppRole>> violations = validator.validate(role);
+
+        for (ConstraintViolation<AppRole> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppRole> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("only upper case with one underscore between ex: ROLE_USER");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("_HELLOROLE");
+    }
 }
