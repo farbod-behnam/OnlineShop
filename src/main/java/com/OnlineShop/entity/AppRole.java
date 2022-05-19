@@ -15,7 +15,7 @@ public class AppRole
 
     @NotBlank(message = "name is required")
     @Size(min = 7, max = 16, message = "name must be between 7 and 16 character")
-    @Pattern(regexp = "^[A-Z]+[_][A-Z]+$", message = "only upper case with one underscore between ex: ROLE_USER")
+    @Pattern(regexp = "^[^ _][A-Z_]+(_[A-Z]+)$", message = "only upper case with one underscore between ex: ROLE_USER, ROLE_SUPER_ADMIN")
     private String name;
 
     public AppRole()
