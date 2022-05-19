@@ -69,5 +69,57 @@ class AppRoleTest
         assertThat(violation.getInvalidValue()).isEqualTo(null);
     }
 
+    @Test
+    public void role_nameLessThan7_shouldNotValidate()
+    {
+        // given
+//        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+        AppRole role = new AppRole("19", "ROLE_A");
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppRole>> violations = validator.validate(role);
+
+        for (ConstraintViolation<AppRole> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppRole> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name must be between 6 and 16 character");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("ROLE_A");
+    }
+
+    @Test
+    public void role_nameGreaterThan16_shouldNotValidate()
+    {
+        // given
+//        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+        AppRole role = new AppRole("19", "ROLE_AASDFASDFASDFASDFASDF");
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppRole>> violations = validator.validate(role);
+
+        for (ConstraintViolation<AppRole> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppRole> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("name must be between 7 and 16 character");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
+        assertThat(violation.getInvalidValue()).isEqualTo("ROLE_AASDFASDFASDFASDFASDF");
+    }
+
 
 }
