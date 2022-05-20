@@ -243,4 +243,135 @@ class AppUserDtoTest
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo("John @!");
     }
+
+    @Test
+    public void user_phoneNumberContainsAlphabetOrSpecialCharacters_shouldNotValidate()
+    {
+        // given
+        Set<String> roles = new HashSet<>();
+
+        String countryId = "10";
+        String roleId = "11";
+
+        roles.add(roleId);
+
+        AppUserDto user = new AppUserDto(
+                "19",
+                "John",
+                "Wick",
+                "00166 fasd!@$",
+                "johnwick@gmail.com",
+                roles,
+                "johnwick", // j.wick
+                "Password1234!",
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
+        );
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+
+        for (ConstraintViolation<AppUserDto> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("phone number must only contain number");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
+        assertThat(violation.getInvalidValue()).isEqualTo("00166 fasd!@$");
+    }
+
+
+    @Test
+    public void user_phoneNumberHasAWrongCountryCode_shouldNotValidate()
+    {
+        // given
+        Set<String> roles = new HashSet<>();
+
+        String countryId = "10";
+        String roleId = "11";
+
+        roles.add(roleId);
+
+        AppUserDto user = new AppUserDto(
+                "19",
+                "John",
+                "Wick",
+                "00461111111111111",
+                "john.wick@gmail.com",
+                roles,
+                "johnwick", // j.wick
+                "Password1234!",
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
+        );
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+
+        for (ConstraintViolation<AppUserDto> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("phone number is invalid");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
+        assertThat(violation.getInvalidValue()).isEqualTo("00461111111111111");
+    }
+
+    @Test
+    public void user_phoneNumberHasWrongLengthForCountryCode_shouldNotValidate()
+    {
+        // given
+        Set<String> roles = new HashSet<>();
+
+        String countryId = "10";
+        String roleId = "11";
+
+        roles.add(roleId);
+
+        AppUserDto user = new AppUserDto(
+                "19",
+                "John",
+                "Wick",
+                "0049999999",
+                "john.wick@gmail.com",
+                roles,
+                "johnwick", // j.wick
+                "Password1234!",
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
+        );
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+
+        for (ConstraintViolation<AppUserDto> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("phone number is invalid");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
+        assertThat(violation.getInvalidValue()).isEqualTo("0049999999");
+    }
+
 }
