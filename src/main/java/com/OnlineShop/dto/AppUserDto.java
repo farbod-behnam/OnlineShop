@@ -31,7 +31,8 @@ public class AppUserDto
     private String email;
 
     @NotNull(message = "role is required")
-    private Set<String> rolesId;
+    @Size(min = 1, max = 2, message = "user must have at least one role and at max two roles")
+    private Set<String> roleIdSet;
 
     @NotBlank(message = "username is required")
     @Size(min = 3, max = 24, message = "username must be between 3 and 24 character")
@@ -57,14 +58,14 @@ public class AppUserDto
     {
     }
 
-    public AppUserDto(String id, String firstName, String lastName, String phoneNumber, String email, Set<String> rolesId, String username, String password, String countryId, String address)
+    public AppUserDto(String id, String firstName, String lastName, String phoneNumber, String email, Set<String> roleIdSet, String username, String password, String countryId, String address)
     {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.rolesId = rolesId;
+        this.roleIdSet = roleIdSet;
         this.username = username;
         this.password = password;
         this.countryId = countryId;
@@ -123,12 +124,12 @@ public class AppUserDto
 
     public Set<String> getRolesId()
     {
-        return rolesId;
+        return roleIdSet;
     }
 
-    public void setRolesId(Set<String> rolesId)
+    public void setRolesId(Set<String> roleIdSet)
     {
-        this.rolesId = rolesId;
+        this.roleIdSet = roleIdSet;
     }
 
     public String getUsername()
@@ -181,7 +182,7 @@ public class AppUserDto
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", rolesId=" + rolesId +
+                ", rolesId=" + roleIdSet +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", countryId='" + countryId + '\'' +
