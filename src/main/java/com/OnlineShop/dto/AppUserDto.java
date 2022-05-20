@@ -51,14 +51,13 @@ public class AppUserDto
     @Pattern(regexp = "[A-Za-z0-9'.\\-\\s,()]*", message = "address is invalid")
     private String address;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
 
     public AppUserDto()
     {
     }
 
-    public AppUserDto(String id, String firstName, String lastName, String phoneNumber, String email, Set<String> rolesId, String username, String password, String countryId, String address, LocalDateTime createdAt, LocalDateTime updatedAt)
+    public AppUserDto(String id, String firstName, String lastName, String phoneNumber, String email, Set<String> rolesId, String username, String password, String countryId, String address)
     {
         this.id = id;
         this.firstName = firstName;
@@ -70,8 +69,6 @@ public class AppUserDto
         this.password = password;
         this.countryId = countryId;
         this.address = address;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public String getId()
@@ -174,25 +171,6 @@ public class AppUserDto
         this.address = address;
     }
 
-    public LocalDateTime getCreatedAt()
-    {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt)
-    {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt()
-    {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt)
-    {
-        this.updatedAt = updatedAt;
-    }
 
     @Override
     public String toString()
@@ -208,8 +186,6 @@ public class AppUserDto
                 ", password='" + password + '\'' +
                 ", countryId='" + countryId + '\'' +
                 ", address='" + address + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 ']';
     }
 }
