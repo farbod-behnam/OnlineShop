@@ -27,45 +27,6 @@ class AppUserTest
         validator = validatorFactory.getValidator();
     }
 
-    @Test
-    public void user_validUser()
-    {
-        // given
-        Set<AppRole> roles = new HashSet<>();
-
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
-
-        roles.add(role);
-
-        AppUser user = new AppUser(
-                "19",
-                "John",
-                "Wick",
-                "0016666666666",
-                "john.wick@gmail.com",
-                roles,
-                "johnwick", // j.wick
-                "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        // when
-
-        // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
-
-//        for (ConstraintViolation<AppUser> violation : violations)
-//        {
-//            System.out.println("Violation Message: " + violation.getMessage());
-//        }
-
-        assertThat(violations.isEmpty()).isTrue();
-
-    }
 
     @Test
     public void user_nullName_shouldNotValidate()
