@@ -1,5 +1,6 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.dto.AppUserDto;
 import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Country;
@@ -17,9 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -36,11 +35,17 @@ class UserServiceTest
     @Mock
     private IUserRepository userRepository;
 
+    @Mock
+    private IRoleService roleService;
+
+    @Mock
+    ICountryService countryService;
+
     @BeforeEach
     void setUp()
     {
         MockitoAnnotations.openMocks(this);
-        underTestUserService = new UserService(userRepository);
+        underTestUserService = new UserService(userRepository, roleService, countryService);
     }
 
     @Test
@@ -159,12 +164,36 @@ class UserServiceTest
     void createUser_shouldReturnCreatedUser()
     {
         // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserDto userDto = new AppUserDto(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "john.wick",
+                "password1234",
+                countryId,
+                "This is an address"
+        );
+
+        // user
+
         Set<AppRole> roles = new HashSet<>();
 
         Country country = new Country("10", CountryEnum.Germany.name());
         AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
 
         roles.add(role);
+
 
         AppUser user = new AppUser(
                 "19",
@@ -181,15 +210,29 @@ class UserServiceTest
                 LocalDateTime.now()
         );
 
+        given(countryService.getCountryById(anyString())).willReturn(country);
+        given(roleService.getRoles(roleIdList)).willReturn(roles);
+
+
+
         // when
-        underTestUserService.createUser(user);
+        underTestUserService.createUser(userDto);
 
         // then
         ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
         verify(userRepository).findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
         verify(userRepository).save(userArgumentCaptor.capture());
         AppUser capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser).isEqualTo(user);
+
+        assertThat(capturedUser.getFirstName()).isEqualTo(user.getFirstName().toLowerCase(Locale.ROOT));
+        assertThat(capturedUser.getLastName()).isEqualTo(user.getLastName().toLowerCase(Locale.ROOT));
+        assertThat(capturedUser.getPhoneNumber()).isEqualTo(user.getPhoneNumber());
+        assertThat(capturedUser.getEmail()).isEqualTo(user.getEmail());
+        assertThat(capturedUser.getRoles()).isEqualTo(user.getRoles());
+        assertThat(capturedUser.getUsername()).isEqualTo(user.getUsername());
+        assertThat(capturedUser.getPassword()).isEqualTo(user.getPassword());
+        assertThat(capturedUser.getCountry()).isEqualTo(user.getCountry());
+        assertThat(capturedUser.getAddress()).isEqualTo(user.getAddress());
     }
 
     @Test
@@ -220,19 +263,24 @@ class UserServiceTest
 
         given(userRepository.findByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(Optional.of(user));
 
-        AppUser userToBeCreated = new AppUser(
-                null,
-                "User",
-                "ToBeCreated",
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserDto userToBeCreated = new AppUserDto(
+                "19",
+                "John",
+                "Wick",
                 "001666666666",
                 "john.wick@gmail.com",
-                roles,
+                roleIdList,
                 "john.wick",
                 "password1234",
-                country,
-                "This is an address",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "This is an address"
         );
 
         // when

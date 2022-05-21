@@ -1,6 +1,9 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.dto.AppUserDto;
+import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.AppUser;
+import com.OnlineShop.entity.Country;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
@@ -9,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -19,11 +20,15 @@ public class UserService implements IUserService
 {
 
     private final IUserRepository userRepository;
+    private final IRoleService roleService;
+    private final ICountryService countryService;
 
     @Autowired
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, IRoleService roleService, ICountryService countryService)
     {
         this.userRepository = userRepository;
+        this.roleService = roleService;
+        this.countryService = countryService;
     }
 
     @Override
@@ -65,25 +70,43 @@ public class UserService implements IUserService
     }
 
     @Override
-    public AppUser createUser(AppUser user)
+    public AppUser createUser(AppUserDto userDto)
     {
-        // in order to create new entity
-        user.setId(null);
 
-        user.setFirstName(user.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
-        user.setLastName(user.getLastName().trim().strip().toLowerCase(Locale.ROOT));
-        user.setPhoneNumber(user.getPhoneNumber().trim().strip());
-        user.setEmail(user.getEmail().trim().strip().toLowerCase(Locale.ROOT));
-        user.setUsername(user.getUsername().trim().strip().toLowerCase(Locale.ROOT));
-        user.setAddress(user.getAddress().trim().strip());
+        userDto.setFirstName(userDto.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
+        userDto.setLastName(userDto.getLastName().trim().strip().toLowerCase(Locale.ROOT));
+        userDto.setPhoneNumber(userDto.getPhoneNumber().trim().strip());
+        userDto.setEmail(userDto.getEmail().trim().strip().toLowerCase(Locale.ROOT));
+        userDto.setUsername(userDto.getUsername().trim().strip().toLowerCase(Locale.ROOT));
+        userDto.setAddress(userDto.getAddress().trim().strip());
 
-        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(userDto.getUsername(), userDto.getEmail(), userDto.getPhoneNumber());
 
         if (result.isPresent())
             throw new AlreadyExistsException("User already exists.");
 
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
+
+        Country country = countryService.getCountryById(userDto.getCountryId());
+
+        List<String> roleIdSet = userDto.getRolesId();
+        Set<AppRole> roleSet = roleService.getRoles(roleIdSet);
+
+        AppUser user = new AppUser(
+                null, // in order to create new entity
+                userDto.getFirstName(),
+                userDto.getLastName(),
+                userDto.getPhoneNumber(),
+                userDto.getEmail(),
+                roleSet,
+                userDto.getUsername(),
+                userDto.getPassword(),
+                country,
+                userDto.getAddress(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
 
         return userRepository.save(user);
     }
