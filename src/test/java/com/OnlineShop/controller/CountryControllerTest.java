@@ -74,7 +74,7 @@ class CountryControllerTest
 
 
 
-        given(countryService.getCountry(anyString())).willReturn(country);
+        given(countryService.getCountryById(anyString())).willReturn(country);
 
         // when
 
