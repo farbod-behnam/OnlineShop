@@ -1,5 +1,6 @@
 package com.OnlineShop.controller;
 
+import com.OnlineShop.dto.AppUserDto;
 import com.OnlineShop.entity.*;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
@@ -16,7 +17,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -185,7 +185,7 @@ class UserControllerTest
         );
 
 
-        given(userService.createUser(any(AppUser.class))).willReturn(user);
+        given(userService.createUser(any(AppUserDto.class))).willReturn(user);
 
         // when
 
