@@ -8,7 +8,7 @@ public interface ICountryService
 {
     List<Country> getCountries();
 
-    Country getCountry(String countryId);
+    Country getCountryById(String countryId);
 
     Country createCountry(Country country);
 

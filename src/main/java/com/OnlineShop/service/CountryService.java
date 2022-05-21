@@ -31,7 +31,7 @@ public class CountryService implements ICountryService
     }
 
     @Override
-    public Country getCountry(String countryId)
+    public Country getCountryById(String countryId)
     {
         Optional<Country> result = countryRepository.findById(countryId);
 
