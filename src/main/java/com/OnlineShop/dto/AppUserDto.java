@@ -4,8 +4,7 @@ import com.OnlineShop.validation.PhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 public class AppUserDto
 {
@@ -32,7 +31,7 @@ public class AppUserDto
 
     @NotNull(message = "role is required")
     @Size(min = 1, max = 2, message = "user must have at least one role and at max two roles")
-    private Set<String> roleIdSet;
+    private List<String> roleIdList;
 
     @NotBlank(message = "username is required")
     @Size(min = 3, max = 24, message = "username must be between 3 and 24 character")
@@ -58,14 +57,14 @@ public class AppUserDto
     {
     }
 
-    public AppUserDto(String id, String firstName, String lastName, String phoneNumber, String email, Set<String> roleIdSet, String username, String password, String countryId, String address)
+    public AppUserDto(String id, String firstName, String lastName, String phoneNumber, String email, List<String> roleIdList, String username, String password, String countryId, String address)
     {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.roleIdSet = roleIdSet;
+        this.roleIdList = roleIdList;
         this.username = username;
         this.password = password;
         this.countryId = countryId;
@@ -122,14 +121,14 @@ public class AppUserDto
         this.email = email;
     }
 
-    public Set<String> getRolesId()
+    public List<String> getRolesId()
     {
-        return roleIdSet;
+        return roleIdList;
     }
 
-    public void setRolesId(Set<String> roleIdSet)
+    public void setRolesId(List<String> roleIdList)
     {
-        this.roleIdSet = roleIdSet;
+        this.roleIdList = roleIdList;
     }
 
     public String getUsername()
@@ -182,7 +181,7 @@ public class AppUserDto
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", rolesId=" + roleIdSet +
+                ", rolesId=" + roleIdList +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", countryId='" + countryId + '\'' +

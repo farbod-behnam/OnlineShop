@@ -9,7 +9,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -30,7 +31,7 @@ class AppUserDtoTest
     public void user_validUser()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -67,7 +68,7 @@ class AppUserDtoTest
     public void user_nullName_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -111,7 +112,7 @@ class AppUserDtoTest
     public void user_sizeNameLessThan3_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -156,7 +157,7 @@ class AppUserDtoTest
     public void user_sizeNameGreaterThan45_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -200,7 +201,7 @@ class AppUserDtoTest
     public void user_nameContainsSpecialCharactersOrNumbers_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -243,7 +244,7 @@ class AppUserDtoTest
     public void user_phoneNumberContainsAlphabetOrSpecialCharacters_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -287,7 +288,7 @@ class AppUserDtoTest
     public void user_phoneNumberHasAWrongCountryCode_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -330,7 +331,7 @@ class AppUserDtoTest
     public void user_phoneNumberHasWrongLengthForCountryCode_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -375,7 +376,7 @@ class AppUserDtoTest
     public void user_nullEmail_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -418,7 +419,7 @@ class AppUserDtoTest
     public void user_invalidEmail_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -501,7 +502,7 @@ class AppUserDtoTest
     public void user_roleListSizeGreaterThan2_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId1 = "9";
@@ -548,7 +549,7 @@ class AppUserDtoTest
     public void user_nullUsername_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -591,7 +592,7 @@ class AppUserDtoTest
     public void user_usernameLessThan3_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -634,7 +635,7 @@ class AppUserDtoTest
     public void user_usernameGreaterThan24_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -677,7 +678,7 @@ class AppUserDtoTest
     public void user_invalidUsername_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -720,7 +721,7 @@ class AppUserDtoTest
     public void user_passwordLessThan10_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -763,7 +764,7 @@ class AppUserDtoTest
     public void user_passwordGreaterThan64_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -806,7 +807,7 @@ class AppUserDtoTest
     public void user_invalidPassword_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -849,7 +850,7 @@ class AppUserDtoTest
     public void user_nullCountry_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String roleId = "11";
 
@@ -891,7 +892,7 @@ class AppUserDtoTest
     public void user_nullAddress_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -935,7 +936,7 @@ class AppUserDtoTest
     public void user_addressGreaterThan100_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
@@ -979,7 +980,7 @@ class AppUserDtoTest
     public void user_addressUnauthorizedSpecialCharacter_shouldNotValidate()
     {
         // given
-        Set<String> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
         String countryId = "10";
         String roleId = "11";
