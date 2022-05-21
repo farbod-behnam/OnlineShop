@@ -69,6 +69,18 @@ public class ControllerExceptionHandler
     }
 
     @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(IllegalArgumentException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(HttpMessageNotReadableException exception)
     {
         ErrorResponse errorResponse = new ErrorResponse();
