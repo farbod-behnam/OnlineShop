@@ -138,43 +138,10 @@ class ProductServiceTest
     {
 
         // given
-        List<Product> productList = new ArrayList<>();
 
-        BigDecimal price = new BigDecimal("69.99");
-        Category category = new Category("11", "Video Games");
+        given(productRepository.existsByNameIgnoreCase(anyString())).willReturn(true);
 
-        Product product1 = new Product(
-                "19",
-                "Bloodborne",
-                "A souls like game",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        Product product2 = new Product(
-                "19",
-                "The Last of Us",
-                "A narrative game with action sequences",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        productList.add(product1);
-        productList.add(product2);
-
-        given(productRepository.findAll()).willReturn(productList);
-
-        String productName = " bloodborne ";
+        String productName = " Bloodborne ";
 
 
         // when
@@ -190,47 +157,31 @@ class ProductServiceTest
     void productNameExists_shouldReturnFalse()
     {
         // given
-        List<Product> productList = new ArrayList<>();
 
-        BigDecimal price = new BigDecimal("69.99");
-        Category category = new Category("11", "Video Games");
-
-        Product product1 = new Product(
-                "19",
-                "Bloodborne",
-                "A souls like game",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        Product product2 = new Product(
-                "19",
-                "The Last of Us",
-                "A narrative game with action sequences",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        productList.add(product1);
-        productList.add(product2);
-
-        given(productRepository.findAll()).willReturn(productList);
+        given(productRepository.existsByNameIgnoreCase(anyString())).willReturn(false);
 
         String productName = " devil may cry 5 ";
+
         // when
         boolean result = underTestProductService.productNameExists(productName);
+
         // then
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void productNameExists_shouldThrowIllegalArgumentException()
+    {
+        // given
+
+        String productName = "    ";
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestProductService.productNameExists(productName))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Product name cannot be empty");
     }
 
     @Test
@@ -286,13 +237,13 @@ class ProductServiceTest
         productList.add(product1);
         productList.add(product2);
 
-        given(productRepository.findAll()).willReturn(productList);
+        given(productRepository.existsByNameIgnoreCase(anyString())).willReturn(false);
         // when
         underTestProductService.createProduct(newProduct);
 
         // then
         ArgumentCaptor<Product> productArgumentCaptor = ArgumentCaptor.forClass(Product.class);
-        verify(productRepository).findAll();
+        verify(productRepository).existsByNameIgnoreCase(newProduct.getName());
         verify(productRepository).save(productArgumentCaptor.capture());
         Product capturedProduct = productArgumentCaptor.getValue();
         assertThat(capturedProduct).isEqualTo(newProduct);

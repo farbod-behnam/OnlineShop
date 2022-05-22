@@ -100,21 +100,12 @@ public class ProductService implements IProductService
     @Transactional
     public boolean productNameExists(String productName)
     {
-        List<Product> productList = productRepository.findAll();
+        if (productName == null || productName.isBlank())
+            throw new IllegalArgumentException("Product name cannot be empty");
 
-        productName = productName.toLowerCase(Locale.ROOT).trim();
+        productName = productName.trim().strip().toLowerCase(Locale.ROOT);
 
-        boolean categoryExists = false;
+        return productRepository.existsByNameIgnoreCase(productName);
 
-        for (Product p: productList)
-        {
-            if (p.getName().toLowerCase(Locale.ROOT).equals(productName))
-            {
-                categoryExists = true;
-                break;
-            }
-        }
-
-        return categoryExists;
     }
 }
