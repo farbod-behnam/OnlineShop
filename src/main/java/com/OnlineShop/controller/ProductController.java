@@ -1,5 +1,6 @@
 package com.OnlineShop.controller;
 
+import com.OnlineShop.dto.ProductDto;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class ProductController
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product)
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductDto product)
     {
         Product createdProduct = productService.createProduct(product);
 

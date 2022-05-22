@@ -1,5 +1,6 @@
 package com.OnlineShop.controller;
 
+import com.OnlineShop.dto.ProductDto;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.service.IProductService;
@@ -188,6 +189,17 @@ class ProductControllerTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
+        ProductDto productDto = new ProductDto(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
         Product product = new Product(
                 "19",
                 "Bloodborne",
@@ -201,13 +213,13 @@ class ProductControllerTest
                 LocalDateTime.now()
         );
 
-        given(productService.createProduct(any(Product.class))).willReturn(product);
+        given(productService.createProduct(any(ProductDto.class))).willReturn(product);
 
         // when
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/products")
-                        .content(asJsonString(product))
+                        .content(asJsonString(productDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
