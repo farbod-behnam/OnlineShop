@@ -99,7 +99,7 @@ public class UserService implements IUserService
                 userDto.getEmail(),
                 roleSet,
                 userDto.getUsername(),
-                userDto.getPassword(),
+                userDto.getPassword(), // TODO password must be encoded,
                 country,
                 userDto.getAddress(),
                 LocalDateTime.now(),
@@ -112,32 +112,44 @@ public class UserService implements IUserService
     }
 
     @Override
-    public AppUser updateUser(AppUser user)
+    public AppUser updateUser(AppUserDto userDto)
     {
 
-        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(userDto.getUsername(), userDto.getEmail(), userDto.getPhoneNumber());
 
         // see if username, email or phone number already is in use
         if (result.isPresent())
             throw new AlreadyExistsException("User with these descriptions already exists");
 
         // if not then see if the user with this id already exists
-        result = userRepository.findById(user.getId());
+        result = userRepository.findById(userDto.getId());
 
         if (result.isEmpty())
-            throw new NotFoundException("User with id: [" + user.getId() + "] cannot be found");
+            throw new NotFoundException("User with id: [" + userDto.getId() + "] cannot be found");
+
+        AppUser foundUser = result.get();
+
+        Country country = countryService.getCountryById(userDto.getCountryId());
+
+        List<String> roleIdSet = userDto.getRolesId();
+        Set<AppRole> roleSet = roleService.getRoles(roleIdSet);
+
+        AppUser user = new AppUser(
+                foundUser.getId(),
+                userDto.getFirstName().trim().strip().toLowerCase(Locale.ROOT),
+                userDto.getLastName().trim().strip().toLowerCase(Locale.ROOT),
+                userDto.getPhoneNumber(),
+                userDto.getEmail().trim().strip().toLowerCase(Locale.ROOT),
+                roleSet,
+                foundUser.getUsername(), // username cannot be changed
+                userDto.getPassword(), // TODO password must be encoded
+                country,
+                userDto.getAddress().trim().strip(),
+                foundUser.getCreatedAt(), // createdAt Date cannot be change
+                LocalDateTime.now() // update the updatedAt Date
+        );
 
 
-
-        user.setFirstName(user.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
-        user.setLastName(user.getLastName().trim().strip().toLowerCase(Locale.ROOT));
-        user.setPhoneNumber(user.getPhoneNumber().trim().strip().toLowerCase(Locale.ROOT));
-        user.setEmail(user.getEmail().trim().strip().toLowerCase(Locale.ROOT));
-        // username should never change
-        user.setUsername(result.get().getUsername());
-        user.setAddress(user.getAddress().trim().strip().toLowerCase(Locale.ROOT));
-
-        user.setUpdatedAt(LocalDateTime.now());
 
         return userRepository.save(user);
     }

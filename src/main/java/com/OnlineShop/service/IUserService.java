@@ -18,7 +18,7 @@ public interface IUserService
 
         AppUser createUser(AppUserDto user);
 
-        AppUser updateUser(AppUser user);
+        AppUser updateUser(AppUserDto user);
 
         void deleteUserById(String userId);
 
