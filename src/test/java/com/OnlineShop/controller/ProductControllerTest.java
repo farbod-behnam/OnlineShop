@@ -241,6 +241,17 @@ class ProductControllerTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
+        ProductDto productDto = new ProductDto(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
         Product product = new Product(
                 "19",
                 "Bloodborne",
@@ -254,13 +265,13 @@ class ProductControllerTest
                 LocalDateTime.now()
         );
 
-        given(productService.updateProduct(any(Product.class))).willReturn(product);
+        given(productService.updateProduct(any(ProductDto.class))).willReturn(product);
 
         // when
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/products")
-                        .content(asJsonString(product))
+                        .content(asJsonString(productDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
