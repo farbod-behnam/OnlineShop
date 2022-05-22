@@ -1,5 +1,6 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.dto.ProductDto;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
@@ -21,7 +22,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -35,11 +35,14 @@ class ProductServiceTest
     @Mock
     private IProductRepository productRepository;
 
+    @Mock
+    private ICategoryService categoryService;
+
     @BeforeEach
     void setUp()
     {
         MockitoAnnotations.openMocks(this);
-        underTestProductService = new ProductService(productRepository);
+        underTestProductService = new ProductService(productRepository, categoryService);
     }
 
     @Test
@@ -190,52 +193,17 @@ class ProductServiceTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        Product newProduct = new Product(
+        ProductDto newProduct = new ProductDto(
                 "19",
                 "Red Dead Redemption 2",
                 "A Wild West Sandbox",
                 price,
                 19,
                 "http://image_url",
-                new Category("11", "Video Games"),
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                "11",
+                true
         );
 
-
-        List<Product> productList = new ArrayList<>();
-
-        Category category = new Category("11", "Video Games");
-
-        Product product1 = new Product(
-                "19",
-                "Bloodborne",
-                "A souls like game",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        Product product2 = new Product(
-                "19",
-                "The Last of Us",
-                "A narrative game with action sequences",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        productList.add(product1);
-        productList.add(product2);
 
         given(productRepository.existsByNameIgnoreCase(anyString())).willReturn(false);
         // when
@@ -243,10 +211,16 @@ class ProductServiceTest
 
         // then
         ArgumentCaptor<Product> productArgumentCaptor = ArgumentCaptor.forClass(Product.class);
-        verify(productRepository).existsByNameIgnoreCase(newProduct.getName());
+//        verify(productRepository).existsByNameIgnoreCase(newProduct.getName());
         verify(productRepository).save(productArgumentCaptor.capture());
         Product capturedProduct = productArgumentCaptor.getValue();
-        assertThat(capturedProduct).isEqualTo(newProduct);
+
+        assertThat(capturedProduct.getName()).isEqualTo(newProduct.getName());
+        assertThat(capturedProduct.getDescription()).isEqualTo(newProduct.getDescription());
+        assertThat(capturedProduct.getPrice()).isEqualTo(newProduct.getPrice());
+        assertThat(capturedProduct.getQuantity()).isEqualTo(newProduct.getQuantity());
+        assertThat(capturedProduct.getImageUrl()).isEqualTo(newProduct.getImageUrl());
+        assertThat(capturedProduct.isActive()).isEqualTo(newProduct.getActive());
     }
 
     @Test
@@ -255,60 +229,28 @@ class ProductServiceTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        Product alreadyExistProduct = new Product(
+        ProductDto alreadyExistProduct = new ProductDto(
                 "19",
                 "Bloodborne",
                 "A Wild West Sandbox",
                 price,
                 19,
                 "http://image_url",
-                new Category("11", "Video Games"),
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                "11",
+                true
         );
 
 
-        List<Product> productList = new ArrayList<>();
+        given(productRepository.existsByNameIgnoreCase(alreadyExistProduct.getName())).willReturn(true);
+//        given(categoryService.getCategoryById(anyString())).willReturn(new Category("11", "TV"));
 
-        Category category = new Category("11", "Video Games");
-
-        Product product1 = new Product(
-                "19",
-                "Bloodborne",
-                "A souls like game",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        Product product2 = new Product(
-                "19",
-                "The Last of Us",
-                "A narrative game with action sequences",
-                price,
-                19,
-                "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        productList.add(product1);
-        productList.add(product2);
-
-        given(productRepository.findAll()).willReturn(productList);
         // when
+//        underTestProductService.createProduct(alreadyExistProduct);
 
         // then
         assertThatThrownBy(() -> underTestProductService.createProduct(alreadyExistProduct))
                 .isInstanceOf(AlreadyExistsException.class)
-                .hasMessageContaining("Category with name [" + alreadyExistProduct.getName() +"] already exists");
+                .hasMessageContaining("Product with name [" + alreadyExistProduct.getName() +"] already exists");
 
     }
 

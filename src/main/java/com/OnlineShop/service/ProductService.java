@@ -1,5 +1,7 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.dto.ProductDto;
+import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
@@ -17,11 +19,13 @@ import java.util.Optional;
 public class ProductService implements IProductService
 {
     private final IProductRepository productRepository;
+    private final ICategoryService categoryService;
 
     @Autowired
-    public ProductService(IProductRepository productRepository)
+    public ProductService(IProductRepository productRepository, ICategoryService categoryService)
     {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -49,20 +53,29 @@ public class ProductService implements IProductService
 
     @Override
     @Transactional
-    public Product createProduct(Product product)
+    public Product createProduct(ProductDto productDto)
     {
-        if (productNameExists(product.getName()))
-            throw new AlreadyExistsException("Category with name [" + product.getName() +"] already exists");
+        if (productNameExists(productDto.getName()))
+            throw new AlreadyExistsException("Product with name [" + productDto.getName() +"] already exists");
 
-        // in order to register entity as a new record
-        // the id should be null
-        product.setId(null);
+        productDto.setName(productDto.getName().trim().strip());
+        productDto.setDescription(productDto.getDescription().trim().strip());
 
-        String trimmedName = product.getName().trim();
-        product.setName(trimmedName);
+        Category category = categoryService.getCategoryById(productDto.getCategoryId());
 
-        product.setCreatedAt(LocalDateTime.now());
-        product.setUpdatedAt(LocalDateTime.now());
+        Product product = new Product(
+                null, // in order to register entity as a new record
+                productDto.getName(),
+                productDto.getDescription(),
+                productDto.getPrice(),
+                productDto.getQuantity(),
+                productDto.getImageUrl(),
+                category,
+                productDto.getActive(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
 
         return productRepository.save(product);
     }
@@ -102,8 +115,6 @@ public class ProductService implements IProductService
     {
         if (productName == null || productName.isBlank())
             throw new IllegalArgumentException("Product name cannot be empty");
-
-        productName = productName.trim().strip().toLowerCase(Locale.ROOT);
 
         return productRepository.existsByNameIgnoreCase(productName);
 
