@@ -204,7 +204,9 @@ class ProductServiceTest
                 true
         );
 
+        Category category = new Category("11", "Video Games");
 
+        given(categoryService.getCategoryById(anyString())).willReturn(category);
         given(productRepository.existsByNameIgnoreCase(anyString())).willReturn(false);
         // when
         underTestProductService.createProduct(newProduct);
@@ -242,6 +244,7 @@ class ProductServiceTest
 
 
         given(productRepository.existsByNameIgnoreCase(alreadyExistProduct.getName())).willReturn(true);
+
 //        given(categoryService.getCategoryById(anyString())).willReturn(new Category("11", "TV"));
 
         // when
@@ -255,23 +258,11 @@ class ProductServiceTest
     }
 
     @Test
-    void updateProduct_shouldReturnAProduct()
+    void updateProduct_shouldReturnUpdatedProduct()
     {
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        Product productUpdate = new Product(
-                "11",
-                "Red Dead Redemption 2",
-                "A Wild West Sandbox",
-                price,
-                19,
-                "http://image_url",
-                new Category("11", "Video Games"),
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
 
 
 
@@ -290,17 +281,63 @@ class ProductServiceTest
                 LocalDateTime.now()
         );
 
+        ProductDto productDto = new ProductDto(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
 
+        given(categoryService.getCategoryById(anyString())).willReturn(category);
         given(productRepository.findById(anyString())).willReturn(Optional.of(foundProduct));
 
         // when
-        underTestProductService.updateProduct(productUpdate);
+        underTestProductService.updateProduct(productDto);
 
         // then
         ArgumentCaptor<Product> productArgumentCaptor = ArgumentCaptor.forClass(Product.class);
         verify(productRepository).save(productArgumentCaptor.capture());
         Product capturedProduct = productArgumentCaptor.getValue();
-        assertThat(capturedProduct).isEqualTo(productUpdate);
+
+        assertThat(capturedProduct.getName()).isEqualTo(foundProduct.getName());
+        assertThat(capturedProduct.getDescription()).isEqualTo(foundProduct.getDescription());
+        assertThat(capturedProduct.getPrice()).isEqualTo(foundProduct.getPrice());
+        assertThat(capturedProduct.getQuantity()).isEqualTo(foundProduct.getQuantity());
+        assertThat(capturedProduct.getImageUrl()).isEqualTo(foundProduct.getImageUrl());
+        assertThat(capturedProduct.isActive()).isEqualTo(foundProduct.isActive());
+    }
+
+    @Test
+    void updateProduct_shouldThrowAlreadyExistsException()
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+
+        ProductDto productDto = new ProductDto(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                new BigDecimal("69.99"),
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
+
+        given(productRepository.existsByNameIgnoreCase(productDto.getName())).willReturn(true);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestProductService.updateProduct(productDto))
+                .isInstanceOf(AlreadyExistsException.class)
+                .hasMessageContaining("Product name: ["+ productDto.getName() +"] already exists");
     }
 
     @Test
@@ -309,28 +346,27 @@ class ProductServiceTest
         // given
         Category category = new Category("11", "Video Games");
 
-        Product notFoundProduct = new Product(
+
+        ProductDto productDto = new ProductDto(
                 "19",
                 "Bloodborne",
                 "A souls like game",
                 new BigDecimal("69.99"),
                 19,
                 "http://image_url",
-                category,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                "11",
+                true
         );
 
 
-        given(productRepository.findById(notFoundProduct.getId())).willReturn(Optional.empty());
+        given(productRepository.findById(productDto.getId())).willReturn(Optional.empty());
 
         // when
 
         // then
-        assertThatThrownBy(() -> underTestProductService.updateProduct(notFoundProduct))
+        assertThatThrownBy(() -> underTestProductService.updateProduct(productDto))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("Product with id: [" + notFoundProduct.getId() + "] cannot be found");
+                .hasMessageContaining("Product with id: [" + productDto.getId() + "] cannot be found");
     }
 
     @Test
@@ -386,7 +422,7 @@ class ProductServiceTest
         // when
 
         // then
-        assertThatThrownBy(() -> underTestProductService.updateProduct(notFoundProduct))
+        assertThatThrownBy(() -> underTestProductService.deleteProduct(notFoundProduct.getId()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Product with id: [" + notFoundProduct.getId() + "] cannot be found");
     }

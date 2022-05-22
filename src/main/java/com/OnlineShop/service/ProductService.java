@@ -82,17 +82,38 @@ public class ProductService implements IProductService
 
     @Override
     @Transactional
-    public Product updateProduct(Product product)
+    public Product updateProduct(ProductDto productDto)
     {
-        Optional<Product> result = productRepository.findById(product.getId());
+        productDto.setName(productDto.getName().trim().strip());
+        productDto.setDescription(productDto.getDescription().trim().strip());
+
+        if (productNameExists(productDto.getName()))
+            throw new AlreadyExistsException("Product name: ["+ productDto.getName() +"] already exists");
+
+        Optional<Product> result = productRepository.findById(productDto.getId());
 
         if (result.isEmpty())
-            throw new NotFoundException("Product with id: [" + product.getId() + "] cannot be found");
+            throw new NotFoundException("Product with id: [" + productDto.getId() + "] cannot be found");
 
-        String trimmedName = product.getName().trim();
-        product.setName(trimmedName);
+        Product foundProduct = result.get();
 
-        product.setUpdatedAt(LocalDateTime.now());
+
+
+
+        Category category = categoryService.getCategoryById(productDto.getCategoryId());
+
+        Product product = new Product(
+                foundProduct.getId(),
+                productDto.getName(),
+                productDto.getDescription(),
+                productDto.getPrice(),
+                productDto.getQuantity(),
+                productDto.getImageUrl(),
+                category,
+                productDto.getActive(),
+                foundProduct.getCreatedAt(),
+                LocalDateTime.now()
+        );
 
         return productRepository.save(product);
     }

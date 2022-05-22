@@ -18,7 +18,7 @@ public interface IProductService
     Product createProduct(ProductDto productDto);
 
     @Transactional
-    Product updateProduct(Product product);
+    Product updateProduct(ProductDto productDto);
 
     @Transactional
     void deleteProduct(String productId);
