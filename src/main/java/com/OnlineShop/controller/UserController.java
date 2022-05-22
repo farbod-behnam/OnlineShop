@@ -48,7 +48,7 @@ public class UserController
     }
 
     @PutMapping
-    public ResponseEntity<AppUser> putUser(@RequestBody AppUser user)
+    public ResponseEntity<AppUser> putUser(@Valid @RequestBody AppUserDto user)
     {
         AppUser updatedUser = userService.updateUser(user);
 
