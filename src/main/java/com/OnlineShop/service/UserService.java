@@ -1,6 +1,6 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.dto.AppUserDto;
+import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Country;
@@ -73,7 +73,7 @@ public class UserService implements IUserService
     }
 
     @Override
-    public AppUser createUser(AppUserDto userDto)
+    public AppUser createUser(AppUserRequest userDto)
     {
 
         userDto.setFirstName(userDto.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
@@ -115,7 +115,7 @@ public class UserService implements IUserService
     }
 
     @Override
-    public AppUser updateUser(AppUserDto userDto)
+    public AppUser updateUser(AppUserRequest userDto)
     {
 
         Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(userDto.getUsername(), userDto.getEmail(), userDto.getPhoneNumber());

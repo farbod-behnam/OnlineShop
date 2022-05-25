@@ -1,4 +1,4 @@
-package com.OnlineShop.dto;
+package com.OnlineShop.dto.request;
 
 import com.OnlineShop.validation.PhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.validation.constraints.*;
 import java.util.List;
 
-public class AppUserDto
+public class AppUserRequest
 {
     private String id;
 
@@ -53,11 +53,11 @@ public class AppUserDto
 
 
 
-    public AppUserDto()
+    public AppUserRequest()
     {
     }
 
-    public AppUserDto(String id, String firstName, String lastName, String phoneNumber, String email, List<String> roleIdList, String username, String password, String countryId, String address)
+    public AppUserRequest(String id, String firstName, String lastName, String phoneNumber, String email, List<String> roleIdList, String username, String password, String countryId, String address)
     {
         this.id = id;
         this.firstName = firstName;

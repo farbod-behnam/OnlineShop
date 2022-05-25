@@ -1,6 +1,6 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.dto.AppUserDto;
+import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Country;
@@ -176,7 +176,7 @@ class UserServiceTest
 
         String countryId = "11";
 
-        AppUserDto userDto = new AppUserDto(
+        AppUserRequest userDto = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -274,7 +274,7 @@ class UserServiceTest
 
         String countryId = "11";
 
-        AppUserDto userToBeCreated = new AppUserDto(
+        AppUserRequest userToBeCreated = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -329,7 +329,7 @@ class UserServiceTest
 
         String countryId = "11";
 
-        AppUserDto userToBeUpdated = new AppUserDto(
+        AppUserRequest userToBeUpdated = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -377,7 +377,7 @@ class UserServiceTest
 
         String countryId = "11";
 
-        AppUserDto notFoundUser = new AppUserDto(
+        AppUserRequest notFoundUser = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -433,7 +433,7 @@ class UserServiceTest
 
         String countryId = "11";
 
-        AppUserDto userToBeUpdated = new AppUserDto(
+        AppUserRequest userToBeUpdated = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",

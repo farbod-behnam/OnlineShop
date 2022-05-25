@@ -1,6 +1,7 @@
 package com.OnlineShop.dto;
 
 
+import com.OnlineShop.dto.request.AppUserRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -54,9 +55,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -76,7 +77,7 @@ class AppUserDtoTest
         roles.add(roleId);
 
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 null,
                 "Wick",
@@ -92,7 +93,7 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
 //        for (ConstraintViolation<AppUserDto> violation : violations)
 //        {
@@ -102,7 +103,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -120,7 +121,7 @@ class AppUserDtoTest
         roles.add(roleId);
 
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "Jo",
                 "Wick",
@@ -136,7 +137,7 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
 //        for (ConstraintViolation<AppUserDto> violation : violations)
 //        {
@@ -146,7 +147,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name must be between 3 and 25 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo("Jo");
@@ -165,7 +166,7 @@ class AppUserDtoTest
         roles.add(roleId);
 
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "asdfasdfasdfgasdfasdfgasdf",
                 "Wick",
@@ -181,9 +182,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -191,7 +192,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name must be between 3 and 25 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo("asdfasdfasdfgasdfasdfgasdf");
@@ -208,7 +209,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John @!",
                 "Wick",
@@ -224,9 +225,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -234,7 +235,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name should only contain alphabet character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo("John @!");
@@ -251,7 +252,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -267,9 +268,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -277,7 +278,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("phone number must only contain number");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
         assertThat(violation.getInvalidValue()).isEqualTo("00166 fasd!@$");
@@ -295,7 +296,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -311,9 +312,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -321,7 +322,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("phone number is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
         assertThat(violation.getInvalidValue()).isEqualTo("00461111111111111");
@@ -338,7 +339,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -354,9 +355,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -364,7 +365,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("phone number is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
         assertThat(violation.getInvalidValue()).isEqualTo("0049999999");
@@ -383,7 +384,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -399,9 +400,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -409,7 +410,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("email is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("email");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -426,7 +427,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -442,9 +443,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -452,7 +453,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("email is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("email");
         assertThat(violation.getInvalidValue()).isEqualTo("hello!@#$@124");
@@ -466,7 +467,7 @@ class AppUserDtoTest
         String countryId = "10";
 
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -482,9 +483,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -492,7 +493,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("role is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("roles");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -513,7 +514,7 @@ class AppUserDtoTest
         roles.add(roleId2);
         roles.add(roleId3);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -529,9 +530,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -539,7 +540,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("user must have at least one role and at max two roles");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("roleIdSet");
         assertThat(violation.getInvalidValue()).isEqualTo(roles);
@@ -556,7 +557,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -572,9 +573,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -582,7 +583,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -599,7 +600,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -615,9 +616,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -625,7 +626,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username must be between 3 and 24 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo("ja");
@@ -642,7 +643,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -658,9 +659,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -668,7 +669,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username must be between 3 and 24 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo("fasdfasdfasdfasdfasdfasdf");
@@ -685,7 +686,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -701,9 +702,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -711,7 +712,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo("hello1234fasdfjlkjsdf");
@@ -728,7 +729,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -744,9 +745,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -754,7 +755,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("password must be greater than 10 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("password");
         assertThat(violation.getInvalidValue()).isEqualTo("Passw0rd!");
@@ -771,7 +772,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -787,9 +788,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -797,7 +798,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("password must be greater than 10 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("password");
         assertThat(violation.getInvalidValue()).isEqualTo("Passw0rd!1234passwordpasswordpassword1234@@  !#Passw0rd!1234passwordpasswordpassword1234@@  !#");
@@ -814,7 +815,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -830,9 +831,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -840,7 +841,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("password must contain at least one upper case letter, one lower case letter, number and special character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("password");
         assertThat(violation.getInvalidValue()).isEqualTo("passw0rd1234");
@@ -856,7 +857,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -872,9 +873,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -882,7 +883,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("country is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("country");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -899,7 +900,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -916,9 +917,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -926,7 +927,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("address is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("address");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -943,7 +944,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -960,9 +961,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -970,7 +971,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("address must be less than 100 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("address");
         assertThat(violation.getInvalidValue()).isEqualTo("this is an address this is an address this is an address this is an address this is an address this is an address this is an address ");
@@ -987,7 +988,7 @@ class AppUserDtoTest
 
         roles.add(roleId);
 
-        AppUserDto user = new AppUserDto(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -1003,9 +1004,9 @@ class AppUserDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<AppUserDto>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUserDto> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -1013,7 +1014,7 @@ class AppUserDtoTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUserDto> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("address is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("address");
         assertThat(violation.getInvalidValue()).isEqualTo("# Cecilia[ ] @ Chapman ! 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401");

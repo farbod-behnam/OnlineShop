@@ -1,6 +1,6 @@
 package com.OnlineShop.controller;
 
-import com.OnlineShop.dto.AppUserDto;
+import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.*;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
@@ -170,7 +170,7 @@ class UserControllerTest
 
         String countryId = "11";
 
-        AppUserDto userDto = new AppUserDto(
+        AppUserRequest userDto = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -208,7 +208,7 @@ class UserControllerTest
         );
 
 
-        given(userService.createUser(any(AppUserDto.class))).willReturn(user);
+        given(userService.createUser(any(AppUserRequest.class))).willReturn(user);
 
         // when
 
@@ -245,7 +245,7 @@ class UserControllerTest
 
         String countryId = "11";
 
-        AppUserDto userDto = new AppUserDto(
+        AppUserRequest userDto = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -282,7 +282,7 @@ class UserControllerTest
         );
 
 
-        given(userService.updateUser(any(AppUserDto.class))).willReturn(user);
+        given(userService.updateUser(any(AppUserRequest.class))).willReturn(user);
 
         // when
 
