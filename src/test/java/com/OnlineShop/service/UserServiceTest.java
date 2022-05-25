@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -41,11 +42,14 @@ class UserServiceTest
     @Mock
     ICountryService countryService;
 
+    @Mock
+    PasswordEncoder passwordEncoder;
+
     @BeforeEach
     void setUp()
     {
         MockitoAnnotations.openMocks(this);
-        underTestUserService = new UserService(userRepository, roleService, countryService);
+        underTestUserService = new UserService(userRepository, roleService, countryService, passwordEncoder);
     }
 
     @Test

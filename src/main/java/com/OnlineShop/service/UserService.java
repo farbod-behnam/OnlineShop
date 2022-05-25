@@ -8,6 +8,7 @@ import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +23,15 @@ public class UserService implements IUserService
     private final IUserRepository userRepository;
     private final IRoleService roleService;
     private final ICountryService countryService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(IUserRepository userRepository, IRoleService roleService, ICountryService countryService)
+    public UserService(IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.countryService = countryService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -99,7 +102,7 @@ public class UserService implements IUserService
                 userDto.getEmail(),
                 roleSet,
                 userDto.getUsername(),
-                userDto.getPassword(), // TODO password must be encoded,
+                passwordEncoder.encode(userDto.getPassword()), // encode the password
                 country,
                 userDto.getAddress(),
                 LocalDateTime.now(),
@@ -142,7 +145,7 @@ public class UserService implements IUserService
                 userDto.getEmail().trim().strip().toLowerCase(Locale.ROOT),
                 roleSet,
                 foundUser.getUsername(), // username cannot be changed
-                userDto.getPassword(), // TODO password must be encoded
+                passwordEncoder.encode(userDto.getPassword()), // encode the password
                 country,
                 userDto.getAddress().trim().strip(),
                 foundUser.getCreatedAt(), // createdAt Date cannot be change
