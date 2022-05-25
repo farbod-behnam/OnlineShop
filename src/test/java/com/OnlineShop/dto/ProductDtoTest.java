@@ -1,6 +1,6 @@
 package com.OnlineShop.dto;
 
-import com.OnlineShop.entity.Category;
+import com.OnlineShop.dto.request.ProductRequest;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
@@ -17,12 +17,10 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ProductDtoTest
 {
@@ -76,7 +74,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -90,7 +88,7 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isTrue();
 
@@ -102,7 +100,7 @@ class ProductDtoTest
     {
         // given
         BigDecimal price = new BigDecimal("69.99");
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 null,
                 "A souls like game",
@@ -117,12 +115,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("name is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -135,7 +133,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "a1",
                 "A souls like game",
@@ -150,12 +148,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("name must be between 3 and 45 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
         assertThat(violation.getInvalidValue()).isEqualTo("a1");
@@ -167,7 +165,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "asdf asdf asdfg asdf asdfg asdfg asdfg asdfg asdfg",
                 "A souls like game",
@@ -182,12 +180,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("name must be between 3 and 45 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
         assertThat(violation.getInvalidValue()).isEqualTo("asdf asdf asdfg asdf asdfg asdfg asdfg asdfg asdfg");
@@ -199,7 +197,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "1@a",
                 "A souls like game",
@@ -214,12 +212,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("name should only contain chars/digits");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
         assertThat(violation.getInvalidValue()).isEqualTo("1@a");
@@ -231,7 +229,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 null,
@@ -245,12 +243,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("description is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("description");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -263,7 +261,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "@$!@#$ fasdfj asdf",
@@ -278,12 +276,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("description should only contain chars/digits");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("description");
         assertThat(violation.getInvalidValue()).isEqualTo("@$!@#$ fasdfj asdf");
@@ -294,7 +292,7 @@ class ProductDtoTest
     {
         // given
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -308,12 +306,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("price is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("price");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -323,7 +321,7 @@ class ProductDtoTest
     public void ProductDto_priceLessOrEqualTo0_shouldNotValidate()
     {
         // given
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -338,12 +336,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("price must be greater than 0.0");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("price");
         assertThat(violation.getInvalidValue()).isEqualTo(new BigDecimal("0.00"));
@@ -353,7 +351,7 @@ class ProductDtoTest
     public void ProductDto_priceGreaterThan5Integer_shouldNotValidate()
     {
         // given
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -368,12 +366,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("price must be between 0.00 and 99999.99");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("price");
         assertThat(violation.getInvalidValue()).isEqualTo(new BigDecimal("123456.12"));
@@ -383,7 +381,7 @@ class ProductDtoTest
     public void ProductDto_priceGreaterThan2Fraction_shouldNotValidate()
     {
         // given
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -398,12 +396,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("price must be between 0.00 and 99999.99");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("price");
         assertThat(violation.getInvalidValue()).isEqualTo(new BigDecimal("12345.123"));
@@ -415,7 +413,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -430,12 +428,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("quantity is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("quantity");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -447,7 +445,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -461,12 +459,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("quantity must be greater than or equal to 0");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("quantity");
         assertThat(violation.getInvalidValue()).isEqualTo(-1);
@@ -478,7 +476,7 @@ class ProductDtoTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -492,12 +490,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("quantity must be less than or equal to 1000");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("quantity");
         assertThat(violation.getInvalidValue()).isEqualTo(1001);
@@ -507,7 +505,7 @@ class ProductDtoTest
     public void ProductDto_nullCategory_shouldNotValidate()
     {
         // given
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -523,12 +521,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("category is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("categoryId");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -539,7 +537,7 @@ class ProductDtoTest
     {
         // given
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -553,12 +551,12 @@ class ProductDtoTest
         // when
 
         // then
-        Set<ConstraintViolation<ProductDto>> violations = validator.validate(productDto);
+        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<ProductDto> violation = violations.iterator().next();
+        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("active is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("active");
         assertThat(violation.getInvalidValue()).isEqualTo(null);

@@ -1,6 +1,6 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.dto.ProductDto;
+import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Product;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +15,10 @@ public interface IProductService
     Product getProductById(String productId);
 
     @Transactional
-    Product createProduct(ProductDto productDto);
+    Product createProduct(ProductRequest productDto);
 
     @Transactional
-    Product updateProduct(ProductDto productDto);
+    Product updateProduct(ProductRequest productDto);
 
     @Transactional
     void deleteProduct(String productId);

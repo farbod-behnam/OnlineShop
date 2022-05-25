@@ -1,10 +1,10 @@
-package com.OnlineShop.dto;
+package com.OnlineShop.dto.request;
 
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
-public class ProductDto
+public class ProductRequest
 {
     private String id;
 
@@ -38,11 +38,11 @@ public class ProductDto
     private Boolean active;
 
 
-    public ProductDto()
+    public ProductRequest()
     {
     }
 
-    public ProductDto(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, String categoryId, Boolean active)
+    public ProductRequest(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, String categoryId, Boolean active)
     {
         this.id = id;
         this.name = name;

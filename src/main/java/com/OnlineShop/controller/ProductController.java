@@ -1,6 +1,6 @@
 package com.OnlineShop.controller;
 
-import com.OnlineShop.dto.ProductDto;
+import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -41,7 +40,7 @@ public class ProductController
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductDto product)
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest product)
     {
         Product createdProduct = productService.createProduct(product);
 
@@ -49,7 +48,7 @@ public class ProductController
     }
 
     @PutMapping
-    public ResponseEntity<Product> updateProduct(@Valid @RequestBody ProductDto productDto)
+    public ResponseEntity<Product> updateProduct(@Valid @RequestBody ProductRequest productDto)
     {
         Product updatedProduct = productService.updateProduct(productDto);
 

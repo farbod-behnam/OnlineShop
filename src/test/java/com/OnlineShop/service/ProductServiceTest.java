@@ -1,6 +1,6 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.dto.ProductDto;
+import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
@@ -193,7 +193,7 @@ class ProductServiceTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto newProduct = new ProductDto(
+        ProductRequest newProduct = new ProductRequest(
                 "19",
                 "Red Dead Redemption 2",
                 "A Wild West Sandbox",
@@ -231,7 +231,7 @@ class ProductServiceTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto alreadyExistProduct = new ProductDto(
+        ProductRequest alreadyExistProduct = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A Wild West Sandbox",
@@ -281,7 +281,7 @@ class ProductServiceTest
                 LocalDateTime.now()
         );
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -318,7 +318,7 @@ class ProductServiceTest
         Category category = new Category("11", "Video Games");
 
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -347,7 +347,7 @@ class ProductServiceTest
         Category category = new Category("11", "Video Games");
 
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",

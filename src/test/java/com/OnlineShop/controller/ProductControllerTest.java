@@ -1,6 +1,6 @@
 package com.OnlineShop.controller;
 
-import com.OnlineShop.dto.ProductDto;
+import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.service.IProductService;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -189,7 +188,7 @@ class ProductControllerTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -213,7 +212,7 @@ class ProductControllerTest
                 LocalDateTime.now()
         );
 
-        given(productService.createProduct(any(ProductDto.class))).willReturn(product);
+        given(productService.createProduct(any(ProductRequest.class))).willReturn(product);
 
         // when
 
@@ -241,7 +240,7 @@ class ProductControllerTest
         // given
         BigDecimal price = new BigDecimal("69.99");
 
-        ProductDto productDto = new ProductDto(
+        ProductRequest productDto = new ProductRequest(
                 "19",
                 "Bloodborne",
                 "A souls like game",
@@ -265,7 +264,7 @@ class ProductControllerTest
                 LocalDateTime.now()
         );
 
-        given(productService.updateProduct(any(ProductDto.class))).willReturn(product);
+        given(productService.updateProduct(any(ProductRequest.class))).willReturn(product);
 
         // when
 

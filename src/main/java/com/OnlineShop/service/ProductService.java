@@ -1,6 +1,6 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.dto.ProductDto;
+import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -53,7 +52,7 @@ public class ProductService implements IProductService
 
     @Override
     @Transactional
-    public Product createProduct(ProductDto productDto)
+    public Product createProduct(ProductRequest productDto)
     {
         if (productNameExists(productDto.getName()))
             throw new AlreadyExistsException("Product with name [" + productDto.getName() +"] already exists");
@@ -82,7 +81,7 @@ public class ProductService implements IProductService
 
     @Override
     @Transactional
-    public Product updateProduct(ProductDto productDto)
+    public Product updateProduct(ProductRequest productDto)
     {
         productDto.setName(productDto.getName().trim().strip());
         productDto.setDescription(productDto.getDescription().trim().strip());
