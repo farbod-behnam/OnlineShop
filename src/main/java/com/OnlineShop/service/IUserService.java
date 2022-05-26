@@ -1,6 +1,6 @@
 package com.OnlineShop.service;
 
-import com.OnlineShop.dto.AppUserDto;
+import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.AppUser;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +16,9 @@ public interface IUserService
 
         AppUser getUserByUsername(String username);
 
-        AppUser createUser(AppUserDto user);
+        AppUser createUser(AppUserRequest userRequest);
 
-        AppUser updateUser(AppUserDto user);
+        AppUser updateUser(AppUserRequest userRequest);
 
         void deleteUserById(String userId);
 
