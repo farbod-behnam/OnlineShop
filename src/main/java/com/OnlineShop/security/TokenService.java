@@ -1,6 +1,7 @@
 package com.OnlineShop.security;
 
 import com.OnlineShop.exception.AlreadyExistsException;
+import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -12,10 +13,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -37,7 +36,7 @@ public class TokenService implements ITokenService
 
 
     @Override
-    public String createJWT(User user)
+    public String createJWT(UserDetailsImpl user)
     {
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
 

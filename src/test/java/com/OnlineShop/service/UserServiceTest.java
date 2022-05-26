@@ -292,7 +292,7 @@ class UserServiceTest
         // then
         assertThatThrownBy(() -> underTestUserService.createUser(userToBeCreated))
                 .isInstanceOf(AlreadyExistsException.class)
-                .hasMessageContaining("User already exists.");
+                .hasMessageContaining("User with username:[" + userToBeCreated.getUsername() + "] email:[" + userToBeCreated.getUsername() + "] phone number:[" + userToBeCreated.getUsername() + "] already exists.");
 
     }
 

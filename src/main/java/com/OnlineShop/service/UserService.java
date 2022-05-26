@@ -86,7 +86,7 @@ public class UserService implements IUserService
         Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(userDto.getUsername(), userDto.getEmail(), userDto.getPhoneNumber());
 
         if (result.isPresent())
-            throw new AlreadyExistsException("User already exists.");
+            throw new AlreadyExistsException("User with username:[" + userDto.getUsername() + "] email:[" + userDto.getUsername() + "] phone number:[" + userDto.getUsername() + "] already exists.");
 
 
         Country country = countryService.getCountryById(userDto.getCountryId());
