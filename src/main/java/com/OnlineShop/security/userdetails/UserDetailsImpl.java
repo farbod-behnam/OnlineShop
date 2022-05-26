@@ -102,6 +102,14 @@ public class UserDetailsImpl implements UserDetails
         return true;
     }
 
+    public List<String> getStringListRoles()
+    {
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+    }
+
     public static UserDetailsImpl buildUserDetails(AppUser user)
     {
         List<GrantedAuthority> authorities = user.getRoles().stream()
