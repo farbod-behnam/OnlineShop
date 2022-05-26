@@ -2,6 +2,7 @@ package com.OnlineShop.controller;
 
 import com.OnlineShop.dto.request.LoginRequest;
 import com.OnlineShop.dto.request.RegisterRequest;
+import com.OnlineShop.dto.request.UpdateRequest;
 import com.OnlineShop.dto.response.UserInfoResponse;
 import com.OnlineShop.security.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,14 @@ public class AuthController
        UserInfoResponse registeredUser = authService.registerUser(registerRequest);
 
        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<UserInfoResponse> updateUser(@Valid @RequestBody UpdateRequest updateRequest)
+    {
+       UserInfoResponse updatedUser = authService.updateUser(updateRequest);
+
+       return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @PostMapping("/logout")
