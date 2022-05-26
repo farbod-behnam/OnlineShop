@@ -1,14 +1,13 @@
 package com.OnlineShop.security;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
+import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
 public interface ITokenService
 {
-    String createJWT(User user);
+    String createJWT(UserDetailsImpl user);
     void createDecodedJWT(String authorizationHeader);
     String getUsernameDecodedJWT();
     String[] getRolesDecodedJWT();
