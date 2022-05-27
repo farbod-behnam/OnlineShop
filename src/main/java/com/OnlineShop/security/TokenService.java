@@ -1,14 +1,10 @@
 package com.OnlineShop.security;
 
-import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.AlgorithmMismatchException;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,14 +36,26 @@ public class TokenService implements ITokenService
     {
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
 
-        String token = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .withIssuer(jwtIssuer)
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
+        try
+        {
+            String token = JWT.create()
+                    .withSubject(user.getUsername())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                    .withIssuer(jwtIssuer)
+                    .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                    .sign(algorithm);
 
-        return token;
+            return token;
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IllegalArgumentException("the jwt authorities does not validate");
+        }
+        catch (JWTCreationException e)
+        {
+            throw new JWTCreationException("claims could not be converted to a valid JSON or there is a problem with the signing key.", new IllegalArgumentException("argument is not valid"));
+        }
+
     }
 
     @Override
@@ -62,29 +70,34 @@ public class TokenService implements ITokenService
             JWTVerifier verifier = JWT.require(algorithm).build();
             decodedJWT = verifier.verify(token);
         }
-        catch (Exception e)
+        catch (StringIndexOutOfBoundsException e)
         {
-            System.out.println(e.getMessage());
+            throw new StringIndexOutOfBoundsException("token is out of bounds");
         }
-//        catch (SignatureVerificationException e)
-//        {
-//            System.out.println(e.getMessage());
-////            throw new SignatureVerificationException(algorithm);
-//        }
-//        catch (AlgorithmMismatchException e)
-//        {
-//            System.out.println(e.getMessage());
-////            throw new SignatureVerificationException(algorithm);
-//        }
-//        catch (JWTDecodeException e)
-//        {
-//            System.out.println(e.getMessage());
-////            throw new JWTDecodeException("The string doesn't have a valid JSON format.");
-//        }
-//        catch (JWTVerificationException e)
-//        {
-//            System.out.println(e.getMessage());
-//        }
+        catch (AlgorithmMismatchException e)
+        {
+            throw new SignatureVerificationException(algorithm);
+        }
+        catch (InvalidClaimException e)
+        {
+            throw new InvalidClaimException("token claims are invalid");
+        }
+        catch (SignatureVerificationException e)
+        {
+            throw new SignatureVerificationException(algorithm);
+        }
+        catch (JWTDecodeException e)
+        {
+            throw new JWTDecodeException("The string doesn't have a valid JSON format.");
+        }
+        catch (TokenExpiredException e)
+        {
+            throw new TokenExpiredException("token is expired");
+        }
+        catch (JWTVerificationException e)
+        {
+            throw new JWTVerificationException("token cannot be verified");
+        }
 
 
     }
