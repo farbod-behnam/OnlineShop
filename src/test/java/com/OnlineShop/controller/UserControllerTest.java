@@ -1,5 +1,6 @@
 package com.OnlineShop.controller;
 
+import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.*;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
@@ -16,7 +17,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -162,6 +162,29 @@ class UserControllerTest
     public void postUser_shouldReturnCreatedUser() throws Exception
     {
         // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "password1234",
+                countryId,
+                "This is an address"
+        );
+
+
+        // user
         Set<AppRole> roles = new HashSet<>();
 
         Country country = new Country("10", CountryEnum.Germany.name());
@@ -185,13 +208,13 @@ class UserControllerTest
         );
 
 
-        given(userService.createUser(any(AppUser.class))).willReturn(user);
+        given(userService.createUser(any(AppUserRequest.class))).willReturn(user);
 
         // when
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
-                        .content(asJsonString(user))
+                        .content(asJsonString(userDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -214,6 +237,28 @@ class UserControllerTest
     public void putUser_shouldReturnUpdatedUser() throws Exception
     {
         // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "password1234",
+                countryId,
+                "This is an address"
+        );
+
+        // user
         Set<AppRole> roles = new HashSet<>();
 
         Country country = new Country("10", CountryEnum.Germany.name());
@@ -237,13 +282,13 @@ class UserControllerTest
         );
 
 
-        given(userService.updateUser(any(AppUser.class))).willReturn(user);
+        given(userService.updateUser(any(AppUserRequest.class))).willReturn(user);
 
         // when
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/users")
-                        .content(asJsonString(user))
+                        .content(asJsonString(userDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

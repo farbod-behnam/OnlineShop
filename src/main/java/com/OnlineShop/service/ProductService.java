@@ -1,5 +1,7 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.dto.request.ProductRequest;
+import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
@@ -10,18 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
 public class ProductService implements IProductService
 {
     private final IProductRepository productRepository;
+    private final ICategoryService categoryService;
 
     @Autowired
-    public ProductService(IProductRepository productRepository)
+    public ProductService(IProductRepository productRepository, ICategoryService categoryService)
     {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
     }
 
     @Override
@@ -49,37 +52,67 @@ public class ProductService implements IProductService
 
     @Override
     @Transactional
-    public Product createProduct(Product product)
+    public Product createProduct(ProductRequest productDto)
     {
-        if (productNameExists(product.getName()))
-            throw new AlreadyExistsException("Category with name [" + product.getName() +"] already exists");
+        if (productNameExists(productDto.getName()))
+            throw new AlreadyExistsException("Product with name [" + productDto.getName() +"] already exists");
 
-        // in order to register entity as a new record
-        // the id should be null
-        product.setId(null);
+        productDto.setName(productDto.getName().trim().strip());
+        productDto.setDescription(productDto.getDescription().trim().strip());
 
-        String trimmedName = product.getName().trim();
-        product.setName(trimmedName);
+        Category category = categoryService.getCategoryById(productDto.getCategoryId());
 
-        product.setCreatedAt(LocalDateTime.now());
-        product.setUpdatedAt(LocalDateTime.now());
+        Product product = new Product(
+                null, // in order to register entity as a new record
+                productDto.getName(),
+                productDto.getDescription(),
+                productDto.getPrice(),
+                productDto.getQuantity(),
+                productDto.getImageUrl(),
+                category,
+                productDto.getActive(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
 
         return productRepository.save(product);
     }
 
     @Override
     @Transactional
-    public Product updateProduct(Product product)
+    public Product updateProduct(ProductRequest productDto)
     {
-        Optional<Product> result = productRepository.findById(product.getId());
+        productDto.setName(productDto.getName().trim().strip());
+        productDto.setDescription(productDto.getDescription().trim().strip());
+
+        if (productNameExists(productDto.getName()))
+            throw new AlreadyExistsException("Product name: ["+ productDto.getName() +"] already exists");
+
+        Optional<Product> result = productRepository.findById(productDto.getId());
 
         if (result.isEmpty())
-            throw new NotFoundException("Product with id: [" + product.getId() + "] cannot be found");
+            throw new NotFoundException("Product with id: [" + productDto.getId() + "] cannot be found");
 
-        String trimmedName = product.getName().trim();
-        product.setName(trimmedName);
+        Product foundProduct = result.get();
 
-        product.setUpdatedAt(LocalDateTime.now());
+
+
+
+        Category category = categoryService.getCategoryById(productDto.getCategoryId());
+
+        Product product = new Product(
+                foundProduct.getId(),
+                productDto.getName(),
+                productDto.getDescription(),
+                productDto.getPrice(),
+                productDto.getQuantity(),
+                productDto.getImageUrl(),
+                category,
+                productDto.getActive(),
+                foundProduct.getCreatedAt(),
+                LocalDateTime.now()
+        );
 
         return productRepository.save(product);
     }
@@ -100,21 +133,10 @@ public class ProductService implements IProductService
     @Transactional
     public boolean productNameExists(String productName)
     {
-        List<Product> productList = productRepository.findAll();
+        if (productName == null || productName.isBlank())
+            throw new IllegalArgumentException("Product name cannot be empty");
 
-        productName = productName.toLowerCase(Locale.ROOT).trim();
+        return productRepository.existsByNameIgnoreCase(productName);
 
-        boolean categoryExists = false;
-
-        for (Product p: productList)
-        {
-            if (p.getName().toLowerCase(Locale.ROOT).equals(productName))
-            {
-                categoryExists = true;
-                break;
-            }
-        }
-
-        return categoryExists;
     }
 }

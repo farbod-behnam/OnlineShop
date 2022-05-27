@@ -58,7 +58,7 @@ class CountryServiceTest
         given(countryRepository.findById(anyString())).willReturn(Optional.of(country));
 
         // when
-        Country foundCountry = underTestCountryService.getCountry(anyString());
+        Country foundCountry = underTestCountryService.getCountryById(anyString());
 
         // then
         verify(countryRepository).findById(anyString());
@@ -74,7 +74,7 @@ class CountryServiceTest
         // when
 
         // then
-        assertThatThrownBy(() -> underTestCountryService.getCountry(countryId))
+        assertThatThrownBy(() -> underTestCountryService.getCountryById(countryId))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Country with id: [" + countryId + "] cannot be found");
     }

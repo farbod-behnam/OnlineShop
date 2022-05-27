@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -27,6 +29,25 @@ public class RoleService implements IRoleService
     public List<AppRole> getRoles()
     {
         return roleRepository.findAll();
+    }
+
+    @Override
+    public Set<AppRole> getRoles(List<String> roleIdList)
+    {
+        if ( roleIdList == null || roleIdList.isEmpty())
+            throw new IllegalArgumentException("Role cannot be empty");
+
+
+        Set<AppRole> roleSet = new HashSet<>();
+
+        for (String roleIdStr: roleIdList)
+        {
+            AppRole role = getRoleById(roleIdStr);
+            roleSet.add(role);
+        }
+
+        return roleSet;
+
     }
 
     @Override

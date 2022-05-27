@@ -1,42 +1,48 @@
-package com.OnlineShop.entity;
+package com.OnlineShop.dto.request;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
-@Document(collection = "Product")
-public class Product
+public class ProductRequest
 {
-    @Id
     private String id;
 
+    @NotBlank(message = "name is required")
+    @Size(min = 3, max = 45, message = "name must be between 3 and 45 character")
+    @Pattern(regexp = "[a-zA-Z][a-zA-Z0-9 ]+", message = "name should only contain chars/digits")
     private String name;
 
+    @NotBlank(message = "description is required")
+    @Size(min = 15, max = 128, message = "description must be between 15 and 128 character")
+    @Pattern(regexp = "[a-zA-Z0-9 ]+", message = "description should only contain chars/digits")
     private String description;
 
+    @NotNull(message = "price is required")
+    @DecimalMin(value = "0.00", inclusive = false, message = "price must be greater than 0.0")
+    @Digits(integer = 5, fraction = 2, message = "price must be between 0.00 and 99999.99")
     private BigDecimal price;
 
+    @NotNull(message = "quantity is required")
+    @Min(value = 0, message = "quantity must be greater than or equal to 0")
+    @Max(value = 1000, message = "quantity must be less than or equal to 1000")
     private Integer quantity;
 
     private String imageUrl;
 
-    @DBRef
-    Category category;
+    @NotBlank(message = "category is required")
+    String categoryId;
 
 
+    @NotNull(message = "active is required")
     private Boolean active;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    public Product()
+    public ProductRequest()
     {
     }
 
-    public Product(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, Category category, Boolean active, LocalDateTime createdAt, LocalDateTime updatedAt)
+    public ProductRequest(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, String categoryId, Boolean active)
     {
         this.id = id;
         this.name = name;
@@ -44,10 +50,8 @@ public class Product
         this.price = price;
         this.quantity = quantity;
         this.imageUrl = imageUrl;
-        this.category = category;
+        this.categoryId = categoryId;
         this.active = active;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public String getId()
@@ -90,12 +94,12 @@ public class Product
         this.price = price;
     }
 
-    public int getQuantity()
+    public Integer getQuantity()
     {
         return quantity;
     }
 
-    public void setQuantity(int quantity)
+    public void setQuantity(Integer quantity)
     {
         this.quantity = quantity;
     }
@@ -110,44 +114,24 @@ public class Product
         this.imageUrl = imageUrl;
     }
 
-    public Category getCategory()
+    public String getCategoryId()
     {
-        return category;
+        return categoryId;
     }
 
-    public void setCategory(Category category)
+    public void setCategoryId(String categoryId)
     {
-        this.category = category;
+        this.categoryId = categoryId;
     }
 
-    public boolean isActive()
+    public Boolean getActive()
     {
         return active;
     }
 
-    public void setActive(boolean active)
+    public void setActive(Boolean active)
     {
         this.active = active;
-    }
-
-    public LocalDateTime getCreatedAt()
-    {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt)
-    {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt()
-    {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt)
-    {
-        this.updatedAt = updatedAt;
     }
 
 
@@ -155,17 +139,15 @@ public class Product
     @Override
     public String toString()
     {
-        return "Product [" +
+        return "ProductDto [" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", imageUrl='" + imageUrl + '\'' +
-                ", category=" + category +
+                ", categoryId='" + categoryId + '\'' +
                 ", active=" + active +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 ']';
     }
 }

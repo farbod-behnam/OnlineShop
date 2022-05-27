@@ -1,5 +1,6 @@
 package com.OnlineShop.service;
 
+import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Country;
@@ -15,11 +16,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -36,11 +36,20 @@ class UserServiceTest
     @Mock
     private IUserRepository userRepository;
 
+    @Mock
+    private IRoleService roleService;
+
+    @Mock
+    ICountryService countryService;
+
+    @Mock
+    PasswordEncoder passwordEncoder;
+
     @BeforeEach
     void setUp()
     {
         MockitoAnnotations.openMocks(this);
-        underTestUserService = new UserService(userRepository);
+        underTestUserService = new UserService(userRepository, roleService, countryService, passwordEncoder);
     }
 
     @Test
@@ -159,12 +168,36 @@ class UserServiceTest
     void createUser_shouldReturnCreatedUser()
     {
         // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "john.wick",
+                "password1234",
+                countryId,
+                "This is an address"
+        );
+
+        // user
+
         Set<AppRole> roles = new HashSet<>();
 
         Country country = new Country("10", CountryEnum.Germany.name());
         AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
 
         roles.add(role);
+
 
         AppUser user = new AppUser(
                 "19",
@@ -181,15 +214,30 @@ class UserServiceTest
                 LocalDateTime.now()
         );
 
+        given(countryService.getCountryById(anyString())).willReturn(country);
+        given(roleService.getRoles(roleIdList)).willReturn(roles);
+
+        given(passwordEncoder.encode(anyString())).willReturn(user.getPassword());
+
+
         // when
-        underTestUserService.createUser(user);
+        underTestUserService.createUser(userDto);
 
         // then
         ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
-        verify(userRepository).findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+        verify(userRepository).existsByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
         verify(userRepository).save(userArgumentCaptor.capture());
         AppUser capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser).isEqualTo(user);
+
+        assertThat(capturedUser.getFirstName()).isEqualTo(user.getFirstName().toLowerCase(Locale.ROOT));
+        assertThat(capturedUser.getLastName()).isEqualTo(user.getLastName().toLowerCase(Locale.ROOT));
+        assertThat(capturedUser.getPhoneNumber()).isEqualTo(user.getPhoneNumber());
+        assertThat(capturedUser.getEmail()).isEqualTo(user.getEmail());
+        assertThat(capturedUser.getRoles()).isEqualTo(user.getRoles());
+        assertThat(capturedUser.getUsername()).isEqualTo(user.getUsername());
+        assertThat(capturedUser.getPassword()).isEqualTo(user.getPassword());
+        assertThat(capturedUser.getCountry()).isEqualTo(user.getCountry());
+        assertThat(capturedUser.getAddress()).isEqualTo(user.getAddress());
     }
 
     @Test
@@ -203,36 +251,28 @@ class UserServiceTest
 
         roles.add(role);
 
-        AppUser user = new AppUser(
+
+
+        given(userRepository.existsByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(true);
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userToBeCreated = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
                 "001666666666",
                 "john.wick@gmail.com",
-                roles,
+                roleIdList,
                 "john.wick",
                 "password1234",
-                country,
-                "This is an address",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
-
-        given(userRepository.findByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(Optional.of(user));
-
-        AppUser userToBeCreated = new AppUser(
-                null,
-                "User",
-                "ToBeCreated",
-                "001666666666",
-                "john.wick@gmail.com",
-                roles,
-                "john.wick",
-                "password1234",
-                country,
-                "This is an address",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "This is an address"
         );
 
         // when
@@ -240,7 +280,7 @@ class UserServiceTest
         // then
         assertThatThrownBy(() -> underTestUserService.createUser(userToBeCreated))
                 .isInstanceOf(AlreadyExistsException.class)
-                .hasMessageContaining("User already exists.");
+                .hasMessageContaining("User with username:[" + userToBeCreated.getUsername() + "] or email:[" + userToBeCreated.getUsername() + "] or phone number:[" + userToBeCreated.getUsername() + "] already exists.");
 
     }
 
@@ -255,7 +295,7 @@ class UserServiceTest
 
         roles.add(role);
 
-        AppUser userToBeUpdated = new AppUser(
+        AppUser user = new AppUser(
                 "19",
                 "John",
                 "Wick",
@@ -270,8 +310,32 @@ class UserServiceTest
                 LocalDateTime.now()
         );
 
-        given(userRepository.findById(anyString())).willReturn(Optional.of(userToBeUpdated));
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
 
+        String countryId = "11";
+
+        AppUserRequest userToBeUpdated = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "john.wick",
+                "password1234",
+                countryId,
+                "This is an address"
+        );
+
+        given(userRepository.findById(anyString())).willReturn(Optional.of(user));
+
+        given(countryService.getCountryById(anyString())).willReturn(country);
+        given(roleService.getRoles(roleIdList)).willReturn(roles);
+
+        given(passwordEncoder.encode(anyString())).willReturn(user.getPassword());
         // when
         underTestUserService.updateUser(userToBeUpdated);
 
@@ -280,33 +344,39 @@ class UserServiceTest
         verify(userRepository).findById(userToBeUpdated.getId());
         verify(userRepository).save(userArgumentCaptor.capture());
         AppUser capturedUser = userArgumentCaptor.getValue();
-        assertThat(capturedUser).isEqualTo(userToBeUpdated);
+
+        assertThat(capturedUser.getFirstName()).isEqualTo(user.getFirstName().toLowerCase(Locale.ROOT));
+        assertThat(capturedUser.getLastName()).isEqualTo(user.getLastName().toLowerCase(Locale.ROOT));
+        assertThat(capturedUser.getPhoneNumber()).isEqualTo(user.getPhoneNumber());
+        assertThat(capturedUser.getEmail()).isEqualTo(user.getEmail());
+        assertThat(capturedUser.getRoles()).isEqualTo(user.getRoles());
+        assertThat(capturedUser.getUsername()).isEqualTo(user.getUsername());
+        assertThat(capturedUser.getPassword()).isEqualTo(user.getPassword());
+        assertThat(capturedUser.getCountry()).isEqualTo(user.getCountry());
+        assertThat(capturedUser.getAddress()).isEqualTo(user.getAddress());
     }
 
     @Test
     void updateUser_shouldThrowNotFoundException()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "11";
 
-        roles.add(role);
-
-        AppUser notFoundUser = new AppUser(
+        AppUserRequest notFoundUser = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
                 "001666666666",
                 "john.wick@gmail.com",
-                roles,
+                roleIdList,
                 "john.wick",
                 "password1234",
-                country,
-                "This is an address",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "This is an address"
         );
 
         given(userRepository.findById(anyString())).willReturn(Optional.empty());
@@ -331,29 +401,34 @@ class UserServiceTest
 
         roles.add(role);
 
-        AppUser foundUser = new AppUser(
+
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userToBeUpdated = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
                 "001666666666",
                 "john.wick@gmail.com",
-                roles,
+                roleIdList,
                 "john.wick",
                 "password1234",
-                country,
-                "This is an address",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "This is an address"
         );
 
-        given(userRepository.findByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(Optional.of(foundUser));
+        given(userRepository.existsByEmailOrPhoneNumber(anyString(), anyString())).willReturn(true);
 
         // when
 
         // then
-        assertThatThrownBy(() -> underTestUserService.updateUser(foundUser))
+        assertThatThrownBy(() -> underTestUserService.updateUser(userToBeUpdated))
                 .isInstanceOf(AlreadyExistsException.class)
-                .hasMessageContaining("User with these descriptions already exists");
+                .hasMessageContaining("User with email:[" + userToBeUpdated.getUsername() + "] or phone number:[" + userToBeUpdated.getUsername() + "] already exists.");
 
     }
 
