@@ -73,38 +73,38 @@ public class UserService implements IUserService
     }
 
     @Override
-    public AppUser createUser(AppUserRequest userDto)
+    public AppUser createUser(AppUserRequest appUserRequest)
     {
 
-        userDto.setFirstName(userDto.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
-        userDto.setLastName(userDto.getLastName().trim().strip().toLowerCase(Locale.ROOT));
-        userDto.setPhoneNumber(userDto.getPhoneNumber().trim().strip());
-        userDto.setEmail(userDto.getEmail().trim().strip().toLowerCase(Locale.ROOT));
-        userDto.setUsername(userDto.getUsername().trim().strip().toLowerCase(Locale.ROOT));
-        userDto.setAddress(userDto.getAddress().trim().strip());
+        appUserRequest.setFirstName(appUserRequest.getFirstName().trim().strip().toLowerCase(Locale.ROOT));
+        appUserRequest.setLastName(appUserRequest.getLastName().trim().strip().toLowerCase(Locale.ROOT));
+        appUserRequest.setPhoneNumber(appUserRequest.getPhoneNumber().trim().strip());
+        appUserRequest.setEmail(appUserRequest.getEmail().trim().strip().toLowerCase(Locale.ROOT));
+        appUserRequest.setUsername(appUserRequest.getUsername().trim().strip().toLowerCase(Locale.ROOT));
+        appUserRequest.setAddress(appUserRequest.getAddress().trim().strip());
 
-        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(userDto.getUsername(), userDto.getEmail(), userDto.getPhoneNumber());
+        boolean result = userRepository.existsByUsernameOrEmailOrPhoneNumber(appUserRequest.getUsername(), appUserRequest.getEmail(), appUserRequest.getPhoneNumber());
 
-        if (result.isPresent())
-            throw new AlreadyExistsException("User with username:[" + userDto.getUsername() + "] email:[" + userDto.getUsername() + "] phone number:[" + userDto.getUsername() + "] already exists.");
+        if (result)
+            throw new AlreadyExistsException("User with username:[" + appUserRequest.getUsername() + "] or email:[" + appUserRequest.getUsername() + "] or phone number:[" + appUserRequest.getUsername() + "] already exists.");
 
 
-        Country country = countryService.getCountryById(userDto.getCountryId());
+        Country country = countryService.getCountryById(appUserRequest.getCountryId());
 
-        List<String> roleIdSet = userDto.getRolesId();
+        List<String> roleIdSet = appUserRequest.getRolesId();
         Set<AppRole> roleSet = roleService.getRoles(roleIdSet);
 
         AppUser user = new AppUser(
                 null, // in order to create new entity
-                userDto.getFirstName(),
-                userDto.getLastName(),
-                userDto.getPhoneNumber(),
-                userDto.getEmail(),
+                appUserRequest.getFirstName(),
+                appUserRequest.getLastName(),
+                appUserRequest.getPhoneNumber(),
+                appUserRequest.getEmail(),
                 roleSet,
-                userDto.getUsername(),
-                passwordEncoder.encode(userDto.getPassword()), // encode the password
+                appUserRequest.getUsername(),
+                passwordEncoder.encode(appUserRequest.getPassword()), // encode the password
                 country,
-                userDto.getAddress(),
+                appUserRequest.getAddress(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -115,39 +115,39 @@ public class UserService implements IUserService
     }
 
     @Override
-    public AppUser updateUser(AppUserRequest userDto)
+    public AppUser updateUser(AppUserRequest appUserRequest)
     {
 
-        Optional<AppUser> result = userRepository.findByUsernameOrEmailOrPhoneNumber(userDto.getUsername(), userDto.getEmail(), userDto.getPhoneNumber());
+        boolean userExists = userRepository.existsByEmailOrPhoneNumber(appUserRequest.getEmail(), appUserRequest.getPhoneNumber());
 
         // see if username, email or phone number already is in use
-        if (result.isPresent())
-            throw new AlreadyExistsException("User with these descriptions already exists");
+        if (userExists)
+            throw new AlreadyExistsException("User with email:[" + appUserRequest.getUsername() + "] or phone number:[" + appUserRequest.getUsername() + "] already exists.");
 
         // if not then see if the user with this id already exists
-        result = userRepository.findById(userDto.getId());
+        Optional<AppUser> result = userRepository.findById(appUserRequest.getId());
 
         if (result.isEmpty())
-            throw new NotFoundException("User with id: [" + userDto.getId() + "] cannot be found");
+            throw new NotFoundException("User with id: [" + appUserRequest.getId() + "] cannot be found");
 
         AppUser foundUser = result.get();
 
-        Country country = countryService.getCountryById(userDto.getCountryId());
+        Country country = countryService.getCountryById(appUserRequest.getCountryId());
 
-        List<String> roleIdSet = userDto.getRolesId();
+        List<String> roleIdSet = appUserRequest.getRolesId();
         Set<AppRole> roleSet = roleService.getRoles(roleIdSet);
 
         AppUser user = new AppUser(
                 foundUser.getId(),
-                userDto.getFirstName().trim().strip().toLowerCase(Locale.ROOT),
-                userDto.getLastName().trim().strip().toLowerCase(Locale.ROOT),
-                userDto.getPhoneNumber(),
-                userDto.getEmail().trim().strip().toLowerCase(Locale.ROOT),
+                appUserRequest.getFirstName().trim().strip().toLowerCase(Locale.ROOT),
+                appUserRequest.getLastName().trim().strip().toLowerCase(Locale.ROOT),
+                appUserRequest.getPhoneNumber(),
+                appUserRequest.getEmail().trim().strip().toLowerCase(Locale.ROOT),
                 roleSet,
                 foundUser.getUsername(), // username cannot be changed
-                passwordEncoder.encode(userDto.getPassword()), // encode the password
+                passwordEncoder.encode(appUserRequest.getPassword()), // encode the password
                 country,
-                userDto.getAddress().trim().strip(),
+                appUserRequest.getAddress().trim().strip(),
                 foundUser.getCreatedAt(), // createdAt Date cannot be change
                 LocalDateTime.now() // update the updatedAt Date
         );

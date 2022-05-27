@@ -217,6 +217,7 @@ class UserServiceTest
         given(countryService.getCountryById(anyString())).willReturn(country);
         given(roleService.getRoles(roleIdList)).willReturn(roles);
 
+        given(passwordEncoder.encode(anyString())).willReturn(user.getPassword());
 
 
         // when
@@ -224,7 +225,7 @@ class UserServiceTest
 
         // then
         ArgumentCaptor<AppUser> userArgumentCaptor = ArgumentCaptor.forClass(AppUser.class);
-        verify(userRepository).findByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
+        verify(userRepository).existsByUsernameOrEmailOrPhoneNumber(user.getUsername(), user.getEmail(), user.getPhoneNumber());
         verify(userRepository).save(userArgumentCaptor.capture());
         AppUser capturedUser = userArgumentCaptor.getValue();
 
@@ -250,22 +251,9 @@ class UserServiceTest
 
         roles.add(role);
 
-        AppUser user = new AppUser(
-                "19",
-                "John",
-                "Wick",
-                "001666666666",
-                "john.wick@gmail.com",
-                roles,
-                "john.wick",
-                "password1234",
-                country,
-                "This is an address",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
 
-        given(userRepository.findByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(Optional.of(user));
+
+        given(userRepository.existsByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(true);
 
         // user dto
         List<String> roleIdList = new ArrayList<>();
@@ -292,7 +280,7 @@ class UserServiceTest
         // then
         assertThatThrownBy(() -> underTestUserService.createUser(userToBeCreated))
                 .isInstanceOf(AlreadyExistsException.class)
-                .hasMessageContaining("User with username:[" + userToBeCreated.getUsername() + "] email:[" + userToBeCreated.getUsername() + "] phone number:[" + userToBeCreated.getUsername() + "] already exists.");
+                .hasMessageContaining("User with username:[" + userToBeCreated.getUsername() + "] or email:[" + userToBeCreated.getUsername() + "] or phone number:[" + userToBeCreated.getUsername() + "] already exists.");
 
     }
 
@@ -347,6 +335,7 @@ class UserServiceTest
         given(countryService.getCountryById(anyString())).willReturn(country);
         given(roleService.getRoles(roleIdList)).willReturn(roles);
 
+        given(passwordEncoder.encode(anyString())).willReturn(user.getPassword());
         // when
         underTestUserService.updateUser(userToBeUpdated);
 
@@ -412,20 +401,6 @@ class UserServiceTest
 
         roles.add(role);
 
-        AppUser foundUser = new AppUser(
-                "19",
-                "John",
-                "Wick",
-                "001666666666",
-                "john.wick@gmail.com",
-                roles,
-                "john.wick",
-                "password1234",
-                country,
-                "This is an address",
-                LocalDateTime.now(),
-                LocalDateTime.now()
-        );
 
         List<String> roleIdList = new ArrayList<>();
         String roleId = "11";
@@ -446,14 +421,14 @@ class UserServiceTest
                 "This is an address"
         );
 
-        given(userRepository.findByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(Optional.of(foundUser));
+        given(userRepository.existsByEmailOrPhoneNumber(anyString(), anyString())).willReturn(true);
 
         // when
 
         // then
         assertThatThrownBy(() -> underTestUserService.updateUser(userToBeUpdated))
                 .isInstanceOf(AlreadyExistsException.class)
-                .hasMessageContaining("User with these descriptions already exists");
+                .hasMessageContaining("User with email:[" + userToBeUpdated.getUsername() + "] or phone number:[" + userToBeUpdated.getUsername() + "] already exists.");
 
     }
 
