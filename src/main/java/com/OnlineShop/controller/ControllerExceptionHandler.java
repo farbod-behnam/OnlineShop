@@ -11,10 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,18 @@ public class ControllerExceptionHandler
 
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(ValidationException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setMessage("Argument is not valid");
         errorResponse.setTimeStamp(System.currentTimeMillis());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -210,6 +224,22 @@ public class ControllerExceptionHandler
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(JWTCreationException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        errorResponse.setStatus(HttpStatus.METHOD_NOT_ALLOWED.value());
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+    // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+
+    // handle authorization
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(HttpRequestMethodNotSupportedException exception)
     {
         ErrorResponse errorResponse = new ErrorResponse();
 
