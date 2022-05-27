@@ -33,7 +33,7 @@ public class CountryController
     @GetMapping("/{countryId}")
     public ResponseEntity<Country> getCountry(@PathVariable String countryId)
     {
-        Country country = countryService.getCountry(countryId);
+        Country country = countryService.getCountryById(countryId);
 
         return new ResponseEntity<>(country, HttpStatus.OK);
     }

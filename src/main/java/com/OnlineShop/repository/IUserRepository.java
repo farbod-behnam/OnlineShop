@@ -11,4 +11,6 @@ public interface IUserRepository extends MongoRepository<AppUser, String>
     Optional<AppUser> findByEmail(String email);
     Optional<AppUser> findByPhoneNumber(String email);
     Optional<AppUser> findByUsernameOrEmailOrPhoneNumber(String username, String email, String phoneNumber);
+    boolean existsByUsernameOrEmailOrPhoneNumber(String username, String email, String phoneNumber);
+    boolean existsByEmailOrPhoneNumber(String email, String phoneNumber);
 }

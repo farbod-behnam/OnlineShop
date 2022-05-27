@@ -1,7 +1,7 @@
-package com.OnlineShop.entity;
+package com.OnlineShop.dto;
 
-import com.OnlineShop.enums.CountryEnum;
-import com.OnlineShop.enums.RoleEnum;
+
+import com.OnlineShop.dto.request.AppUserRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,13 +10,13 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-class AppUserTest
+class AppUserDtoTest
 {
     private Validator validator;
 
@@ -27,18 +27,19 @@ class AppUserTest
         validator = validatorFactory.getValidator();
     }
 
+
     @Test
     public void user_validUser()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -47,38 +48,36 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-//        for (ConstraintViolation<AppUser> violation : violations)
-//        {
-//            System.out.println("Violation Message: " + violation.getMessage());
-//        }
+        for (ConstraintViolation<AppUserRequest> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
 
         assertThat(violations.isEmpty()).isTrue();
-
     }
 
     @Test
     public void user_nullName_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 null,
                 "Wick",
@@ -87,18 +86,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-//        for (ConstraintViolation<AppUser> violation : violations)
+//        for (ConstraintViolation<AppUserDto> violation : violations)
 //        {
 //            System.out.println("Violation Message: " + violation.getMessage());
 //        }
@@ -106,7 +103,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -116,14 +113,15 @@ class AppUserTest
     public void user_sizeNameLessThan3_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "Jo",
                 "Wick",
@@ -132,18 +130,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-//        for (ConstraintViolation<AppUser> violation : violations)
+//        for (ConstraintViolation<AppUserDto> violation : violations)
 //        {
 //            System.out.println("Violation Message: " + violation.getMessage());
 //        }
@@ -151,24 +147,26 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name must be between 3 and 25 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo("Jo");
     }
 
+
     @Test
     public void user_sizeNameGreaterThan45_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "asdfasdfasdfgasdfasdfgasdf",
                 "Wick",
@@ -177,26 +175,24 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-//        for (ConstraintViolation<AppUser> violation : violations)
-//        {
-//            System.out.println("Violation Message: " + violation.getMessage());
-//        }
+        for (ConstraintViolation<AppUserRequest> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name must be between 3 and 25 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo("asdfasdfasdfgasdfasdfgasdf");
@@ -206,14 +202,14 @@ class AppUserTest
     public void user_nameContainsSpecialCharactersOrNumbers_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John @!",
                 "Wick",
@@ -222,26 +218,24 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-//        for (ConstraintViolation<AppUser> violation : violations)
-//        {
-//            System.out.println("Violation Message: " + violation.getMessage());
-//        }
+        for (ConstraintViolation<AppUserRequest> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
 
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("first name should only contain alphabet character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("firstName");
         assertThat(violation.getInvalidValue()).isEqualTo("John @!");
@@ -251,14 +245,14 @@ class AppUserTest
     public void user_phoneNumberContainsAlphabetOrSpecialCharacters_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -267,18 +261,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -286,7 +278,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("phone number must only contain number");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
         assertThat(violation.getInvalidValue()).isEqualTo("00166 fasd!@$");
@@ -297,14 +289,14 @@ class AppUserTest
     public void user_phoneNumberHasAWrongCountryCode_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -313,18 +305,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -332,7 +322,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("phone number is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
         assertThat(violation.getInvalidValue()).isEqualTo("00461111111111111");
@@ -342,14 +332,14 @@ class AppUserTest
     public void user_phoneNumberHasWrongLengthForCountryCode_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -358,18 +348,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -377,24 +365,26 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("phone number is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("phoneNumber");
         assertThat(violation.getInvalidValue()).isEqualTo("0049999999");
     }
 
+
+
     @Test
     public void user_nullEmail_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -403,18 +393,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -422,7 +410,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("email is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("email");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -432,14 +420,14 @@ class AppUserTest
     public void user_invalidEmail_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -448,18 +436,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -467,24 +453,111 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("email is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("email");
         assertThat(violation.getInvalidValue()).isEqualTo("hello!@#$@124");
     }
 
     @Test
+    public void user_nullRole_shouldNotValidate()
+    {
+        // given
+
+        String countryId = "10";
+
+
+        AppUserRequest user = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                null,
+                "johnwick", // j.wick
+                "Password1234!",
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
+        );
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
+
+        for (ConstraintViolation<AppUserRequest> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("role is required");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("roles");
+        assertThat(violation.getInvalidValue()).isEqualTo(null);
+    }
+
+    @Test
+    public void user_roleListSizeGreaterThan2_shouldNotValidate()
+    {
+        // given
+        List<String> roles = new ArrayList<>();
+
+        String countryId = "10";
+        String roleId1 = "9";
+        String roleId2 = "10";
+        String roleId3 = "11";
+
+        roles.add(roleId1);
+        roles.add(roleId2);
+        roles.add(roleId3);
+
+        AppUserRequest user = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roles,
+                "johnwick", // j.wick
+                "Password1234!",
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
+        );
+
+        // when
+
+        // then
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
+
+        for (ConstraintViolation<AppUserRequest> violation : violations)
+        {
+            System.out.println("Violation Message: " + violation.getMessage());
+        }
+
+        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations.size()).isEqualTo(1);
+
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
+        assertThat(violation.getMessage()).isEqualTo("user must have at least one role and at max two roles");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("roleIdSet");
+        assertThat(violation.getInvalidValue()).isEqualTo(roles);
+    }
+
+    @Test
     public void user_nullUsername_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -493,18 +566,16 @@ class AppUserTest
                 roles,
                 null,
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -512,7 +583,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -522,14 +593,14 @@ class AppUserTest
     public void user_usernameLessThan3_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -538,18 +609,16 @@ class AppUserTest
                 roles,
                 "ja",
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -557,7 +626,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username must be between 3 and 24 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo("ja");
@@ -567,14 +636,14 @@ class AppUserTest
     public void user_usernameGreaterThan24_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -583,18 +652,16 @@ class AppUserTest
                 roles,
                 "fasdfasdfasdfasdfasdfasdf",
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -602,7 +669,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username must be between 3 and 24 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo("fasdfasdfasdfasdfasdfasdf");
@@ -612,14 +679,14 @@ class AppUserTest
     public void user_invalidUsername_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -628,18 +695,16 @@ class AppUserTest
                 roles,
                 "hello1234fasdfjlkjsdf", // hello1234fasdfjlkjsdf - how.1234
                 "Password1234!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -647,7 +712,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("username is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("username");
         assertThat(violation.getInvalidValue()).isEqualTo("hello1234fasdfjlkjsdf");
@@ -657,14 +722,14 @@ class AppUserTest
     public void user_passwordLessThan10_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -673,18 +738,16 @@ class AppUserTest
                 roles,
                 "hello123",
                 "Passw0rd!",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -692,7 +755,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("password must be greater than 10 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("password");
         assertThat(violation.getInvalidValue()).isEqualTo("Passw0rd!");
@@ -702,14 +765,14 @@ class AppUserTest
     public void user_passwordGreaterThan64_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -718,18 +781,16 @@ class AppUserTest
                 roles,
                 "hello123",
                 "Passw0rd!1234passwordpasswordpassword1234@@  !#Passw0rd!1234passwordpasswordpassword1234@@  !#",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -737,7 +798,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("password must be greater than 10 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("password");
         assertThat(violation.getInvalidValue()).isEqualTo("Passw0rd!1234passwordpasswordpassword1234@@  !#Passw0rd!1234passwordpasswordpassword1234@@  !#");
@@ -747,14 +808,14 @@ class AppUserTest
     public void user_invalidPassword_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -763,18 +824,16 @@ class AppUserTest
                 roles,
                 "hello123",
                 "passw0rd1234",
-                country,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -782,7 +841,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("password must contain at least one upper case letter, one lower case letter, number and special character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("password");
         assertThat(violation.getInvalidValue()).isEqualTo("passw0rd1234");
@@ -792,14 +851,13 @@ class AppUserTest
     public void user_nullCountry_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -809,17 +867,15 @@ class AppUserTest
                 "johnwick", // j.wick
                 "Password1234!",
                 null,
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -827,7 +883,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("country is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("country");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -837,14 +893,14 @@ class AppUserTest
     public void user_nullAddress_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -853,19 +909,17 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                null,
+                countryId,
+                null
 //                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -873,7 +927,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("address is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("address");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
@@ -883,14 +937,14 @@ class AppUserTest
     public void user_addressGreaterThan100_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -899,19 +953,17 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "this is an address this is an address this is an address this is an address this is an address this is an address this is an address ",
+                countryId,
+                "this is an address this is an address this is an address this is an address this is an address this is an address this is an address "
 //                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -919,7 +971,7 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("address must be less than 100 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("address");
         assertThat(violation.getInvalidValue()).isEqualTo("this is an address this is an address this is an address this is an address this is an address this is an address this is an address ");
@@ -929,14 +981,14 @@ class AppUserTest
     public void user_addressUnauthorizedSpecialCharacter_shouldNotValidate()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
+        List<String> roles = new ArrayList<>();
 
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+        String countryId = "10";
+        String roleId = "11";
 
-        roles.add(role);
+        roles.add(roleId);
 
-        AppUser user = new AppUser(
+        AppUserRequest user = new AppUserRequest(
                 "19",
                 "John",
                 "Wick",
@@ -945,18 +997,16 @@ class AppUserTest
                 roles,
                 "johnwick", // j.wick
                 "Password1234!",
-                country,
-                "# Cecilia[ ] @ Chapman ! 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                countryId,
+                "# Cecilia[ ] @ Chapman ! 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
         );
 
         // when
 
         // then
-        Set<ConstraintViolation<AppUser>> violations = validator.validate(user);
+        Set<ConstraintViolation<AppUserRequest>> violations = validator.validate(user);
 
-        for (ConstraintViolation<AppUser> violation : violations)
+        for (ConstraintViolation<AppUserRequest> violation : violations)
         {
             System.out.println("Violation Message: " + violation.getMessage());
         }
@@ -964,9 +1014,10 @@ class AppUserTest
         assertThat(violations.isEmpty()).isFalse();
         assertThat(violations.size()).isEqualTo(1);
 
-        ConstraintViolation<AppUser> violation = violations.iterator().next();
+        ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("address is invalid");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("address");
         assertThat(violation.getInvalidValue()).isEqualTo("# Cecilia[ ] @ Chapman ! 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401");
     }
+
 }

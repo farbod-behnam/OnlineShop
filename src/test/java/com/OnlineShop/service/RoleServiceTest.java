@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -47,6 +47,53 @@ class RoleServiceTest
 
         // then
         verify(roleRepository).findAll();
+    }
+
+    @Test
+    void getRoles_shouldReturnARoleSet()
+    {
+        // given
+        List<String> roleIdList = new ArrayList<>();
+        roleIdList.add("11");
+
+
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+//
+        given(roleRepository.findById(anyString())).willReturn(Optional.of(role));
+
+        // when
+        Set<AppRole> roleSet = underTestRoleService.getRoles(roleIdList);
+
+        // then
+        verify(roleRepository).findById(anyString());
+        assertThat(roleSet.contains(role)).isEqualTo(true);
+    }
+
+    @Test
+    void getRoles_nullList_shouldThrowIllegalArgumentException()
+    {
+        // given
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestRoleService.getRoles(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Role cannot be empty");
+    }
+
+    @Test
+    void getRoles_emptyList_shouldThrowIllegalArgumentException()
+    {
+        // given
+        List<String> roleIdList = new ArrayList<>();
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestRoleService.getRoles(roleIdList))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Role cannot be empty");
     }
 
     @Test
