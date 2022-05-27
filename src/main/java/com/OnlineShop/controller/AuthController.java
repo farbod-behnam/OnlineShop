@@ -56,6 +56,6 @@ public class AuthController
     {
         authService.logoutUser();
 
-        return new ResponseEntity<>("You have been signed out",HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("You have been signed out",HttpStatus.OK);
     }
 }
