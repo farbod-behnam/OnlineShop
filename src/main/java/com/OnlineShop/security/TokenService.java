@@ -62,25 +62,30 @@ public class TokenService implements ITokenService
     public void createDecodedJWT(String authorizationHeader)
     {
 
-        Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
+        Algorithm algorithm = null;
 
         try
         {
             String token = authorizationHeader.substring("Bearer ".length());
+            algorithm = Algorithm.HMAC256(jwtSecret.getBytes());
             JWTVerifier verifier = JWT.require(algorithm).build();
             decodedJWT = verifier.verify(token);
         }
         catch (StringIndexOutOfBoundsException e)
         {
-            throw new StringIndexOutOfBoundsException("token is out of bounds");
+            throw new StringIndexOutOfBoundsException("Token is out of bounds");
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IllegalArgumentException("Algorithm is not created");
         }
         catch (AlgorithmMismatchException e)
         {
-            throw new SignatureVerificationException(algorithm);
+            throw new AlgorithmMismatchException("The algorithm stated in the token's header is not equal to the one defined");
         }
         catch (InvalidClaimException e)
         {
-            throw new InvalidClaimException("token claims are invalid");
+            throw new InvalidClaimException("Token claims are invalid");
         }
         catch (SignatureVerificationException e)
         {
@@ -92,11 +97,11 @@ public class TokenService implements ITokenService
         }
         catch (TokenExpiredException e)
         {
-            throw new TokenExpiredException("token is expired");
+            throw new TokenExpiredException("Token has expired");
         }
         catch (JWTVerificationException e)
         {
-            throw new JWTVerificationException("token cannot be verified");
+            throw new JWTVerificationException("Token cannot be verified");
         }
 
 
