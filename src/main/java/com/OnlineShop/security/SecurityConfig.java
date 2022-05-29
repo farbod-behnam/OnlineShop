@@ -2,6 +2,8 @@ package com.OnlineShop.security;
 
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.filter.AuthTokenFilter;
+import com.OnlineShop.filter.ExceptionHandlerFilter;
+import com.OnlineShop.security.service.ITokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import java.security.SecureRandom;
 
@@ -46,6 +49,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         return new AuthTokenFilter(tokenService);
     }
 
+    @Bean
+    public ExceptionHandlerFilter exceptionHandlerFilter()
+    {
+        return new ExceptionHandlerFilter();
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception
     {
@@ -74,8 +83,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         // then whatever url you want authorization to happen
 
         // auth
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/auth/update/**").authenticated();
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/auth/logout/**").authenticated();
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/auth/update/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name());
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/auth/logout/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name());
 
         // categories
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
@@ -106,5 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(exceptionHandlerFilter(), LogoutFilter.class);
     }
 }
