@@ -4,7 +4,7 @@ import com.OnlineShop.dto.request.LoginRequest;
 import com.OnlineShop.dto.request.RegisterRequest;
 import com.OnlineShop.dto.request.UpdateRequest;
 import com.OnlineShop.dto.response.UserInfoResponse;
-import com.OnlineShop.security.IAuthService;
+import com.OnlineShop.security.service.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

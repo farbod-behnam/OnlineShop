@@ -1,4 +1,4 @@
-package com.OnlineShop.security;
+package com.OnlineShop.security.service;
 
 import com.OnlineShop.dto.request.LoginRequest;
 import com.OnlineShop.dto.request.RegisterRequest;

@@ -3,6 +3,7 @@ package com.OnlineShop.security;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.filter.AuthTokenFilter;
 import com.OnlineShop.filter.ExceptionHandlerFilter;
+import com.OnlineShop.security.service.ITokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.security.SecureRandom;
 

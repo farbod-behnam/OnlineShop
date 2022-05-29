@@ -1,4 +1,4 @@
-package com.OnlineShop.security;
+package com.OnlineShop.security.service;
 
 import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import com.auth0.jwt.JWT;

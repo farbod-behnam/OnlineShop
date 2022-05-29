@@ -1,6 +1,6 @@
 package com.OnlineShop.filter;
 
-import com.OnlineShop.security.ITokenService;
+import com.OnlineShop.security.service.ITokenService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
