@@ -21,6 +21,7 @@ public class AppUserRequest
     private String lastName;
 
 
+    @NotBlank(message = "phone number is required")
     @Pattern(regexp = "^[0-9]*$", message = "phone number must only contain number")
     @PhoneNumber(countryCode = {"001", "0049", "0044"}, phoneNumberLength = {13, 14, 14}, message = "phone number is invalid")
     private String phoneNumber;
@@ -39,6 +40,7 @@ public class AppUserRequest
     private String username;
 
     @JsonIgnore
+    @NotBlank(message = "password is required")
     @Size(min = 10, max = 64, message = "password must be greater than 10 character")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).+$", message = "password must contain at least one upper case letter, one lower case letter, number and special character")
     private String password;

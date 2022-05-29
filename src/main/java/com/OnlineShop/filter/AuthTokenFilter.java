@@ -1,6 +1,6 @@
 package com.OnlineShop.filter;
 
-import com.OnlineShop.security.ITokenService;
+import com.OnlineShop.security.service.ITokenService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,7 +26,7 @@ public class AuthTokenFilter extends OncePerRequestFilter
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
     {
-        if (request.getServletPath().equals("/api/login"))
+        if (request.getServletPath().equals("/api/auth/login"))
             filterChain.doFilter(request, response);
         else
         {

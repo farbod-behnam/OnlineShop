@@ -4,14 +4,11 @@ import com.OnlineShop.dto.request.LoginRequest;
 import com.OnlineShop.dto.request.RegisterRequest;
 import com.OnlineShop.dto.request.UpdateRequest;
 import com.OnlineShop.dto.response.UserInfoResponse;
-import com.OnlineShop.security.IAuthService;
+import com.OnlineShop.security.service.IAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -43,7 +40,7 @@ public class AuthController
        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<UserInfoResponse> updateUser(@Valid @RequestBody UpdateRequest updateRequest)
     {
        UserInfoResponse updatedUser = authService.updateUser(updateRequest);
@@ -54,8 +51,8 @@ public class AuthController
     @PostMapping("/logout")
     public ResponseEntity<String> logoutUser()
     {
-        authService.logoutUser();
+        String response = authService.logoutUser();
 
-        return new ResponseEntity<>("You have been signed out",HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

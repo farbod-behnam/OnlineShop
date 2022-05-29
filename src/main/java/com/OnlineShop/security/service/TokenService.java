@@ -1,4 +1,4 @@
-package com.OnlineShop.security;
+package com.OnlineShop.security.service;
 
 import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import com.auth0.jwt.JWT;
@@ -93,7 +93,7 @@ public class TokenService implements ITokenService
         }
         catch (JWTDecodeException e)
         {
-            throw new JWTDecodeException("The string doesn't have a valid JSON format.");
+            throw new JWTDecodeException("The string token cannot be decoded");
         }
         catch (TokenExpiredException e)
         {

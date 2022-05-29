@@ -1,4 +1,4 @@
-package com.OnlineShop.security;
+package com.OnlineShop.security.service;
 
 import com.OnlineShop.dto.request.LoginRequest;
 import com.OnlineShop.dto.request.RegisterRequest;
@@ -18,16 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Transactional
 public class AuthService implements IAuthService
 {
     private final AuthenticationManager authenticationManager;
@@ -68,13 +69,20 @@ public class AuthService implements IAuthService
 
         List<String> roles = userDetails.getStringListRoles();
 
+        Optional<AppUser> userOptional = userRepository.findById(userDetails.getId());
+
+        if (userOptional.isEmpty())
+            throw new NotFoundException("User with id: [" + userDetails.getId() + "] cannot be found");
+
+        AppUser user = userOptional.get();
+
         return new UserInfoResponse(
                userDetails.getId(),
-               userDetails.getFirstName(),
-               userDetails.getLastName(),
+               user.getFirstName(),
+                user.getLastName(),
                userDetails.getUsername(),
                userDetails.getEmail(),
-               userDetails.getPhoneNumber(),
+                user.getPhoneNumber(),
                roles,
                token
         );
@@ -138,7 +146,9 @@ public class AuthService implements IAuthService
             throw new UsernameNotFoundException("User is not logged in");
 
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        // my implementation of UserDetailsImp does not work !!! but in loginUser method it does work
+//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String loggedInUsername = (String) authentication.getPrincipal();
 
         boolean result = userRepository.existsByEmailOrPhoneNumber(updateRequest.getEmail(), updateRequest.getPhoneNumber());
 
@@ -146,37 +156,34 @@ public class AuthService implements IAuthService
             throw new AlreadyExistsException("User with these descriptions already exists");
 
 
-        Optional<AppUser> userToBeUpdatedOptional = userRepository.findById(userDetails.getId());
+        Optional<AppUser> userToBeUpdatedOptional = userRepository.findByUsername(loggedInUsername);
 
         if (userToBeUpdatedOptional.isEmpty())
-            throw new NotFoundException("User with id: [" + userDetails.getId() + "] cannot be found");
-
-        Country country = countryService.getCountryById(updateRequest.getCountryId());
-
-        List<String> stringListRoles = userDetails.getStringListRoles();
-
-        Set<AppRole> roleSet = new HashSet<>();
-
-        for (String roleStr: stringListRoles)
-        {
-            AppRole role = roleService.getRoleByName(roleStr);
-            roleSet.add(role);
-        }
-
+            throw new NotFoundException("User with username: [" + loggedInUsername + "] cannot be found");
 
 
         AppUser foundUser = userToBeUpdatedOptional.get();
+
+
+        Set<AppRole> roleSet = foundUser.getRoles();
+
+        List<String> stringListRoles = new ArrayList<>();
+
+        for (AppRole role: roleSet)
+            stringListRoles.add(role.getName());
+
+
 
         AppUser user = new AppUser(
                 foundUser.getId(),
                 updateRequest.getFirstName().trim().strip().toLowerCase(Locale.ROOT),
                 updateRequest.getLastName().trim().strip().toLowerCase(Locale.ROOT),
-                updateRequest.getPhoneNumber(),
+                updateRequest.getPhoneNumber().trim().strip(),
                 updateRequest.getEmail().trim().strip().toLowerCase(Locale.ROOT),
                 roleSet, // user has only ROLE_USER
                 foundUser.getUsername(), // username cannot be changed
-                passwordEncoder.encode(updateRequest.getPassword()), // encode the password
-                country,
+                passwordEncoder.encode(updateRequest.getPassword()),
+                countryService.getCountryById(updateRequest.getCountryId()),
                 updateRequest.getAddress().trim().strip(),
                 foundUser.getCreatedAt(), // createdAt Date cannot be change
                 LocalDateTime.now() // update the updatedAt Date
@@ -198,8 +205,17 @@ public class AuthService implements IAuthService
     }
 
     @Override
-    public void logoutUser()
+    public String logoutUser()
     {
-        SecurityContextHolder.getContext().setAuthentication(null);
+
+        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
+        {
+            String loggedInUsername = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            SecurityContextHolder.getContext().setAuthentication(null);
+
+            return "You have been logged out";
+        }
+
+        return "No user is logged into the application";
     }
 }

@@ -1,4 +1,4 @@
-package com.OnlineShop.security;
+package com.OnlineShop.security.service;
 
 import com.OnlineShop.dto.request.LoginRequest;
 import com.OnlineShop.dto.request.RegisterRequest;
@@ -10,5 +10,5 @@ public interface IAuthService
     UserInfoResponse loginUser(LoginRequest loginRequest);
     UserInfoResponse registerUser(RegisterRequest registerRequest);
     UserInfoResponse updateUser(UpdateRequest updateRequest);
-    void logoutUser();
+    String logoutUser();
 }
