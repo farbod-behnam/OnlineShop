@@ -85,7 +85,7 @@ public class TokenService implements ITokenService
         }
         catch (InvalidClaimException e)
         {
-            throw new InvalidClaimException("Token claims are invalid");
+            throw new InvalidClaimException("Token claims are not valid");
         }
         catch (SignatureVerificationException e)
         {
@@ -93,7 +93,7 @@ public class TokenService implements ITokenService
         }
         catch (JWTDecodeException e)
         {
-            throw new JWTDecodeException("The string token cannot be decoded");
+            throw new JWTDecodeException("The token is not valid and cannot be decoded");
         }
         catch (TokenExpiredException e)
         {
