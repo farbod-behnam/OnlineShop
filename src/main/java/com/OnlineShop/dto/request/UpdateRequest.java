@@ -2,41 +2,51 @@ package com.OnlineShop.dto.request;
 
 import com.OnlineShop.validation.PhoneNumber;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.*;
 
 public class UpdateRequest
 {
 
+//    @Nullable
     @NotBlank(message = "first name is required")
     @Size(min = 3, max = 25, message = "first name must be between 3 and 25 character")
     @Pattern(regexp = "^[a-zA-Z]*$", message = "first name should only contain alphabet character")
     private String firstName;
 
+//    @Nullable
     @NotBlank(message = "last name is required")
     @Size(min = 3, max = 25, message = "last name must be between 3 and 25 character")
     @Pattern(regexp = "^[a-zA-Z]*$", message = "last name should only contain alphabet character")
     private String lastName;
 
 
+//    @Nullable
+    @NotBlank(message = "phone number is required")
     @Pattern(regexp = "^[0-9]*$", message = "phone number must only contain number")
     @PhoneNumber(countryCode = {"001", "0049", "0044"}, phoneNumberLength = {13, 14, 14}, message = "phone number is invalid")
     private String phoneNumber;
 
+//    @Nullable
     @NotBlank(message = "email is required")
     @Email(message = "email is invalid")
     private String email;
 
 
-    @JsonIgnore
+//    @Nullable
+    @NotBlank(message = "country is required")
     @Size(min = 10, max = 64, message = "password must be greater than 10 character")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).+$", message = "password must contain at least one upper case letter, one lower case letter, number and special character")
     private String password;
 
-    @NotNull(message = "country is required")
+//    @Nullable
+    @NotBlank(message = "country is required")
     private String  countryId;
 
-    @NotNull(message = "address is required")
+//    @Nullable
+    @NotBlank(message = "address is required")
     @Size(max = 100, message = "address must be less than 100 character")
     @Pattern(regexp = "[A-Za-z0-9'.\\-\\s,()]*", message = "address is invalid")
     private String address;
