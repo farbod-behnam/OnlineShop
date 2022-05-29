@@ -10,5 +10,5 @@ public interface IAuthService
     UserInfoResponse loginUser(LoginRequest loginRequest);
     UserInfoResponse registerUser(RegisterRequest registerRequest);
     UserInfoResponse updateUser(UpdateRequest updateRequest);
-    void logoutUser();
+    String logoutUser();
 }
