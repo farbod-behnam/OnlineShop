@@ -58,8 +58,8 @@ public class CategoryService implements ICategoryService
         // in order to register entity as a new record
         // the id should be null
         category.setId(null);
-        String trimmedName = category.getName().trim();
-        category.setName(trimmedName);
+
+        category.setName(category.getName().trim().strip());
 
         return categoryRepository.save(category);
     }
