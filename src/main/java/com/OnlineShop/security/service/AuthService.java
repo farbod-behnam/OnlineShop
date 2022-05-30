@@ -16,9 +16,11 @@ import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,16 +43,19 @@ public class AuthService implements IAuthService
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserDetailsService userDetailsService;
+
     private final ITokenService tokenService;
 
     @Autowired
-    public AuthService(AuthenticationManager authenticationManager, IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder, ITokenService tokenService)
+    public AuthService(AuthenticationManager authenticationManager, IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, ITokenService tokenService)
     {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.countryService = countryService;
         this.passwordEncoder = passwordEncoder;
+        this.userDetailsService = userDetailsService;
         this.tokenService = tokenService;
     }
 
@@ -58,31 +63,43 @@ public class AuthService implements IAuthService
     @Override
     public UserInfoResponse loginUser(LoginRequest loginRequest)
     {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Authentication authentication;
+
+        try
+        {
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        }
+        catch (BadCredentialsException exception)
+        {
+           throw new BadCredentialsException("Incorrect username or password");
+        }
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(loginRequest.getUsername());
 
         String token = tokenService.createJWT(userDetails);
 
         List<String> roles = userDetails.getStringListRoles();
 
-        Optional<AppUser> userOptional = userRepository.findById(userDetails.getId());
-
-        if (userOptional.isEmpty())
-            throw new NotFoundException("User with id: [" + userDetails.getId() + "] cannot be found");
-
-        AppUser user = userOptional.get();
+//        Optional<AppUser> userOptional = userRepository.findById(userDetails.getId());
+//
+//        if (userOptional.isEmpty())
+//            throw new NotFoundException("User with id: [" + userDetails.getId() + "] cannot be found");
+//
+//        AppUser user = userOptional.get();
 
         return new UserInfoResponse(
                userDetails.getId(),
-               user.getFirstName(),
-                user.getLastName(),
+               userDetails.getFirstName(),
+               userDetails.getLastName(),
                userDetails.getUsername(),
                userDetails.getEmail(),
-                user.getPhoneNumber(),
+               userDetails.getPhoneNumber(),
                roles,
                token
         );
@@ -109,6 +126,7 @@ public class AuthService implements IAuthService
 
         Set<AppRole> roleSet = new HashSet<>();
 
+        // a normal user when registers they only need to have ROLE_USER
         AppRole role = roleService.getRoleByName(RoleEnum.ROLE_USER.name());
         roleSet.add(role);
 
@@ -127,12 +145,25 @@ public class AuthService implements IAuthService
                 LocalDateTime.now()
         );
 
-
         AppUser createdAppUser = userRepository.save(user);
 
-        LoginRequest loginRequest = new LoginRequest(createdAppUser.getUsername(), createdAppUser.getPassword());
+        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(createdAppUser.getUsername());
 
-        return loginUser(loginRequest);
+        String token = tokenService.createJWT(userDetails);
+
+        List<String> roles = userDetails.getStringListRoles();
+
+
+        return new UserInfoResponse(
+                userDetails.getId(),
+                userDetails.getFirstName(),
+                userDetails.getLastName(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                userDetails.getPhoneNumber(),
+                roles,
+                token
+        );
 
     }
 
@@ -202,20 +233,5 @@ public class AuthService implements IAuthService
                 null
         );
 
-    }
-
-    @Override
-    public String logoutUser()
-    {
-
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
-        {
-            String loggedInUsername = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            SecurityContextHolder.getContext().setAuthentication(null);
-
-            return "You have been logged out";
-        }
-
-        return "No user is logged into the application";
     }
 }
