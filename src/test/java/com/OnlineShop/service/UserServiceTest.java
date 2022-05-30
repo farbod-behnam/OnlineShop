@@ -244,13 +244,6 @@ class UserServiceTest
     void createUser_shouldThrowAlreadyExistsException()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
-
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
-
-        roles.add(role);
-
 
 
         given(userRepository.existsByUsernameOrEmailOrPhoneNumber(anyString(), anyString(), anyString())).willReturn(true);
@@ -394,14 +387,6 @@ class UserServiceTest
     void updateUser_shouldAlreadyExistsException()
     {
         // given
-        Set<AppRole> roles = new HashSet<>();
-
-        Country country = new Country("10", CountryEnum.Germany.name());
-        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
-
-        roles.add(role);
-
-
         List<String> roleIdList = new ArrayList<>();
         String roleId = "11";
         roleIdList.add(roleId);
@@ -428,7 +413,7 @@ class UserServiceTest
         // then
         assertThatThrownBy(() -> underTestUserService.updateUser(userToBeUpdated))
                 .isInstanceOf(AlreadyExistsException.class)
-                .hasMessageContaining("User with email:[" + userToBeUpdated.getUsername() + "] or phone number:[" + userToBeUpdated.getUsername() + "] already exists.");
+                .hasMessageContaining("User with email:[" + userToBeUpdated.getEmail() + "] or phone number:[" + userToBeUpdated.getPhoneNumber() + "] already exists.");
 
     }
 
