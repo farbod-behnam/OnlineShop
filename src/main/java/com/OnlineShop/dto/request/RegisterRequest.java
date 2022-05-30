@@ -33,7 +33,7 @@ public class RegisterRequest
     @Pattern(regexp = "^[a-z]*?[0-9]*$", message = "username is invalid")
     private String username;
 
-    @JsonIgnore
+    @NotBlank(message = "password is required")
     @Size(min = 10, max = 64, message = "password must be greater than 10 character")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).+$", message = "password must contain at least one upper case letter, one lower case letter, number and special character")
     private String password;
@@ -151,5 +151,21 @@ public class RegisterRequest
     public void setAddress(String address)
     {
         this.address = address;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "RegisterRequest [" +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", countryId='" + countryId + '\'' +
+                ", address='" + address + '\'' +
+                ']';
     }
 }
