@@ -91,7 +91,7 @@ public class UserService implements IUserService
 
         Country country = countryService.getCountryById(appUserRequest.getCountryId());
 
-        List<String> roleIdSet = appUserRequest.getRolesId();
+        List<String> roleIdSet = appUserRequest.getRoleIdList();
         Set<AppRole> roleSet = roleService.getRoles(roleIdSet);
 
         AppUser user = new AppUser(
@@ -122,7 +122,7 @@ public class UserService implements IUserService
 
         // see if username, email or phone number already is in use
         if (userExists)
-            throw new AlreadyExistsException("User with email:[" + appUserRequest.getUsername() + "] or phone number:[" + appUserRequest.getUsername() + "] already exists.");
+            throw new AlreadyExistsException("User with email:[" + appUserRequest.getEmail() + "] or phone number:[" + appUserRequest.getPhoneNumber() + "] already exists.");
 
         // if not then see if the user with this id already exists
         Optional<AppUser> result = userRepository.findById(appUserRequest.getId());
@@ -134,7 +134,7 @@ public class UserService implements IUserService
 
         Country country = countryService.getCountryById(appUserRequest.getCountryId());
 
-        List<String> roleIdSet = appUserRequest.getRolesId();
+        List<String> roleIdSet = appUserRequest.getRoleIdList();
         Set<AppRole> roleSet = roleService.getRoles(roleIdSet);
 
         AppUser user = new AppUser(
