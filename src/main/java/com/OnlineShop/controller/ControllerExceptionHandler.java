@@ -8,6 +8,7 @@ import org.springframework.data.mapping.MappingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -138,6 +139,19 @@ public class ControllerExceptionHandler
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(HttpRequestMethodNotSupportedException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        errorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(BadCredentialsException exception)
     {
         ErrorResponse errorResponse = new ErrorResponse();
 
