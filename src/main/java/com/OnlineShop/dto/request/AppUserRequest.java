@@ -30,7 +30,7 @@ public class AppUserRequest
     @Email(message = "email is invalid")
     private String email;
 
-    @NotNull(message = "role is required")
+    @NotEmpty(message = "role is required")
     @Size(min = 1, max = 2, message = "user must have at least one role and at max two roles")
     private List<String> roleIdList;
 
@@ -39,7 +39,6 @@ public class AppUserRequest
     @Pattern(regexp = "^[a-z]*?[0-9]*$", message = "username is invalid")
     private String username;
 
-    @JsonIgnore
     @NotBlank(message = "password is required")
     @Size(min = 10, max = 64, message = "password must be greater than 10 character")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).+$", message = "password must contain at least one upper case letter, one lower case letter, number and special character")
@@ -123,12 +122,12 @@ public class AppUserRequest
         this.email = email;
     }
 
-    public List<String> getRolesId()
+    public List<String> getRoleIdList()
     {
         return roleIdList;
     }
 
-    public void setRolesId(List<String> roleIdList)
+    public void setRoleIdList(List<String> roleIdList)
     {
         this.roleIdList = roleIdList;
     }
@@ -177,13 +176,13 @@ public class AppUserRequest
     @Override
     public String toString()
     {
-        return "AppUserDto [" +
+        return "AppUserRequest [" +
                 "id='" + id + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", rolesId=" + roleIdList +
+                ", roleIdList=" + roleIdList +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", countryId='" + countryId + '\'' +
