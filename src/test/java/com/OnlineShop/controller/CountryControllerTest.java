@@ -142,8 +142,11 @@ class CountryControllerTest
                 .andExpect(status().isForbidden())
                 .andDo(print());
     }
+
+
     @Test
-    void postCountry_shouldReturnCreatedCountry() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    void postCountry_authorizedByAdmin_shouldReturnCreatedCountry() throws Exception
     {
         // given
         Country country = new Country("19", CountryEnum.Germany.toString());
@@ -160,6 +163,45 @@ class CountryControllerTest
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(equalTo("19")))
                 .andExpect(jsonPath("$.name").value(equalTo("germany")))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    void postCountry_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryService.createCountry(any(Country.class))).willReturn(country);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/countries")
+                        .content(asJsonString(country))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void postCountry_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryService.createCountry(any(Country.class))).willReturn(country);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/countries")
+                        .content(asJsonString(country))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
     }
 
