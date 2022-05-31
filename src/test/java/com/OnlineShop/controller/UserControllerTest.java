@@ -563,7 +563,8 @@ class UserControllerTest
     }
 
     @Test
-    public void putUser_shouldReturnUpdatedUser() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void putUser_authorizedByAdmin_shouldReturnUpdatedUser() throws Exception
     {
         // given
 
@@ -632,6 +633,133 @@ class UserControllerTest
                 .andExpect(jsonPath("$.country.id").value(equalTo("10")))
                 .andExpect(jsonPath("$.country.name").value(equalTo(CountryEnum.Germany.name())))
                 .andExpect(jsonPath("$.address").value(equalTo("This is an address")))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void putUser_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.updateUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void putUser_shouldBeUnauthorized() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.updateUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
     }
