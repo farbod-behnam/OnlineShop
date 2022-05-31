@@ -337,7 +337,8 @@ class ProductControllerTest
     }
 
     @Test
-    public void putProduct_shouldReturnUpdatedProduct() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void putProduct_authorizedByAdmin_shouldReturnUpdatedProduct() throws Exception
     {
         // given
         BigDecimal price = new BigDecimal("69.99");
@@ -384,6 +385,96 @@ class ProductControllerTest
                 .andExpect(jsonPath("$.category.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.category.name").value(equalTo("Video Games")))
                 .andExpect(jsonPath("$.active").value(equalTo(true)))
+                .andDo(print());
+
+    }
+
+    @Test
+    public void putProduct_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        ProductRequest productDto = new ProductRequest(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productService.updateProduct(any(ProductRequest.class))).willReturn(product);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/products")
+                        .content(asJsonString(productDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void putProduct_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        ProductRequest productDto = new ProductRequest(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productService.updateProduct(any(ProductRequest.class))).willReturn(product);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/products")
+                        .content(asJsonString(productDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
     }
