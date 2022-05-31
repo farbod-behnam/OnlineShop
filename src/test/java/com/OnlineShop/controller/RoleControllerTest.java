@@ -250,7 +250,8 @@ class RoleControllerTest
     }
 
     @Test
-    void putRole_shouldReturnUpdatedRole() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    void putRole_authorizedByAdmin_shouldReturnUpdatedRole() throws Exception
     {
         // given
 
@@ -269,6 +270,49 @@ class RoleControllerTest
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(equalTo("19")))
                 .andExpect(jsonPath("$.name").value(equalTo("ROLE_USER")))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    void putRole_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+
+        given(roleService.updateRole(any(AppRole.class))).willReturn(role);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/roles/")
+                        .content(asJsonString(role))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void putRole_shouldBeUnauthorized() throws Exception
+    {
+        // given
+
+        AppRole role = new AppRole("19", RoleEnum.ROLE_USER.name());
+
+
+        given(roleService.updateRole(any(AppRole.class))).willReturn(role);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/roles/")
+                        .content(asJsonString(role))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
     }
 
