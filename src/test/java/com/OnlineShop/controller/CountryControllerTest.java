@@ -104,7 +104,8 @@ class CountryControllerTest
 
 
     @Test
-    void getCountry_shouldReturnACountry() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN", "ROLE_USER"})
+    void getCountry_authorizedByUserAndAdmin_shouldReturnACountry() throws Exception
     {
         // given
         Country country = new Country("19", CountryEnum.Germany.name());
@@ -123,6 +124,24 @@ class CountryControllerTest
                 .andDo(print());
     }
 
+
+    @Test
+    void getCountry_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.name());
+
+
+
+        given(countryService.getCountryById(anyString())).willReturn(country);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/countries" + "/19"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
     @Test
     void postCountry_shouldReturnCreatedCountry() throws Exception
     {
