@@ -358,7 +358,8 @@ class UserControllerTest
     }
 
     @Test
-    public void postUser_shouldReturnCreatedUser() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void postUser_authorizedByAdmin_shouldReturnCreatedUser() throws Exception
     {
         // given
 
@@ -377,7 +378,7 @@ class UserControllerTest
                 "john.wick@gmail.com",
                 roleIdList,
                 "johnwick",
-                "password1234",
+                "Password!1234",
                 countryId,
                 "This is an address"
         );
@@ -433,6 +434,135 @@ class UserControllerTest
     }
 
     @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void postUser_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.createUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void postUser_shouldBeUnauthorized() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.createUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
     public void putUser_shouldReturnUpdatedUser() throws Exception
     {
         // given
@@ -452,7 +582,7 @@ class UserControllerTest
                 "john.wick@gmail.com",
                 roleIdList,
                 "johnwick",
-                "password1234",
+                "Password!1234",
                 countryId,
                 "This is an address"
         );
@@ -473,7 +603,7 @@ class UserControllerTest
                 "john.wick@gmail.com",
                 roles,
                 "john.wick",
-                "password1234",
+                "Password!1234",
                 country,
                 "This is an address",
                 LocalDateTime.now(),
