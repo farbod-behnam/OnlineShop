@@ -765,7 +765,8 @@ class UserControllerTest
     }
 
     @Test
-    public void deleteUser_ShouldReturnString() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void deleteUser_authorizedByAdmin_ShouldReturnString() throws Exception
     {
         // given
         String userId = "11";
@@ -778,6 +779,41 @@ class UserControllerTest
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(equalTo("User with id: [" + userId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void deleteUser_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        String userId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/" + userId)
+                        .content(asJsonString("User with id: [" + userId + "] is deleted"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void deleteUser_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        String userId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/" + userId)
+                        .content(asJsonString("User with id: [" + userId + "] is deleted"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
     }
