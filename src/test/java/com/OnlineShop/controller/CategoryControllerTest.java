@@ -1,8 +1,13 @@
 package com.OnlineShop.controller;
 
+import com.OnlineShop.OnlineShopApplication;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
-import com.OnlineShop.service.ICategoryService;
+import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.security.SecurityConfig;
+import com.OnlineShop.security.service.ITokenService;
+import com.OnlineShop.security.userdetails.UserDetailsServiceImpl;
+import com.OnlineShop.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,14 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 
 import java.util.ArrayList;
@@ -28,12 +33,12 @@ import java.util.List;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(CategoryController.class)
+@WebMvcTest(controllers = CategoryController.class)
+//@Import(SecurityConfig.class)
 public class CategoryControllerTest
 {
 
@@ -43,22 +48,25 @@ public class CategoryControllerTest
     @MockBean
     private ICategoryService categoryService;
 
-//    @Autowired
-//    private WebApplicationContext context;
-////
-////    @Autowired
-////    private UserDetailsService userDetailsService;
-////
-//    @BeforeEach
-//    void setUp()
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private ITokenService tokenService;
+
+
+//    @Configuration
+//    @EnableWebSecurity
+//    static class Config extends WebSecurityConfigurerAdapter
 //    {
-//        mockMvc = MockMvcBuilders
-//                .webAppContextSetup(context)
-//                .apply(springSecurity())
-//                .build();
+//        @Autowired
+//        public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception
+//        {
+//            auth.inMemoryAuthentication().withUser("user").password("pa$$").roles("USER");
+//            auth.inMemoryAuthentication().withUser("admin").password("pa$$").roles("ADMIN");
+//        }
+//
 //    }
-
-
 
     @Test
     public void getCategories_returnsEmptyCategoryList() throws Exception
@@ -166,6 +174,7 @@ public class CategoryControllerTest
     }
 
     @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
     public void postCategory_returnsCreatedCategory() throws Exception
     {
         // given
@@ -188,6 +197,48 @@ public class CategoryControllerTest
         // then
 //        verify(categoryService, times(1)).findAll();
     }
+
+    @Test
+    public void postCategory_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.createCategory(any(Category.class))).willReturn(category);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void postCategory_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.createCategory(any(Category.class))).willReturn(category);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+
 
     @Test
     public void putCategory_returnsUpdatedCategory() throws Exception
