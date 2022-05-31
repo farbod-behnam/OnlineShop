@@ -267,7 +267,8 @@ class CountryControllerTest
     }
 
     @Test
-    public void deleteCountry_ShouldReturnString() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void deleteCountry_authorizedByAdmin_ShouldReturnString() throws Exception
     {
         // given
         String countryId = "11";
@@ -276,10 +277,42 @@ class CountryControllerTest
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/countries/" + countryId)
-                        .content(asJsonString("Country with id: [" + countryId + "] is deleted"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(equalTo("Country with id: [" + countryId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void deleteCountry_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        String countryId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/countries/" + countryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void deleteCountry_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        String countryId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/countries/" + countryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
     }
