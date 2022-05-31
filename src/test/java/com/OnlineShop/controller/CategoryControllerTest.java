@@ -175,7 +175,7 @@ public class CategoryControllerTest
 
     @Test
     @WithMockUser(authorities = {"ROLE_ADMIN"})
-    public void postCategory_returnsCreatedCategory() throws Exception
+    public void postCategory_authorized_returnsCreatedCategory() throws Exception
     {
         // given
         Category category = new Category("11", "Video Games");
@@ -241,7 +241,8 @@ public class CategoryControllerTest
 
 
     @Test
-    public void putCategory_returnsUpdatedCategory() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void putCategory_authorized_returnsUpdatedCategory() throws Exception
     {
         // given
         Category category = new Category("11", "Video Games");
@@ -258,6 +259,47 @@ public class CategoryControllerTest
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+
+    @Test
+    public void putCategory_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.updateCategory(any(Category.class))).willReturn(category);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+        // then
+//        verify(categoryService, times(1)).findAll();
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void putCategory_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.updateCategory(any(Category.class))).willReturn(category);
+
+        // when
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
         // then
