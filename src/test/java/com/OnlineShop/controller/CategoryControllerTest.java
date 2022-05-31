@@ -48,6 +48,8 @@ public class CategoryControllerTest
     @MockBean
     private ICategoryService categoryService;
 
+    // need to be mocked because SecurityConfig.class injects
+    // these two services ( UserDetailsService, ITokenService ) into itself
     @MockBean
     private UserDetailsService userDetailsService;
 
