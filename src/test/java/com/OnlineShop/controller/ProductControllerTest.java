@@ -480,7 +480,8 @@ class ProductControllerTest
     }
 
     @Test
-    public void deleteProduct_ShouldReturnString() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void deleteProduct_authorizedByAdmin_ShouldReturnString() throws Exception
     {
         // given
         String productId = "11";
@@ -489,10 +490,44 @@ class ProductControllerTest
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/products/" + productId)
-                        .content(asJsonString("Product with id: [" + productId + "] is deleted"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.").value(equalTo("Product with id: [" + productId + "] is deleted")))
+//                .andExpect(jsonPath("$").value(equalTo("Product with id: [" + productId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void deleteProduct_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        String productId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/products/" + productId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+//                .andExpect(jsonPath("$").value(equalTo("Product with id: [" + productId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    public void deleteProduct_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        String productId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/products/" + productId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+//                .andExpect(jsonPath("$").value(equalTo("Product with id: [" + productId + "] is deleted")))
                 .andDo(print());
 
     }
