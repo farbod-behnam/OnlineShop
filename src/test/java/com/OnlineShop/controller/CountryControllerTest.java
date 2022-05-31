@@ -2,6 +2,8 @@ package com.OnlineShop.controller;
 
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.CountryEnum;
+import com.OnlineShop.security.SecurityConfig;
+import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.service.ICountryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -9,7 +11,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -26,7 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(CountryController.class)
+@WebMvcTest(controllers = CountryController.class)
+//@Import(SecurityConfig.class)
 class CountryControllerTest
 {
 
@@ -36,9 +42,18 @@ class CountryControllerTest
     @MockBean
     private ICountryService countryService;
 
+    // need to be mocked because SecurityConfig.class injects
+    // these two services ( UserDetailsService, ITokenService ) into itself
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private ITokenService tokenService;
+
 
     @Test
-    void getCountries_shouldReturnCountryList() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN", "ROLE_USER"})
+    void getCountries_authorizedByUserAndAdmin_shouldReturnCountryList() throws Exception
     {
         // given
         Country country1 = new Country("19", CountryEnum.Germany.name());
@@ -62,6 +77,28 @@ class CountryControllerTest
                 .andExpect(jsonPath("$[0].name").value(equalTo("Germany")))
                 .andExpect(jsonPath("$[1].id").value(equalTo("20")))
                 .andExpect(jsonPath("$[1].name").value(equalTo("USA")))
+                .andDo(print());
+    }
+
+    @Test
+    void getCountries_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Country country1 = new Country("19", CountryEnum.Germany.name());
+        Country country2 = new Country("20", CountryEnum.USA.name());
+
+        List<Country> countries = new ArrayList<>();
+
+        countries.add(country1);
+        countries.add(country2);
+
+        given(countryService.getCountries()).willReturn(countries);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/countries"))
+                .andExpect(status().isForbidden())
                 .andDo(print());
     }
 
