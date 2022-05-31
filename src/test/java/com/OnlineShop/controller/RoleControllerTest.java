@@ -2,6 +2,7 @@ package com.OnlineShop.controller;
 
 import com.OnlineShop.entity.AppRole;
 import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.service.IRoleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,7 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(RoleController.class)
+@WebMvcTest(controllers = RoleController.class)
+//@Import(SecurityConfig.class)
 class RoleControllerTest
 {
 
@@ -37,8 +41,18 @@ class RoleControllerTest
     @MockBean
     private IRoleService roleService;
 
+    // need to be mocked because SecurityConfig.class injects
+    // these two services ( UserDetailsService, ITokenService ) into itself
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private ITokenService tokenService;
+
+
     @Test
-    void getRoles_shouldReturnRoles() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    void getRoles_authorizedByAdmin_shouldReturnRoles() throws Exception
     {
         // given
         List<AppRole> roles = new ArrayList<>();
@@ -62,6 +76,51 @@ class RoleControllerTest
                 .andExpect(jsonPath("$[0].name").value(equalTo("ROLE_USER")))
                 .andExpect(jsonPath("$[1].id").value(equalTo("20")))
                 .andExpect(jsonPath("$[1].name").value(equalTo("ROLE_ADMIN")))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    void getRoles_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        List<AppRole> roles = new ArrayList<>();
+
+        AppRole role1 = new AppRole("19", RoleEnum.ROLE_USER.name());
+        AppRole role2 = new AppRole("20", RoleEnum.ROLE_ADMIN.name());
+
+        roles.add(role1);
+        roles.add(role2);
+
+        given(roleService.getRoles()).willReturn(roles);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/roles"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void getRoles_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        List<AppRole> roles = new ArrayList<>();
+
+        AppRole role1 = new AppRole("19", RoleEnum.ROLE_USER.name());
+        AppRole role2 = new AppRole("20", RoleEnum.ROLE_ADMIN.name());
+
+        roles.add(role1);
+        roles.add(role2);
+
+        given(roleService.getRoles()).willReturn(roles);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/roles"))
+                .andExpect(status().isForbidden())
                 .andDo(print());
     }
 
