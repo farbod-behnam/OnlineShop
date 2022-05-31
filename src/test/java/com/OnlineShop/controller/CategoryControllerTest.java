@@ -165,7 +165,7 @@ public class CategoryControllerTest
 
     @Test
     @WithMockUser(authorities = {"ROLE_ADMIN"})
-    public void postCategory_authorized_returnsCreatedCategory() throws Exception
+    public void postCategory_authorizedByAdmin_returnsCreatedCategory() throws Exception
     {
         // given
         Category category = new Category("11", "Video Games");
@@ -232,7 +232,7 @@ public class CategoryControllerTest
 
     @Test
     @WithMockUser(authorities = {"ROLE_ADMIN"})
-    public void putCategory_authorized_returnsUpdatedCategory() throws Exception
+    public void putCategory_authorizedByAdmin_returnsUpdatedCategory() throws Exception
     {
         // given
         Category category = new Category("11", "Video Games");
@@ -298,7 +298,7 @@ public class CategoryControllerTest
 
     @Test
     @WithMockUser(authorities = {"ROLE_ADMIN"})
-    public void deleteCategory_authorized_ShouldReturnString() throws Exception
+    public void deleteCategory_authorizedByAdmin_ShouldReturnString() throws Exception
     {
         // given
         String categoryId = "11";
