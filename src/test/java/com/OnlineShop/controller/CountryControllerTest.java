@@ -206,7 +206,8 @@ class CountryControllerTest
     }
 
     @Test
-    void putCountry_shouldReturnUpdatedCountry() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    void putCountry_authorizedByAdmin_shouldReturnUpdatedCountry() throws Exception
     {
         // given
         Country country = new Country("19", CountryEnum.Germany.toString());
@@ -226,6 +227,44 @@ class CountryControllerTest
                 .andDo(print());
     }
 
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    void putCountry_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryService.updateCountry(any(Country.class))).willReturn(country);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/countries")
+                        .content(asJsonString(country))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void putCountry_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Country country = new Country("19", CountryEnum.Germany.toString());
+
+        given(countryService.updateCountry(any(Country.class))).willReturn(country);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/countries")
+                        .content(asJsonString(country))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
 
     @Test
     public void deleteCountry_ShouldReturnString() throws Exception
