@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * User entity for OnlineShop application
+ */
 @Document(collection = "User")
 public class AppUser
 {

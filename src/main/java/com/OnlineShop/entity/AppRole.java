@@ -7,6 +7,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+/**
+ * Role entity for OnlineShop application
+ */
 @Document(collection = "Role")
 public class AppRole
 {

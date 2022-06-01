@@ -38,11 +38,20 @@ public class AuthTokenFilter extends OncePerRequestFilter
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer "))
             {
+
+                // build DecodedJWT interface
                 tokenService.createDecodedJWT(authorizationHeader);
+
+                // get username from DecodedJWT
                 String username = tokenService.getUsernameDecodedJWT();
+
+                // get authorities from DecodedJWT
                 Collection<SimpleGrantedAuthority> authorities = tokenService.getAuthoritiesDecodedJWT();
 
+                // build the Authentication Token
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+                // set the Authentication Token
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
                 filterChain.doFilter(request, response);

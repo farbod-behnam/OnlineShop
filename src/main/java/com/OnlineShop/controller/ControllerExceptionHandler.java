@@ -20,6 +20,11 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * A Class that handles exception in the Controller
+ */
+
 @ControllerAdvice
 public class ControllerExceptionHandler
 {

@@ -102,6 +102,12 @@ public class UserDetailsImpl implements UserDetails
         return true;
     }
 
+    /**
+     * A method to convert the authorities ({@link GrantedAuthority})
+     * to a list of string
+     *
+     * @return the authenticated user roles as a list as string
+     */
     public List<String> getStringListRoles()
     {
         return authorities.stream()
@@ -110,6 +116,12 @@ public class UserDetailsImpl implements UserDetails
 
     }
 
+    /**
+     * A method to construct UserDetailsImpl class
+     *
+     * @param user {@link AppUser} entity
+     * @return userDetailsImpl the implementation of {@link UserDetails}
+     */
     public static UserDetailsImpl buildUserDetails(AppUser user)
     {
         List<GrantedAuthority> authorities = user.getRoles().stream()

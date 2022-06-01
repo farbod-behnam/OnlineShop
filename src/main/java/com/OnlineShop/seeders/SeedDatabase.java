@@ -18,6 +18,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class that seeds the database when the application starts
+ */
 @Component
 public class SeedDatabase
 {
