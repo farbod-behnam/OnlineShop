@@ -63,4 +63,14 @@ public class ErrorListResponse
 
         this.messageList.add(message);
     }
+
+    @Override
+    public String toString()
+    {
+        return "ErrorListResponse [" +
+                "status=" + status +
+                ", messageList=" + messageList +
+                ", timeStamp=" + timeStamp +
+                ']';
+    }
 }

@@ -51,4 +51,14 @@ public class ErrorResponse
     {
         this.timeStamp = timeStamp;
     }
+
+    @Override
+    public String toString()
+    {
+        return "ErrorResponse [" +
+                "status=" + status +
+                ", message='" + message + '\'' +
+                ", timeStamp=" + timeStamp +
+                ']';
+    }
 }
