@@ -214,14 +214,15 @@
 			"name": "Countries",
 			"item": [
 				{
-					"name": "countries (auth needed)",
+					"name": "countries",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"url": {
@@ -239,14 +240,15 @@
 					"response": []
 				},
 				{
-					"name": "country by id (auth needed)",
+					"name": "country by id",
 					"request": {
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"url": {
