@@ -76,43 +76,58 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // first whatever url you want to allow without any authorization
-        http.authorizeRequests().antMatchers("/api/auth/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/categories/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/products/**").permitAll();
+        http.authorizeRequests().antMatchers("/api/auth/**").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/countries/**").permitAll()
+                .and()
+                // auth
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/auth/update/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/auth/logout/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name())
+                .and()
+                // categories
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                // countries
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                // products
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                // roles
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                // users
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
 
-        // then whatever url you want authorization to happen
-
-        // auth
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/auth/update/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/auth/logout/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name());
-
-        // categories
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-
-        // countries
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/countries/**").authenticated();
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-
-        // products
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/products/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-
-        // roles
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/roles/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-
-        // users
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 

@@ -1,17 +1,27 @@
 package com.OnlineShop.controller;
 
+import com.OnlineShop.OnlineShopApplication;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
-import com.OnlineShop.service.ICategoryService;
+import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.security.SecurityConfig;
+import com.OnlineShop.security.service.ITokenService;
+import com.OnlineShop.security.userdetails.UserDetailsServiceImpl;
+import com.OnlineShop.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -27,7 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(CategoryController.class)
+@WebMvcTest(controllers = CategoryController.class)
+//@Import(SecurityConfig.class)
 public class CategoryControllerTest
 {
 
@@ -36,6 +47,14 @@ public class CategoryControllerTest
 
     @MockBean
     private ICategoryService categoryService;
+
+    // need to be mocked because SecurityConfig.class injects
+    // these two services ( UserDetailsService, ITokenService ) into itself
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private ITokenService tokenService;
 
 
 
@@ -48,13 +67,13 @@ public class CategoryControllerTest
         given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(categoryList.size()));
 
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
 
@@ -69,6 +88,8 @@ public class CategoryControllerTest
         given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -76,8 +97,6 @@ public class CategoryControllerTest
                 .andExpect(jsonPath("$[0].id").value(equalTo("11")))
                 .andExpect(jsonPath("$[0].name").value(equalTo("Video Games")));
 
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
     @Test
@@ -93,13 +112,13 @@ public class CategoryControllerTest
         given(categoryService.getCategories()).willReturn(categoryList);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(categoryList.size()))
                 .andExpect(jsonPath("$[0].id").value(equalTo("11")));
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
     @Test
@@ -112,14 +131,14 @@ public class CategoryControllerTest
         given(categoryService.getCategoryById(categoryId)).willReturn(category);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories/11"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
                 .andDo(print());
 
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
     @Test
@@ -134,18 +153,19 @@ public class CategoryControllerTest
         given(categoryService.getCategoryById(categoryId)).willReturn(category);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/categories/11"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(equalTo("11")))
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
                 .andDo(print());
 
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
     @Test
-    public void postCategory_returnsCreatedCategory() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void postCategory_authorizedByAdmin_returnsCreatedCategory() throws Exception
     {
         // given
         Category category = new Category("11", "Video Games");
@@ -153,6 +173,8 @@ public class CategoryControllerTest
         given(categoryService.createCategory(any(Category.class))).willReturn(category);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/categories")
                         .content(asJsonString(category))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -164,12 +186,53 @@ public class CategoryControllerTest
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
                 .andDo(print());
 
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
     @Test
-    public void putCategory_returnsUpdatedCategory() throws Exception
+    public void postCategory_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.createCategory(any(Category.class))).willReturn(category);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void postCategory_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.createCategory(any(Category.class))).willReturn(category);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void putCategory_authorizedByAdmin_returnsUpdatedCategory() throws Exception
     {
         // given
         Category category = new Category("11", "Video Games");
@@ -177,6 +240,8 @@ public class CategoryControllerTest
         given(categoryService.updateCategory(any(Category.class))).willReturn(category);
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.put("/api/categories")
                         .content(asJsonString(category))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -188,30 +253,101 @@ public class CategoryControllerTest
                 .andExpect(jsonPath("$.name").value(equalTo("Video Games")))
                 .andDo(print());
 
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
     @Test
-    public void deleteCategory_ShouldReturnString() throws Exception
+    public void putCategory_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.updateCategory(any(Category.class))).willReturn(category);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void putCategory_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        given(categoryService.updateCategory(any(Category.class))).willReturn(category);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/categories")
+                        .content(asJsonString(category))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void deleteCategory_authorizedByAdmin_ShouldReturnString() throws Exception
     {
         // given
         String categoryId = "11";
 
-//        given(categoryService.deleteCategory(anyString());)
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/categories/" + categoryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$").value(equalTo("Category with id: [" + categoryId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void deleteCategory_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        String categoryId = "11";
+
 
         // when
+
+        // then
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/categories/" + categoryId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString("Category with id: [" + categoryId + "] is deleted")))
-                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$").value(equalTo("Category with id: [" + category.getId() + "] is deleted")))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
-        // then
-//        verify(categoryService, times(1)).findAll();
     }
 
+    @Test
+    public void deleteCategory_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        String categoryId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/categories/" + categoryId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
 
     private String asJsonString(final Object obj)
     {

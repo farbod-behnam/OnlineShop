@@ -1,13 +1,14 @@
 package com.OnlineShop.controller;
 
 import com.OnlineShop.exception.AlreadyExistsException;
-import com.OnlineShop.exception.ErrorListResponse;
-import com.OnlineShop.exception.ErrorResponse;
+import com.OnlineShop.dto.response.ErrorListResponse;
+import com.OnlineShop.dto.response.ErrorResponse;
 import com.OnlineShop.exception.NotFoundException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -18,6 +19,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+
+
+/**
+ * A Class that handles exception in the Controller
+ */
 
 @ControllerAdvice
 public class ControllerExceptionHandler
@@ -138,6 +144,19 @@ public class ControllerExceptionHandler
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleException(HttpRequestMethodNotSupportedException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        errorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(BadCredentialsException exception)
     {
         ErrorResponse errorResponse = new ErrorResponse();
 

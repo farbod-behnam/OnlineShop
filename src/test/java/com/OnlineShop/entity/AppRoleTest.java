@@ -90,7 +90,7 @@ class AppRoleTest
         assertThat(violations.size()).isEqualTo(1);
 
         ConstraintViolation<AppRole> violation = violations.iterator().next();
-        assertThat(violation.getMessage()).isEqualTo("name must be between 6 and 16 character");
+        assertThat(violation.getMessage()).isEqualTo("name must be between 7 and 16 character");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
         assertThat(violation.getInvalidValue()).isEqualTo("ROLE_A");
     }
@@ -142,7 +142,7 @@ class AppRoleTest
         assertThat(violations.size()).isEqualTo(1);
 
         ConstraintViolation<AppRole> violation = violations.iterator().next();
-        assertThat(violation.getMessage()).isEqualTo("only upper case with one underscore between ex: ROLE_USER");
+        assertThat(violation.getMessage()).isEqualTo("only upper case with one underscore between ex: ROLE_USER, ROLE_SUPER_ADMIN");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
         assertThat(violation.getInvalidValue()).isEqualTo("_HELLOROLE");
     }

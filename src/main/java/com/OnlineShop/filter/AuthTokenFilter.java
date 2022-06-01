@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 
+/**
+ * A filter class which uses ITokenService and extends OncePerRequestFilter
+ * to decode the JWT inside the http header for Authorization key
+ */
 public class AuthTokenFilter extends OncePerRequestFilter
 {
     private final ITokenService tokenService;
@@ -34,11 +38,20 @@ public class AuthTokenFilter extends OncePerRequestFilter
 
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer "))
             {
+
+                // build DecodedJWT interface
                 tokenService.createDecodedJWT(authorizationHeader);
+
+                // get username from DecodedJWT
                 String username = tokenService.getUsernameDecodedJWT();
+
+                // get authorities from DecodedJWT
                 Collection<SimpleGrantedAuthority> authorities = tokenService.getAuthoritiesDecodedJWT();
 
+                // build the Authentication Token
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+                // set the Authentication Token
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
                 filterChain.doFilter(request, response);

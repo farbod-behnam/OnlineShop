@@ -3,6 +3,7 @@ package com.OnlineShop.controller;
 import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
+import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.service.IProductService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -38,7 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(ProductController.class)
+@WebMvcTest(controllers = ProductController.class)
+//@Import(SecurityConfig.class)
 class ProductControllerTest
 {
 
@@ -47,6 +51,14 @@ class ProductControllerTest
 
     @MockBean
     private IProductService productService;
+
+    // need to be mocked because SecurityConfig.class injects
+    // these two services ( UserDetailsService, ITokenService ) into itself
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private ITokenService tokenService;
 
     @BeforeEach
     void setUp()
@@ -143,7 +155,7 @@ class ProductControllerTest
     }
 
     @Test
-    public void getProduct_shouldReturnACategory() throws Exception
+    public void getProduct_shouldReturnAProduct() throws Exception
     {
         // given
 
@@ -183,7 +195,8 @@ class ProductControllerTest
     }
 
     @Test
-    public void createProduct_shouldReturnCreatedCategory() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void createProduct_authorizedByAdmin_shouldReturnCreatedCategory() throws Exception
     {
         // given
         BigDecimal price = new BigDecimal("69.99");
@@ -235,7 +248,97 @@ class ProductControllerTest
     }
 
     @Test
-    public void putProduct_shouldReturnUpdatedProduct() throws Exception
+    public void createProduct_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        ProductRequest productDto = new ProductRequest(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productService.createProduct(any(ProductRequest.class))).willReturn(product);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/products")
+                        .content(asJsonString(productDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void createProduct_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        ProductRequest productDto = new ProductRequest(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productService.createProduct(any(ProductRequest.class))).willReturn(product);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/products")
+                        .content(asJsonString(productDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void putProduct_authorizedByAdmin_shouldReturnUpdatedProduct() throws Exception
     {
         // given
         BigDecimal price = new BigDecimal("69.99");
@@ -287,7 +390,98 @@ class ProductControllerTest
     }
 
     @Test
-    public void deleteProduct_ShouldReturnString() throws Exception
+    public void putProduct_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        ProductRequest productDto = new ProductRequest(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productService.updateProduct(any(ProductRequest.class))).willReturn(product);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/products")
+                        .content(asJsonString(productDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void putProduct_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        BigDecimal price = new BigDecimal("69.99");
+
+        ProductRequest productDto = new ProductRequest(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                "11",
+                true
+        );
+
+        Product product = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                new Category("11", "Video Games"),
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productService.updateProduct(any(ProductRequest.class))).willReturn(product);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/products")
+                        .content(asJsonString(productDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void deleteProduct_authorizedByAdmin_ShouldReturnString() throws Exception
     {
         // given
         String productId = "11";
@@ -296,10 +490,44 @@ class ProductControllerTest
 
         // then
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/products/" + productId)
-                        .content(asJsonString("Product with id: [" + productId + "] is deleted"))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.").value(equalTo("Product with id: [" + productId + "] is deleted")))
+//                .andExpect(jsonPath("$").value(equalTo("Product with id: [" + productId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void deleteProduct_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        String productId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/products/" + productId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+//                .andExpect(jsonPath("$").value(equalTo("Product with id: [" + productId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    public void deleteProduct_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        String productId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/products/" + productId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+//                .andExpect(jsonPath("$").value(equalTo("Product with id: [" + productId + "] is deleted")))
                 .andDo(print());
 
     }

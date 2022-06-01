@@ -1,6 +1,5 @@
-package com.OnlineShop.dto;
+package com.OnlineShop.dto.request;
 
-import com.OnlineShop.dto.request.ProductRequest;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
@@ -22,7 +21,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-class ProductDtoTest
+class ProductRequestTest
 {
     
     private Validator validator;
