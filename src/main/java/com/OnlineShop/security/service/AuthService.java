@@ -43,8 +43,6 @@ public class AuthService implements IAuthService
 
     private final PasswordEncoder passwordEncoder;
 
-    private final UserDetailsService userDetailsService;
-
     private final ITokenService tokenService;
 
     @Autowired
@@ -55,7 +53,6 @@ public class AuthService implements IAuthService
         this.roleService = roleService;
         this.countryService = countryService;
         this.passwordEncoder = passwordEncoder;
-        this.userDetailsService = userDetailsService;
         this.tokenService = tokenService;
     }
 
@@ -63,6 +60,12 @@ public class AuthService implements IAuthService
     @Override
     public UserInfoResponse loginUser(LoginRequest loginRequest)
     {
+        // authenticationManager has been initialized inside com.OnlineShop.security.SecurityConfig class
+        // by AuthenticationManagerBuilder. It uses an implementation of UserDetailsService for finding the username
+        // and also decode the password based on the PasswordEncoder initialized inside com.OnlineShop.security.SecurityConfig class
+        //
+        // we also need to implement UserDetails interface since UserDetailsServiceImpl returns a UserDetails
+
         Authentication authentication;
 
         try
@@ -78,20 +81,16 @@ public class AuthService implements IAuthService
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        // get the authenticated user
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(loginRequest.getUsername());
+//        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(loginRequest.getUsername());
 
+        // create a JWT based on UserDetails implemented class
         String token = tokenService.createJWT(userDetails);
 
         List<String> roles = userDetails.getStringListRoles();
 
-//        Optional<AppUser> userOptional = userRepository.findById(userDetails.getId());
-//
-//        if (userOptional.isEmpty())
-//            throw new NotFoundException("User with id: [" + userDetails.getId() + "] cannot be found");
-//
-//        AppUser user = userOptional.get();
 
         return new UserInfoResponse(
                userDetails.getId(),
@@ -116,20 +115,22 @@ public class AuthService implements IAuthService
         registerRequest.setUsername(registerRequest.getUsername().trim().strip().toLowerCase(Locale.ROOT));
         registerRequest.setAddress(registerRequest.getAddress().trim().strip());
 
+        // first check if the username, email or phone number already exists in the database
         boolean result = userRepository.existsByUsernameOrEmailOrPhoneNumber(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPhoneNumber());
 
         if (result)
             throw new AlreadyExistsException("User already exists.");
 
-
         Country country = countryService.getCountryById(registerRequest.getCountryId());
 
         Set<AppRole> roleSet = new HashSet<>();
 
-        // a normal user when registers they only need to have ROLE_USER
+        // a normal user only needs to have ROLE_USER, so we need to find the
+        // ROLE_USER based on its name
         AppRole role = roleService.getRoleByName(RoleEnum.ROLE_USER.name());
         roleSet.add(role);
 
+        // Create AppUser entity
         AppUser user = new AppUser(
                 null, // in order to create new entity
                 registerRequest.getFirstName(),
@@ -147,8 +148,11 @@ public class AuthService implements IAuthService
 
         AppUser createdAppUser = userRepository.save(user);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(createdAppUser.getUsername());
+        // Now we need to build the authenticated user
+        UserDetailsImpl userDetails = UserDetailsImpl.buildUserDetails(createdAppUser);
 
+
+        // Now create JWT based on authenticated user
         String token = tokenService.createJWT(userDetails);
 
         List<String> roles = userDetails.getStringListRoles();
@@ -176,11 +180,10 @@ public class AuthService implements IAuthService
         if (authentication == null)
             throw new UsernameNotFoundException("User is not logged in");
 
-
-        // my implementation of UserDetailsImp does not work !!! but in loginUser method it does work
 //        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String loggedInUsername = (String) authentication.getPrincipal();
 
+        // check if the email or phone number already exists in the database
         boolean result = userRepository.existsByEmailOrPhoneNumber(updateRequest.getEmail(), updateRequest.getPhoneNumber());
 
         if (result)
@@ -198,20 +201,13 @@ public class AuthService implements IAuthService
 
         Set<AppRole> roleSet = foundUser.getRoles();
 
-        List<String> stringListRoles = new ArrayList<>();
-
-        for (AppRole role: roleSet)
-            stringListRoles.add(role.getName());
-
-
-
         AppUser user = new AppUser(
                 foundUser.getId(),
                 updateRequest.getFirstName().trim().strip().toLowerCase(Locale.ROOT),
                 updateRequest.getLastName().trim().strip().toLowerCase(Locale.ROOT),
                 updateRequest.getPhoneNumber().trim().strip(),
                 updateRequest.getEmail().trim().strip().toLowerCase(Locale.ROOT),
-                roleSet, // user has only ROLE_USER
+                roleSet,
                 foundUser.getUsername(), // username cannot be changed
                 passwordEncoder.encode(updateRequest.getPassword()),
                 countryService.getCountryById(updateRequest.getCountryId()),
@@ -221,6 +217,12 @@ public class AuthService implements IAuthService
         );
 
         AppUser updatedUser = userRepository.save(user);
+
+        // create a string list to add string role name to it
+        List<String> stringListRoles = new ArrayList<>();
+
+        for (AppRole role: roleSet)
+            stringListRoles.add(role.getName());
 
         return new UserInfoResponse(
                 updatedUser.getId(),
