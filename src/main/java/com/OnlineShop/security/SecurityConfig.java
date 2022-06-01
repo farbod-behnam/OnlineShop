@@ -82,6 +82,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/countries/**").permitAll()
+                .and()
                 // auth
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/auth/update/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name())
                 .and()
@@ -95,8 +97,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/categories/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
                 .and()
                 // countries
-                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name())
-                .and()
                 .authorizeRequests().antMatchers(HttpMethod.POST, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/countries/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
