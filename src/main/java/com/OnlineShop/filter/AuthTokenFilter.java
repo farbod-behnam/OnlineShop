@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 
+/**
+ * A filter class which uses ITokenService and extends OncePerRequestFilter
+ * to decode the JWT inside the http header for Authorization key
+ */
 public class AuthTokenFilter extends OncePerRequestFilter
 {
     private final ITokenService tokenService;
