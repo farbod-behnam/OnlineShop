@@ -1,8 +1,8 @@
 package com.OnlineShop.controller;
 
 import com.OnlineShop.exception.AlreadyExistsException;
-import com.OnlineShop.exception.ErrorListResponse;
-import com.OnlineShop.exception.ErrorResponse;
+import com.OnlineShop.dto.response.ErrorListResponse;
+import com.OnlineShop.dto.response.ErrorResponse;
 import com.OnlineShop.exception.NotFoundException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.http.HttpStatus;

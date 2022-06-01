@@ -1,4 +1,4 @@
-package com.OnlineShop.exception;
+package com.OnlineShop.dto.response;
 
 
 import java.util.ArrayList;

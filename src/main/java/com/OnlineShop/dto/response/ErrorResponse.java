@@ -1,4 +1,4 @@
-package com.OnlineShop.exception;
+package com.OnlineShop.dto.response;
 
 /**
  * A class for returning a string messages regarding
