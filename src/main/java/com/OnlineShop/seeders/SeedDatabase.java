@@ -1,22 +1,21 @@
 package com.OnlineShop.seeders;
 
-import com.OnlineShop.dto.request.AppUserRequest;
-import com.OnlineShop.dto.request.ProductRequest;
-import com.OnlineShop.entity.AppRole;
-import com.OnlineShop.entity.Category;
-import com.OnlineShop.entity.Country;
+import com.OnlineShop.entity.*;
 import com.OnlineShop.enums.CategoryEnum;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.repository.*;
 import com.OnlineShop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A class that seeds the database when the application starts
@@ -24,175 +23,223 @@ import java.util.List;
 @Component
 public class SeedDatabase
 {
-    private final IRoleService roleService;
-    private final IUserService userService;
-    private final ICountryService countryService;
-    private final ICategoryService categoryService;
-    private final IProductService productService;
+    private final IUserRepository userRepository;
+    private final IRoleRepository roleRepository;
+    private final ICountryRepository countryRepository;
+    private final IProductRepository productRepository;
+    private final ICategoryRepository categoryRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SeedDatabase(IRoleService roleService, IUserService userService, ICountryService countryService, ICategoryService categoryService, IProductService productService)
+    public SeedDatabase(IRoleService roleService, IUserService userService, ICountryService countryService, ICategoryService categoryService, IProductService productService, IUserRepository userRepository, IRoleRepository roleRepository, ICountryRepository countryRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, PasswordEncoder passwordEncoder)
     {
-        this.roleService = roleService;
-        this.userService = userService;
-        this.countryService = countryService;
-        this.categoryService = categoryService;
-        this.productService = productService;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.countryRepository = countryRepository;
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.passwordEncoder = passwordEncoder;
     }
+
 
     @EventListener
     public void seed(ContextRefreshedEvent event)
     {
+
+        deleteAllTable();
+
+        createUsers();
+
+        createProducts();
+
+    }
+
+    private void createUsers()
+    {
+
         // role
         AppRole roleUser = new AppRole(null, RoleEnum.ROLE_USER.name());
         AppRole roleAdmin = new AppRole(null, RoleEnum.ROLE_ADMIN.name());
 
-        roleUser = roleService.createRole(roleUser);
-        roleAdmin = roleService.createRole(roleAdmin);
+        roleUser = roleRepository.save(roleUser);
+        roleAdmin = roleRepository.save(roleAdmin);
 
         // country
         Country germany = new Country(null, CountryEnum.Germany.toString());
         Country usa = new Country(null, CountryEnum.USA.toString());
         Country uk = new Country(null, CountryEnum.UK.toString());
 
-        germany = countryService.createCountry(germany);
-        usa = countryService.createCountry(usa);
-        uk = countryService.createCountry(uk);
+        germany = countryRepository.save(germany);
+        usa = countryRepository.save(usa);
+        uk = countryRepository.save(uk);
 
-        List<String> userRoleList = new ArrayList<>();
-        userRoleList.add(roleUser.getId());
+        Set<AppRole> userRoleList = new HashSet<>();
+        userRoleList.add(roleUser);
 
         //
-        AppUserRequest user = new AppUserRequest(
-                "19",
+        AppUser user = new AppUser(
+                null,
                 "John",
                 "Wick",
                 "0016666666666",
                 "john.wick@gmail.com",
                 userRoleList,
                 "john", // j.wick
-                "1234",
-                germany.getId(),
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
+                passwordEncoder.encode("1234"),
+                germany,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        userService.createUser(user);
 
-        List<String> adminRoleList = new ArrayList<>();
-        adminRoleList.add(roleAdmin.getId());
+        userRepository.save(user);
 
-        AppUserRequest admin = new AppUserRequest(
-                "19",
+
+        Set<AppRole> adminRoleList = new HashSet<>();
+        adminRoleList.add(roleAdmin);
+
+        AppUser admin = new AppUser(
+                null,
                 "Arnold",
                 "Schwarzenegger",
                 "00112345667910",
                 "arnold.schwarzenegger@gmail.com",
                 adminRoleList,
                 "arnold", // j.wick
-                "1234",
-                germany.getId(),
-                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401"
+                passwordEncoder.encode("1234"),
+                germany,
+                "Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522 (257) 563-7401",
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        userService.createUser(admin);
+        userRepository.save(admin);
+    }
+
+    private void createProducts()
+    {
 
         Category digitalDevices = new Category(null, CategoryEnum.digital_devices.toString());
         Category videoGames = new Category(null, CategoryEnum.video_games.toString());
         Category clothes = new Category(null, CategoryEnum.clothes.toString());
 
-        digitalDevices = categoryService.createCategory(digitalDevices);
-        videoGames = categoryService.createCategory(videoGames);
-        clothes = categoryService.createCategory(clothes);
+        digitalDevices = categoryRepository.save(digitalDevices);
+        videoGames = categoryRepository.save(videoGames);
+        clothes = categoryRepository.save(clothes);
 
-        ProductRequest bloodborne = new ProductRequest(
+        Product bloodborne = new Product(
                 null,
                 "Bloodborne",
                 "a souls like game by from software company",
                 new BigDecimal("69.99"),
                 19,
                 "https://image_url",
-                videoGames.getId(),
-                true
+                videoGames,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        productService.createProduct(bloodborne);
+        productRepository.save(bloodborne);
 
-        ProductRequest devilMayCry5 = new ProductRequest(
+        Product devilMayCry5 = new Product(
                 null,
                 "Devil May Cry 5 Special Edition",
                 "An Action beatem up and the fifth installment of popular devil may cry series",
                 new BigDecimal("69.99"),
                 95,
                 "https://image_url",
-                videoGames.getId(),
-                true
+                videoGames,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        productService.createProduct(devilMayCry5);
+        productRepository.save(devilMayCry5);
 
-        ProductRequest returnal = new ProductRequest(
+        Product returnal = new Product(
                 null,
                 "Returnal",
                 "A rogue like experience and in style of metroid game",
                 new BigDecimal("69.99"),
                 95,
                 "https://image_url",
-                videoGames.getId(),
-                true
+                videoGames,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        productService.createProduct(returnal);
+        productRepository.save(returnal);
 
-        ProductRequest LGC1TV = new ProductRequest(
+        Product LGC1TV = new Product(
                 null,
                 "LG C1",
                 "An OLED TV produced by LG company",
                 new BigDecimal("999.99"),
                 20,
                 "https://image_url",
-                digitalDevices.getId(),
-                true
+                digitalDevices,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        productService.createProduct(LGC1TV);
+        productRepository.save(LGC1TV);
 
-        ProductRequest ps5 = new ProductRequest(
+        Product ps5 = new Product(
                 null,
                 "PlayStation 5 standard edition",
                 "The fifth generation of console from Sony",
                 new BigDecimal("499.99"),
                 20,
                 "https://image_url",
-                digitalDevices.getId(),
-                true
+                digitalDevices,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        productService.createProduct(ps5);
+        productRepository.save(ps5);
 
-        ProductRequest lenovoLegion7 = new ProductRequest(
+        Product lenovoLegion7 = new Product(
                 null,
                 "Lenovo Legion Slim 7",
                 "The slim version of lenovo legion 7",
                 new BigDecimal("1799.99"),
                 20,
                 "https://image_url",
-                digitalDevices.getId(),
-                true
+                digitalDevices,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        productService.createProduct(lenovoLegion7);
+        productRepository.save(lenovoLegion7);
 
-        ProductRequest iphone13 = new ProductRequest(
+        Product iphone13 = new Product(
                 null,
                 "Iphone 13",
                 "The 13 iteration of apple iphones",
                 new BigDecimal("699.99"),
                 20,
                 "https://image_url",
-                digitalDevices.getId(),
-                true
+                digitalDevices,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        productService.createProduct(iphone13);
+        productRepository.save(iphone13);
+    }
+
+    private void deleteAllTable()
+    {
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+        countryRepository.deleteAll();
+        productRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 }
