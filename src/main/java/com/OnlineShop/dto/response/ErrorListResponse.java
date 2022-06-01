@@ -1,9 +1,13 @@
-package com.OnlineShop.exception;
+package com.OnlineShop.dto.response;
 
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class for returning a list of string messages regarding
+ * errors for input validation
+ */
 public class ErrorListResponse
 {
     private int status;
@@ -58,5 +62,15 @@ public class ErrorListResponse
             this.messageList = new ArrayList<>();
 
         this.messageList.add(message);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ErrorListResponse [" +
+                "status=" + status +
+                ", messageList=" + messageList +
+                ", timeStamp=" + timeStamp +
+                ']';
     }
 }

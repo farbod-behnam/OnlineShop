@@ -1,4 +1,4 @@
-package com.OnlineShop.dto;
+package com.OnlineShop.dto.request;
 
 
 import com.OnlineShop.dto.request.AppUserRequest;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-class AppUserDtoTest
+class AppUserRequestTest
 {
     private Validator validator;
 
@@ -495,7 +495,7 @@ class AppUserDtoTest
 
         ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("role is required");
-        assertThat(violation.getPropertyPath().toString()).isEqualTo("roles");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("roleIdList");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
     }
 
@@ -542,7 +542,7 @@ class AppUserDtoTest
 
         ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("user must have at least one role and at max two roles");
-        assertThat(violation.getPropertyPath().toString()).isEqualTo("roleIdSet");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("roleIdList");
         assertThat(violation.getInvalidValue()).isEqualTo(roles);
     }
 
@@ -885,7 +885,7 @@ class AppUserDtoTest
 
         ConstraintViolation<AppUserRequest> violation = violations.iterator().next();
         assertThat(violation.getMessage()).isEqualTo("country is required");
-        assertThat(violation.getPropertyPath().toString()).isEqualTo("country");
+        assertThat(violation.getPropertyPath().toString()).isEqualTo("countryId");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
     }
 

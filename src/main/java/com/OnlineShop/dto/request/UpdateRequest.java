@@ -36,7 +36,7 @@ public class UpdateRequest
 
 
 //    @Nullable
-    @NotBlank(message = "country is required")
+    @NotBlank(message = "password is required")
     @Size(min = 10, max = 64, message = "password must be greater than 10 character")
     @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[*.!@$%^& ]).+$", message = "password must contain at least one upper case letter, one lower case letter, number and special character")
     private String password;
@@ -134,5 +134,19 @@ public class UpdateRequest
     public void setAddress(String address)
     {
         this.address = address;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "UpdateRequest [" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", countryId='" + countryId + '\'' +
+                ", address='" + address + '\'' +
+                ']';
     }
 }

@@ -113,4 +113,19 @@ public class UserInfoResponse
     {
         this.roles = roles;
     }
+
+    @Override
+    public String toString()
+    {
+        return "UserInfoResponse [" +
+                "id='" + id + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", roles=" + roles +
+                ", token='" + token + '\'' +
+                ']';
+    }
 }

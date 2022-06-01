@@ -4,6 +4,7 @@ import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.*;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.service.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -32,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(UserController.class)
+@WebMvcTest(controllers = UserController.class)
+//@Import(SecurityConfig.class)
 class UserControllerTest
 {
 
@@ -42,10 +46,18 @@ class UserControllerTest
     @MockBean
     private IUserService userService;
 
+    // need to be mocked because SecurityConfig.class injects
+    // these two services ( UserDetailsService, ITokenService ) into itself
+    @MockBean
+    private UserDetailsService userDetailsService;
+
+    @MockBean
+    private ITokenService tokenService;
 
 
     @Test
-    void getUsers_shouldReturnUsers() throws Exception
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    void getUsers_authorizedByAdmin_shouldReturnUsers() throws Exception
     {
         // given
         List<AppUser> users = new ArrayList<>();
@@ -112,7 +124,119 @@ class UserControllerTest
     }
 
     @Test
-    void getUser_shouldReturnAUser() throws Exception
+    @WithMockUser(authorities = {"ROLE_USER"})
+    void getUsers_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        List<AppUser> users = new ArrayList<>();
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user1 = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        AppUser user2 = new AppUser(
+                "20",
+                "Peter",
+                "Parker",
+                "00119191919",
+                "peter.parker@gmail.com",
+                roles,
+                "peter.parker",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        users.add(user1);
+        users.add(user2);
+
+        given(userService.getUsers()).willReturn(users);
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void getUsers_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        List<AppUser> users = new ArrayList<>();
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user1 = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        AppUser user2 = new AppUser(
+                "20",
+                "Peter",
+                "Parker",
+                "00119191919",
+                "peter.parker@gmail.com",
+                roles,
+                "peter.parker",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        users.add(user1);
+        users.add(user2);
+
+        given(userService.getUsers()).willReturn(users);
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    void getUser_authorizedByAdmin_shouldReturnAUser() throws Exception
     {
         // given
         Set<AppRole> roles = new HashSet<>();
@@ -159,7 +283,83 @@ class UserControllerTest
     }
 
     @Test
-    public void postUser_shouldReturnCreatedUser() throws Exception
+    @WithMockUser(authorities = {"ROLE_USER"})
+    void getUser_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.getUserById(anyString())).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/" + "19"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void getUser_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.getUserById(anyString())).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/" + "19"))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void postUser_authorizedByAdmin_shouldReturnCreatedUser() throws Exception
     {
         // given
 
@@ -178,7 +378,7 @@ class UserControllerTest
                 "john.wick@gmail.com",
                 roleIdList,
                 "johnwick",
-                "password1234",
+                "Password!1234",
                 countryId,
                 "This is an address"
         );
@@ -234,7 +434,8 @@ class UserControllerTest
     }
 
     @Test
-    public void putUser_shouldReturnUpdatedUser() throws Exception
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void postUser_shouldBeUnauthorizedByUser() throws Exception
     {
         // given
 
@@ -253,7 +454,136 @@ class UserControllerTest
                 "john.wick@gmail.com",
                 roleIdList,
                 "johnwick",
-                "password1234",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.createUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void postUser_shouldBeUnauthorized() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.createUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void putUser_authorizedByAdmin_shouldReturnUpdatedUser() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
                 countryId,
                 "This is an address"
         );
@@ -274,7 +604,7 @@ class UserControllerTest
                 "john.wick@gmail.com",
                 roles,
                 "john.wick",
-                "password1234",
+                "Password!1234",
                 country,
                 "This is an address",
                 LocalDateTime.now(),
@@ -308,7 +638,154 @@ class UserControllerTest
     }
 
     @Test
-    public void deleteUser_ShouldReturnString() throws Exception
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void putUser_shouldBeUnauthorizedByUser() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.updateUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void putUser_shouldBeUnauthorized() throws Exception
+    {
+        // given
+
+        // user dto
+        List<String> roleIdList = new ArrayList<>();
+        String roleId = "11";
+        roleIdList.add(roleId);
+
+        String countryId = "11";
+
+        AppUserRequest userDto = new AppUserRequest(
+                "19",
+                "John",
+                "Wick",
+                "0016666666666",
+                "john.wick@gmail.com",
+                roleIdList,
+                "johnwick",
+                "Password!1234",
+                countryId,
+                "This is an address"
+        );
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        given(userService.updateUser(any(AppUserRequest.class))).willReturn(user);
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/users")
+                        .content(asJsonString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void deleteUser_authorizedByAdmin_ShouldReturnString() throws Exception
+    {
+        // given
+        String userId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/" + userId)
+//                        .content(asJsonString("User with id: [" + userId + "] is deleted"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$").value(equalTo("User with id: [" + userId + "] is deleted")))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void deleteUser_shouldBeUnauthorizedByUser() throws Exception
     {
         // given
         String userId = "11";
@@ -319,8 +796,24 @@ class UserControllerTest
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/" + userId)
                         .content(asJsonString("User with id: [" + userId + "] is deleted"))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(equalTo("User with id: [" + userId + "] is deleted")))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void deleteUser_shouldBeUnauthorized() throws Exception
+    {
+        // given
+        String userId = "11";
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/" + userId)
+                        .content(asJsonString("User with id: [" + userId + "] is deleted"))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
     }

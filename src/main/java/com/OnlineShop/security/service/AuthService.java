@@ -16,9 +16,11 @@ import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class AuthService implements IAuthService
     private final ITokenService tokenService;
 
     @Autowired
-    public AuthService(AuthenticationManager authenticationManager, IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder, ITokenService tokenService)
+    public AuthService(AuthenticationManager authenticationManager, IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, ITokenService tokenService)
     {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -58,31 +60,45 @@ public class AuthService implements IAuthService
     @Override
     public UserInfoResponse loginUser(LoginRequest loginRequest)
     {
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        // authenticationManager has been initialized inside com.OnlineShop.security.SecurityConfig class
+        // by AuthenticationManagerBuilder. It uses an implementation of UserDetailsService for finding the username
+        // and also decode the password based on the PasswordEncoder initialized inside com.OnlineShop.security.SecurityConfig class
+        //
+        // we also need to implement UserDetails interface since UserDetailsServiceImpl returns a UserDetails
+
+        Authentication authentication;
+
+        try
+        {
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        }
+        catch (BadCredentialsException exception)
+        {
+           throw new BadCredentialsException("Incorrect username or password");
+        }
+
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // get the authenticated user
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
+//        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(loginRequest.getUsername());
+
+        // create a JWT based on UserDetails implemented class
         String token = tokenService.createJWT(userDetails);
 
         List<String> roles = userDetails.getStringListRoles();
 
-        Optional<AppUser> userOptional = userRepository.findById(userDetails.getId());
-
-        if (userOptional.isEmpty())
-            throw new NotFoundException("User with id: [" + userDetails.getId() + "] cannot be found");
-
-        AppUser user = userOptional.get();
 
         return new UserInfoResponse(
                userDetails.getId(),
-               user.getFirstName(),
-                user.getLastName(),
+               userDetails.getFirstName(),
+               userDetails.getLastName(),
                userDetails.getUsername(),
                userDetails.getEmail(),
-                user.getPhoneNumber(),
+               userDetails.getPhoneNumber(),
                roles,
                token
         );
@@ -99,19 +115,22 @@ public class AuthService implements IAuthService
         registerRequest.setUsername(registerRequest.getUsername().trim().strip().toLowerCase(Locale.ROOT));
         registerRequest.setAddress(registerRequest.getAddress().trim().strip());
 
+        // first check if the username, email or phone number already exists in the database
         boolean result = userRepository.existsByUsernameOrEmailOrPhoneNumber(registerRequest.getUsername(), registerRequest.getEmail(), registerRequest.getPhoneNumber());
 
         if (result)
             throw new AlreadyExistsException("User already exists.");
 
-
         Country country = countryService.getCountryById(registerRequest.getCountryId());
 
         Set<AppRole> roleSet = new HashSet<>();
 
+        // a normal user only needs to have ROLE_USER, so we need to find the
+        // ROLE_USER based on its name
         AppRole role = roleService.getRoleByName(RoleEnum.ROLE_USER.name());
         roleSet.add(role);
 
+        // Create AppUser entity
         AppUser user = new AppUser(
                 null, // in order to create new entity
                 registerRequest.getFirstName(),
@@ -127,12 +146,28 @@ public class AuthService implements IAuthService
                 LocalDateTime.now()
         );
 
-
         AppUser createdAppUser = userRepository.save(user);
 
-        LoginRequest loginRequest = new LoginRequest(createdAppUser.getUsername(), createdAppUser.getPassword());
+        // Now we need to build the authenticated user
+        UserDetailsImpl userDetails = UserDetailsImpl.buildUserDetails(createdAppUser);
 
-        return loginUser(loginRequest);
+
+        // Now create JWT based on authenticated user
+        String token = tokenService.createJWT(userDetails);
+
+        List<String> roles = userDetails.getStringListRoles();
+
+
+        return new UserInfoResponse(
+                userDetails.getId(),
+                userDetails.getFirstName(),
+                userDetails.getLastName(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                userDetails.getPhoneNumber(),
+                roles,
+                token
+        );
 
     }
 
@@ -145,11 +180,10 @@ public class AuthService implements IAuthService
         if (authentication == null)
             throw new UsernameNotFoundException("User is not logged in");
 
-
-        // my implementation of UserDetailsImp does not work !!! but in loginUser method it does work
 //        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String loggedInUsername = (String) authentication.getPrincipal();
 
+        // check if the email or phone number already exists in the database
         boolean result = userRepository.existsByEmailOrPhoneNumber(updateRequest.getEmail(), updateRequest.getPhoneNumber());
 
         if (result)
@@ -167,20 +201,13 @@ public class AuthService implements IAuthService
 
         Set<AppRole> roleSet = foundUser.getRoles();
 
-        List<String> stringListRoles = new ArrayList<>();
-
-        for (AppRole role: roleSet)
-            stringListRoles.add(role.getName());
-
-
-
         AppUser user = new AppUser(
                 foundUser.getId(),
                 updateRequest.getFirstName().trim().strip().toLowerCase(Locale.ROOT),
                 updateRequest.getLastName().trim().strip().toLowerCase(Locale.ROOT),
                 updateRequest.getPhoneNumber().trim().strip(),
                 updateRequest.getEmail().trim().strip().toLowerCase(Locale.ROOT),
-                roleSet, // user has only ROLE_USER
+                roleSet,
                 foundUser.getUsername(), // username cannot be changed
                 passwordEncoder.encode(updateRequest.getPassword()),
                 countryService.getCountryById(updateRequest.getCountryId()),
@@ -190,6 +217,12 @@ public class AuthService implements IAuthService
         );
 
         AppUser updatedUser = userRepository.save(user);
+
+        // create a string list to add string role name to it
+        List<String> stringListRoles = new ArrayList<>();
+
+        for (AppRole role: roleSet)
+            stringListRoles.add(role.getName());
 
         return new UserInfoResponse(
                 updatedUser.getId(),
@@ -202,20 +235,5 @@ public class AuthService implements IAuthService
                 null
         );
 
-    }
-
-    @Override
-    public String logoutUser()
-    {
-
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
-        {
-            String loggedInUsername = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            SecurityContextHolder.getContext().setAuthentication(null);
-
-            return "You have been logged out";
-        }
-
-        return "No user is logged into the application";
     }
 }
