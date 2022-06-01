@@ -4,6 +4,10 @@ package com.OnlineShop.exception;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class for returning a list of string messages regarding
+ * errors for input validation
+ */
 public class ErrorListResponse
 {
     private int status;

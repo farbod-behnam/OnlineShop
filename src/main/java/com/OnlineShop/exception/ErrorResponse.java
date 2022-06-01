@@ -1,5 +1,9 @@
 package com.OnlineShop.exception;
 
+/**
+ * A class for returning a string messages regarding
+ * error in the application
+ */
 public class ErrorResponse
 {
     private int status;
