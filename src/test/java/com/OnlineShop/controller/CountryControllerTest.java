@@ -52,8 +52,7 @@ class CountryControllerTest
 
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN", "ROLE_USER"})
-    void getCountries_authorizedByUserAndAdmin_shouldReturnCountryList() throws Exception
+    void getCountries_shouldReturnCountryList() throws Exception
     {
         // given
         Country country1 = new Country("19", CountryEnum.Germany.name());
@@ -80,32 +79,10 @@ class CountryControllerTest
                 .andDo(print());
     }
 
-    @Test
-    void getCountries_shouldBeUnauthorized() throws Exception
-    {
-        // given
-        Country country1 = new Country("19", CountryEnum.Germany.name());
-        Country country2 = new Country("20", CountryEnum.USA.name());
-
-        List<Country> countries = new ArrayList<>();
-
-        countries.add(country1);
-        countries.add(country2);
-
-        given(countryService.getCountries()).willReturn(countries);
-
-        // when
-
-        // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/countries"))
-                .andExpect(status().isForbidden())
-                .andDo(print());
-    }
 
 
     @Test
-    @WithMockUser(authorities = {"ROLE_ADMIN", "ROLE_USER"})
-    void getCountry_authorizedByUserAndAdmin_shouldReturnACountry() throws Exception
+    void getCountry_shouldReturnACountry() throws Exception
     {
         // given
         Country country = new Country("19", CountryEnum.Germany.name());
@@ -124,24 +101,6 @@ class CountryControllerTest
                 .andDo(print());
     }
 
-
-    @Test
-    void getCountry_shouldBeUnauthorized() throws Exception
-    {
-        // given
-        Country country = new Country("19", CountryEnum.Germany.name());
-
-
-
-        given(countryService.getCountryById(anyString())).willReturn(country);
-
-        // when
-
-        // then
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/countries" + "/19"))
-                .andExpect(status().isForbidden())
-                .andDo(print());
-    }
 
 
     @Test
