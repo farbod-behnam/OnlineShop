@@ -84,6 +84,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/api/countries/**").permitAll()
                 .and()
+                // --------------------------------------------------
+                // now urls that needs authorization
+                // --------------------------------------------------
                 // auth
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/auth/update/**").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ADMIN.name())
                 .and()
@@ -126,7 +129,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.PUT, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
                 .and()
-                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name());
+                .authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                // orders
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/orders/user/**").hasAnyAuthority(RoleEnum.ROLE_USER.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/api/orders/**").hasAnyAuthority(RoleEnum.ROLE_ADMIN.name())
+                .and()
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/api/orders/**").hasAnyAuthority(RoleEnum.ROLE_USER.name());
+
 
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
