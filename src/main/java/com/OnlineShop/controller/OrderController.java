@@ -30,6 +30,12 @@ public class OrderController
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Order> getOrder(@PathVariable String orderId)
+    {
+        Order foundOrder = orderService.getOrderById(orderId);
 
+        return new ResponseEntity<>(foundOrder, HttpStatus.OK);
+    }
 
 }
