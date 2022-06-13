@@ -5,6 +5,7 @@ import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.service.IOrderService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,12 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -141,8 +142,86 @@ class OrderServiceTest
     }
 
     @Test
-    void getOrderById()
+    void getOrderById_shouldReturnAnOrder()
     {
+        // given
+
+        // product
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+
+        Product product = new Product(
+                "19",
+                "The Last of Us",
+                "A narrative game with action sequences",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        OrderItem item3 = new OrderItem(product, 19);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(item3);
+
+        Order order = new Order(
+                "12",
+                orderItemList,
+                user,
+                true
+        );
+
+        given(orderRepository.findById(anyString())).willReturn(Optional.of(order));
+
+        // when
+        Order foundOrder = underTestOrderService.getOrderById(anyString());
+
+        // then
+        verify(orderRepository).findById(anyString());
+        assertThat(foundOrder).isEqualTo(order);
+    }
+
+    @Test
+    void getOrderById_shouldThrowNotFoundException()
+    {
+        // given
+        String orderId = "12";
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestOrderService.getOrderById(orderId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Order with id: [" + orderId + "] cannot be found");
+
     }
 
     @Test
