@@ -1,10 +1,11 @@
-package com.OnlineShop.service;
+package com.OnlineShop.service.impl;
 
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICountryRepository;
+import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.impl.CountryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

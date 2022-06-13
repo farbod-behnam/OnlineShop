@@ -1,4 +1,4 @@
-package com.OnlineShop.service;
+package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
@@ -6,6 +6,8 @@ import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IProductRepository;
+import com.OnlineShop.service.ICategoryService;
+import com.OnlineShop.service.IProductService;
 import com.OnlineShop.service.impl.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

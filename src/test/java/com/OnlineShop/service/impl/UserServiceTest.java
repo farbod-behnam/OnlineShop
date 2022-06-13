@@ -1,4 +1,4 @@
-package com.OnlineShop.service;
+package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.AppRole;
@@ -9,6 +9,9 @@ import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
+import com.OnlineShop.service.ICountryService;
+import com.OnlineShop.service.IRoleService;
+import com.OnlineShop.service.IUserService;
 import com.OnlineShop.service.impl.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
