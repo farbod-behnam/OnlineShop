@@ -1,5 +1,6 @@
-package com.OnlineShop.security.service;
+package com.OnlineShop.security.service.impl;
 
+import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
