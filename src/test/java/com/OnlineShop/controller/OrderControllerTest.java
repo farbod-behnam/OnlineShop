@@ -1362,4 +1362,342 @@ class OrderControllerTest
 
 
     }
+
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_USER"})
+    public void createUserOrder_authorizedByUser_shouldReturnCreatedOrder() throws Exception
+    {
+        // given
+
+        // request
+        OrderItemRequest orderItemRequest1 = new OrderItemRequest("19", 9);
+        OrderItemRequest orderItemRequest2 = new OrderItemRequest("20", 2);
+
+        List<OrderItemRequest> orderItemRequestList = new ArrayList<>();
+        orderItemRequestList.add(orderItemRequest1);
+        orderItemRequestList.add(orderItemRequest2);
+
+        OrderRequest orderRequest = new OrderRequest(orderItemRequestList);
+
+        // created
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Product product2 = new Product(
+                "20",
+                "The Last of Us",
+                "A narrative game with action sequences",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        OrderItem item1 = new OrderItem(product1, 9);
+        OrderItem item2 = new OrderItem(product2, 2);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(item1);
+        orderItemList.add(item2);
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Order order = new Order(
+                "11",
+                orderItemList,
+                user,
+                false
+        );
+
+
+
+        // when
+        given(orderService.createUserOrder(any(OrderRequest.class))).willReturn(order);
+
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+                        .content(asJsonString(orderRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.orderItemList.length()").value(orderItemList.size()))
+                .andExpect(jsonPath("$.orderItemList[0].product.id").value(equalTo(orderItemRequest1.getProductId())))
+                .andExpect(jsonPath("$.orderItemList[0].product.name").value(equalTo("Bloodborne")))
+                .andExpect(jsonPath("$.orderItemList[0].product.price").value(equalTo(new BigDecimal("69.99"))))
+                .andExpect(jsonPath("$.orderItemList[0].product.quantity").value(equalTo(19)))
+                .andExpect(jsonPath("$.orderItemList[0].product.category.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.orderItemList[0].product.category.name").value(equalTo("Video Games")))
+                .andExpect(jsonPath("$.orderItemList[0].product.active").value(equalTo(true)))
+                .andExpect(jsonPath("$.orderItemList[0].quantity").value(equalTo(orderItemRequest1.getQuantity())))
+
+                .andExpect(jsonPath("$.orderItemList[1].product.id").value(equalTo(orderItemRequest2.getProductId())))
+                .andExpect(jsonPath("$.orderItemList[1].product.name").value(equalTo("The Last of Us")))
+                .andExpect(jsonPath("$.orderItemList[1].product.price").value(equalTo(new BigDecimal("69.99"))))
+                .andExpect(jsonPath("$.orderItemList[1].product.quantity").value(equalTo(19)))
+                .andExpect(jsonPath("$.orderItemList[1].product.category.id").value(equalTo("11")))
+                .andExpect(jsonPath("$.orderItemList[1].product.category.name").value(equalTo("Video Games")))
+                .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
+                .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(orderItemRequest2.getQuantity())))
+
+                .andExpect(jsonPath("$.paymentSuccessful").value(equalTo(false)))
+                .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))))
+                .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void createUserOrder_shouldBeUnauthorizedByAdmin() throws Exception
+    {
+        // given
+
+        // request
+        OrderItemRequest orderItemRequest1 = new OrderItemRequest("19", 9);
+        OrderItemRequest orderItemRequest2 = new OrderItemRequest("20", 2);
+
+        List<OrderItemRequest> orderItemRequestList = new ArrayList<>();
+        orderItemRequestList.add(orderItemRequest1);
+        orderItemRequestList.add(orderItemRequest2);
+
+        OrderRequest orderRequest = new OrderRequest(orderItemRequestList);
+
+        // created
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Product product2 = new Product(
+                "20",
+                "The Last of Us",
+                "A narrative game with action sequences",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        OrderItem item1 = new OrderItem(product1, 9);
+        OrderItem item2 = new OrderItem(product2, 2);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(item1);
+        orderItemList.add(item2);
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Order order = new Order(
+                "11",
+                orderItemList,
+                user,
+                false
+        );
+
+
+
+        // when
+        given(orderService.createUserOrder(any(OrderRequest.class))).willReturn(order);
+
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+                        .content(asJsonString(orderRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    @Test
+    public void createUserOrder_shouldBeUnauthorized() throws Exception
+    {
+        // given
+
+        // request
+        OrderItemRequest orderItemRequest1 = new OrderItemRequest("19", 9);
+        OrderItemRequest orderItemRequest2 = new OrderItemRequest("20", 2);
+
+        List<OrderItemRequest> orderItemRequestList = new ArrayList<>();
+        orderItemRequestList.add(orderItemRequest1);
+        orderItemRequestList.add(orderItemRequest2);
+
+        OrderRequest orderRequest = new OrderRequest(orderItemRequestList);
+
+        // created
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Product product2 = new Product(
+                "20",
+                "The Last of Us",
+                "A narrative game with action sequences",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        OrderItem item1 = new OrderItem(product1, 9);
+        OrderItem item2 = new OrderItem(product2, 2);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(item1);
+        orderItemList.add(item2);
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Order order = new Order(
+                "11",
+                orderItemList,
+                user,
+                false
+        );
+
+
+
+        // when
+        given(orderService.createUserOrder(any(OrderRequest.class))).willReturn(order);
+
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+                        .content(asJsonString(orderRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
+
+    private String asJsonString(final Object obj)
+    {
+        try
+        {
+            final ObjectMapper mapper = new ObjectMapper();
+
+            return mapper.writeValueAsString(obj);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
