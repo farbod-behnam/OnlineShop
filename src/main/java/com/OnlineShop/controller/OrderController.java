@@ -38,4 +38,13 @@ public class OrderController
         return new ResponseEntity<>(foundOrder, HttpStatus.OK);
     }
 
+    @GetMapping("/user")
+    public ResponseEntity<List<Order>> getUserOrders()
+    {
+        List<Order> orders = orderService.getUserOrders();
+
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+
 }
