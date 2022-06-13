@@ -1,6 +1,7 @@
 package com.OnlineShop.controller;
 
 
+import com.OnlineShop.dto.request.order.OrderRequest;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -54,4 +56,11 @@ public class OrderController
         return new ResponseEntity<>(foundUserOrder, HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity<Order> createUserOrder(@Valid @RequestBody OrderRequest orderRequest)
+    {
+        Order createdOrder = orderService.createUserOrder(orderRequest);
+
+        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    }
 }
