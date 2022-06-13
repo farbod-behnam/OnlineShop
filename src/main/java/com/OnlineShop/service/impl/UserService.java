@@ -1,4 +1,4 @@
-package com.OnlineShop.service;
+package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.AppRole;
@@ -7,6 +7,9 @@ import com.OnlineShop.entity.Country;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
+import com.OnlineShop.service.ICountryService;
+import com.OnlineShop.service.IRoleService;
+import com.OnlineShop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
