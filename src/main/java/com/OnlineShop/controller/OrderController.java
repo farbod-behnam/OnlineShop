@@ -46,5 +46,12 @@ public class OrderController
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
+    @GetMapping("/user/{orderId}")
+    public ResponseEntity<Order> getUserOrder(@PathVariable String orderId)
+    {
+        Order foundUserOrder = orderService.getUserOrderById(orderId);
+
+        return new ResponseEntity<>(foundUserOrder, HttpStatus.OK);
+    }
 
 }
