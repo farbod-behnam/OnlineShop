@@ -20,6 +20,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -166,6 +171,62 @@ class UserServiceTest
         assertThatThrownBy(() -> underTestUserService.getUserByUsername(username))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("User with username: [" + username + "] cannot be found");
+    }
+
+    @Test
+    void getLoggedInUser_shouldReturnLoggedInUser()
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "johnwick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // user need to be authenticated for this test
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken("john.wick", null,authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+
+        // when
+        AppUser foundLoggedInUser = underTestUserService.getLoggedInUser();
+
+        // then
+        verify(userRepository).findByUsername(anyString());
+        assertThat(foundLoggedInUser).isEqualTo(user);
+    }
+
+    @Test
+    void getLoggedInUser_shouldThrowUsernameNotFoundException()
+    {
+        // given
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.getLoggedInUser())
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("User is not logged in");
     }
 
     @Test
