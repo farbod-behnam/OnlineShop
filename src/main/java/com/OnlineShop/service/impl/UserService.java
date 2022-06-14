@@ -11,6 +11,10 @@ import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.IRoleService;
 import com.OnlineShop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +77,22 @@ public class UserService implements IUserService
             throw new NotFoundException("User with username: [" + username + "] cannot be found");
 
         return user;
+    }
+
+    @Override
+    public AppUser getLoggedInUser()
+    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean userIsLoggedIn = authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+
+        if (!userIsLoggedIn)
+            throw new UsernameNotFoundException("User is not logged in");
+
+        String loggedInUsername = (String) authentication.getPrincipal();
+
+        return getUserByUsername(loggedInUsername);
+
     }
 
     @Override
