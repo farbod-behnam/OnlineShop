@@ -328,14 +328,7 @@ class OrderServiceTest
         userOrders.add(order1);
         userOrders.add(order2);
 
-        // user need to be authenticated for this test
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken("john.wick", null,authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        given(userService.getUserByUsername(anyString())).willReturn(user);
+        given(userService.getLoggedInUser()).willReturn(user);
 
         given(orderRepository.findOrdersByUser(any(AppUser.class))).willReturn(userOrders);
 
@@ -345,20 +338,6 @@ class OrderServiceTest
         // then
         verify(orderRepository).findOrdersByUser(any(AppUser.class));
         assertThat(foundUserOrders).isEqualTo(userOrders);
-    }
-
-    @Test
-    void getUserOrders_shouldThrowUsernameNotFoundException()
-    {
-        // given
-
-        // when
-
-        // then
-        assertThatThrownBy(() -> underTestOrderService.getUserOrders())
-                .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessageContaining("User is not logged in");
-
     }
 
     @Test
