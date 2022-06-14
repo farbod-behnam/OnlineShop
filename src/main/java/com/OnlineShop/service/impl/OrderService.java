@@ -57,25 +57,15 @@ public class OrderService implements IOrderService
     @Override
     public List<Order> getUserOrders()
     {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AppUser loggedInUser = userService.getLoggedInUser();
 
-        boolean userIsLoggedIn = authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
-
-        if (!userIsLoggedIn)
-            throw new UsernameNotFoundException("User is not logged in");
-
-        String loggedInUsername = (String) authentication.getPrincipal();
-
-        AppUser user = userService.getUserByUsername(loggedInUsername);
-
-        List<Order> userOrders = orderRepository.findOrdersByUser(user);
-
-        return userOrders;
+        return orderRepository.findOrdersByUser(loggedInUser);
     }
 
     @Override
     public Order getUserOrderById(String orderId)
     {
+
         return null;
     }
 
