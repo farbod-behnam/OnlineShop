@@ -1,11 +1,17 @@
 package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.order.OrderRequest;
+import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.service.IOrderService;
+import com.OnlineShop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +24,13 @@ public class OrderService implements IOrderService
 {
 
     private final IOrderRepository orderRepository;
+    private final IUserService userService;
 
     @Autowired
-    public OrderService(IOrderRepository orderRepository)
+    public OrderService(IOrderRepository orderRepository, IUserService userService)
     {
         this.orderRepository = orderRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -49,7 +57,20 @@ public class OrderService implements IOrderService
     @Override
     public List<Order> getUserOrders()
     {
-        return null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean userIsLoggedIn = authentication != null && !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+
+        if (!userIsLoggedIn)
+            throw new UsernameNotFoundException("User is not logged in");
+
+        String loggedInUsername = (String) authentication.getPrincipal();
+
+        AppUser user = userService.getUserByUsername(loggedInUsername);
+
+        List<Order> userOrders = orderRepository.findOrdersByUser(user);
+
+        return userOrders;
     }
 
     @Override
