@@ -16,6 +16,8 @@ public interface IUserService
 
         AppUser getUserByUsername(String username);
 
+        AppUser getLoggedInUser();
+
         AppUser createUser(AppUserRequest userRequest);
 
         AppUser updateUser(AppUserRequest userRequest);
