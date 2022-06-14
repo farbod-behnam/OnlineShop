@@ -65,13 +65,20 @@ public class OrderService implements IOrderService
     @Override
     public Order getUserOrderById(String orderId)
     {
+        AppUser loggedInUser = userService.getLoggedInUser();
 
-        return null;
+        Optional<Order> result = orderRepository.findOrderByUserAndId(loggedInUser, orderId);
+
+        if (result.isEmpty())
+            throw new NotFoundException("Order with id: [" + orderId + "] and username: [" + loggedInUser.getUsername() + "]  cannot be found");
+
+        return result.get();
     }
 
     @Override
     public Order createUserOrder(OrderRequest orderRequest)
     {
+        // TODO: add rabbitMQ to send the order to Payment Application
         return null;
     }
 }
