@@ -4,6 +4,7 @@ import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
+import com.OnlineShop.exception.LimitExceedException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IProductRepository;
 import com.OnlineShop.service.ICategoryService;
@@ -12,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.naming.LimitExceededException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class ProductService implements IProductService
 {
     private final IProductRepository productRepository;
@@ -30,14 +33,12 @@ public class ProductService implements IProductService
     }
 
     @Override
-    @Transactional
     public List<Product> getProducts()
     {
         return productRepository.findAll();
     }
 
     @Override
-    @Transactional
     public Product getProductById(String productId)
     {
         Optional<Product> result = productRepository.findById(productId);
@@ -53,7 +54,6 @@ public class ProductService implements IProductService
     }
 
     @Override
-    @Transactional
     public Product createProduct(ProductRequest productDto)
     {
         if (productNameExists(productDto.getName()))
@@ -82,7 +82,6 @@ public class ProductService implements IProductService
     }
 
     @Override
-    @Transactional
     public Product updateProduct(ProductRequest productDto)
     {
         productDto.setName(productDto.getName().trim().strip());
@@ -120,7 +119,6 @@ public class ProductService implements IProductService
     }
 
     @Override
-    @Transactional
     public void deleteProduct(String productId)
     {
         Optional<Product> result = productRepository.findById(productId);
@@ -132,7 +130,6 @@ public class ProductService implements IProductService
     }
 
     @Override
-    @Transactional
     public boolean productNameExists(String productName)
     {
         if (productName == null || productName.isBlank())
@@ -140,5 +137,19 @@ public class ProductService implements IProductService
 
         return productRepository.existsByNameIgnoreCase(productName);
 
+    }
+
+    @Override
+    public Product subtractProductQuantity(String productId, Integer quantity)
+    {
+        Product product = getProductById(productId);
+
+        if (product.getQuantity() < quantity)
+            throw new LimitExceedException("Requested quantity: [" + quantity + "] for Product: [" + product.getName() +"] exceeds the limit of [" + product.getQuantity() + "]");
+
+
+        product.setQuantity(product.getQuantity() - quantity);
+
+        return product;
     }
 }
