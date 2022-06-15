@@ -4,11 +4,11 @@ import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
+import com.OnlineShop.exception.LimitExceedException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IProductRepository;
 import com.OnlineShop.service.ICategoryService;
 import com.OnlineShop.service.IProductService;
-import com.OnlineShop.service.impl.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -428,5 +428,65 @@ class ProductServiceTest
         assertThatThrownBy(() -> underTestProductService.deleteProduct(notFoundProduct.getId()))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Product with id: [" + notFoundProduct.getId() + "] cannot be found");
+    }
+
+    @Test
+    void subtractProductQuantity_shouldReturnProductWithSubtractedQuantity()
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        Product foundProduct = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                new BigDecimal("69.99"),
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productRepository.findById(anyString())).willReturn(Optional.of(foundProduct));
+
+        // when
+        Product subtractedQuantityProduct = underTestProductService.subtractProductQuantity(anyString(), 2);
+
+        // then
+        verify(productRepository).findById(anyString());
+        assertThat(subtractedQuantityProduct).isEqualTo(foundProduct);
+
+    }
+    @Test
+    void subtractProductQuantity_shouldThrowLimitExceedException()
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        Product foundProduct = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                new BigDecimal("69.99"),
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productRepository.findById(anyString())).willReturn(Optional.of(foundProduct));
+
+        int requestedQuantity = 20;
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestProductService.subtractProductQuantity(anyString(), requestedQuantity))
+                .isInstanceOf(LimitExceedException.class)
+                .hasMessageContaining("Requested quantity: [" + requestedQuantity + "] for Product: [" + foundProduct.getName() +"] exceeds the limit of [" + foundProduct.getQuantity() + "]");
+
     }
 }
