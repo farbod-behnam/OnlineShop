@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 public class OrderItemRequest
 {
-    @NotBlank(message = "Product id is required")
+    @NotBlank(message = "product id is required")
     private String productId;
 
     @NotNull(message = "quantity is required")
