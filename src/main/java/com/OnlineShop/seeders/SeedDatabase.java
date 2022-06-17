@@ -26,16 +26,18 @@ public class SeedDatabase
     private final IUserRepository userRepository;
     private final IRoleRepository roleRepository;
     private final ICountryRepository countryRepository;
+    private final IOrderRepository orderRepository;
     private final IProductRepository productRepository;
     private final ICategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SeedDatabase(IRoleService roleService, IUserService userService, ICountryService countryService, ICategoryService categoryService, IProductService productService, IUserRepository userRepository, IRoleRepository roleRepository, ICountryRepository countryRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, PasswordEncoder passwordEncoder)
+    public SeedDatabase(IRoleService roleService, IUserService userService, ICountryService countryService, ICategoryService categoryService, IProductService productService, IUserRepository userRepository, IRoleRepository roleRepository, ICountryRepository countryRepository, IOrderRepository orderRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.countryRepository = countryRepository;
+        this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.passwordEncoder = passwordEncoder;
@@ -234,10 +236,16 @@ public class SeedDatabase
         productRepository.save(iphone13);
     }
 
+    private void createOrder()
+    {
+
+    }
+
     private void deleteAllTable()
     {
         userRepository.deleteAll();
         roleRepository.deleteAll();
+        orderRepository.deleteAll();
         countryRepository.deleteAll();
         productRepository.deleteAll();
         categoryRepository.deleteAll();
