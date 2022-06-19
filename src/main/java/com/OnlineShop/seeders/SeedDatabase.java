@@ -1,11 +1,12 @@
 package com.OnlineShop.seeders;
 
 import com.OnlineShop.entity.*;
+import com.OnlineShop.entity.order.Order;
+import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CategoryEnum;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.repository.*;
-import com.OnlineShop.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,8 +34,20 @@ public class SeedDatabase
     private final ICategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // local variables
+    private AppUser johnWickUser;
+    private AppUser bruceLeeUser;
+
+    private Product bloodborne;
+    private Product devilMayCry5;
+    private Product returnal;
+    private Product LGC1TV;
+    private Product ps5;
+    private Product lenovoLegion7;
+    private Product iphone13;
+
     @Autowired
-    public SeedDatabase(IRoleService roleService, IUserService userService, ICountryService countryService, ICategoryService categoryService, IProductService productService, IUserRepository userRepository, IRoleRepository roleRepository, ICountryRepository countryRepository, IOrderRepository orderRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, PasswordEncoder passwordEncoder)
+    public SeedDatabase(IUserRepository userRepository, IRoleRepository roleRepository, ICountryRepository countryRepository, IOrderRepository orderRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, PasswordEncoder passwordEncoder)
     {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -53,6 +68,8 @@ public class SeedDatabase
         createUsers();
 
         createProducts();
+
+        createOrder();
 
     }
 
@@ -79,7 +96,7 @@ public class SeedDatabase
         userRoleList.add(roleUser);
 
         //
-        AppUser user = new AppUser(
+        this.johnWickUser = new AppUser(
                 null,
                 "John",
                 "Wick",
@@ -94,8 +111,25 @@ public class SeedDatabase
                 LocalDateTime.now()
         );
 
+        userRepository.save(this.johnWickUser);
 
-        userRepository.save(user);
+        this.bruceLeeUser = new AppUser(
+                null,
+                "Bruce",
+                "Lee",
+                "0016666666666",
+                "bruce.lee@gmail.com",
+                userRoleList,
+                "bruce",
+                passwordEncoder.encode("1234"),
+                usa,
+                "Aaron Hawkins 5587 Nunc. Avenue Erie Rhode Island 24975",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        userRepository.save(this.bruceLeeUser);
 
 
         Set<AppRole> adminRoleList = new HashSet<>();
@@ -130,7 +164,7 @@ public class SeedDatabase
         videoGames = categoryRepository.save(videoGames);
         clothes = categoryRepository.save(clothes);
 
-        Product bloodborne = new Product(
+       this.bloodborne = new Product(
                 null,
                 "Bloodborne",
                 "a souls like game by from software company",
@@ -145,7 +179,7 @@ public class SeedDatabase
 
         productRepository.save(bloodborne);
 
-        Product devilMayCry5 = new Product(
+       this.devilMayCry5 = new Product(
                 null,
                 "Devil May Cry 5 Special Edition",
                 "An Action beatem up and the fifth installment of popular devil may cry series",
@@ -160,7 +194,7 @@ public class SeedDatabase
 
         productRepository.save(devilMayCry5);
 
-        Product returnal = new Product(
+        this.returnal = new Product(
                 null,
                 "Returnal",
                 "A rogue like experience and in style of metroid game",
@@ -175,7 +209,7 @@ public class SeedDatabase
 
         productRepository.save(returnal);
 
-        Product LGC1TV = new Product(
+        this.LGC1TV = new Product(
                 null,
                 "LG C1",
                 "An OLED TV produced by LG company",
@@ -190,7 +224,7 @@ public class SeedDatabase
 
         productRepository.save(LGC1TV);
 
-        Product ps5 = new Product(
+        this.ps5 = new Product(
                 null,
                 "PlayStation 5 standard edition",
                 "The fifth generation of console from Sony",
@@ -205,7 +239,7 @@ public class SeedDatabase
 
         productRepository.save(ps5);
 
-        Product lenovoLegion7 = new Product(
+        this.lenovoLegion7 = new Product(
                 null,
                 "Lenovo Legion Slim 7",
                 "The slim version of lenovo legion 7",
@@ -220,7 +254,7 @@ public class SeedDatabase
 
         productRepository.save(lenovoLegion7);
 
-        Product iphone13 = new Product(
+       this.iphone13 = new Product(
                 null,
                 "Iphone 13",
                 "The 13 iteration of apple iphones",
@@ -238,7 +272,78 @@ public class SeedDatabase
 
     private void createOrder()
     {
+        OrderItem orderItem1 = new OrderItem(this.bloodborne, 2);
+        OrderItem orderItem2 = new OrderItem(this.devilMayCry5, 4);
 
+
+        Order order1 = new Order(
+                null,
+                Arrays.asList(orderItem1, orderItem2),
+                this.johnWickUser,
+                false
+        );
+
+        orderRepository.save(order1);
+
+        OrderItem orderItem3 = new OrderItem(this.returnal, 1);
+        OrderItem orderItem4 = new OrderItem(this.LGC1TV, 1);
+
+
+        Order order2 = new Order(
+                null,
+                Arrays.asList(orderItem3, orderItem4),
+                this.johnWickUser,
+                false
+        );
+
+        orderRepository.save(order2);
+
+        OrderItem orderItem5 = new OrderItem(this.lenovoLegion7, 1);
+
+        Order order3 = new Order(
+                null,
+                List.of(orderItem5),
+                this.johnWickUser,
+                false
+        );
+
+        orderRepository.save(order3);
+
+
+        OrderItem orderItem6 = new OrderItem(this.ps5, 1);
+        OrderItem orderItem7 = new OrderItem(this.devilMayCry5, 1);
+
+        Order order4 = new Order(
+                null,
+                Arrays.asList(orderItem6, orderItem7),
+                this.bruceLeeUser,
+                false
+        );
+
+        orderRepository.save(order4);
+
+
+        OrderItem orderItem8 = new OrderItem(this.iphone13, 1);
+
+        Order order5 = new Order(
+                null,
+                List.of(orderItem8),
+                this.bruceLeeUser,
+                false
+        );
+
+        orderRepository.save(order5);
+
+        OrderItem orderItem9 = new OrderItem(this.LGC1TV, 1);
+
+        Order order6 = new Order(
+                null,
+                List.of(orderItem9),
+                this.bruceLeeUser,
+                false
+        );
+
+        orderRepository.save(order6);
     }
 
     private void deleteAllTable()
