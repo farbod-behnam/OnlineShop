@@ -459,6 +459,8 @@ class ProductServiceTest
         assertThat(subtractedQuantityProduct).isEqualTo(foundProduct);
 
     }
+
+
     @Test
     void subtractProductQuantity_shouldThrowLimitExceedException()
     {
@@ -487,6 +489,37 @@ class ProductServiceTest
         assertThatThrownBy(() -> underTestProductService.subtractProductQuantity(anyString(), requestedQuantity))
                 .isInstanceOf(LimitExceedException.class)
                 .hasMessageContaining("Requested quantity: [" + requestedQuantity + "] for Product: [" + foundProduct.getName() +"] exceeds the limit of [" + foundProduct.getQuantity() + "]");
+
+    }
+
+    @Test
+    void subtractProductQuantity_shouldThrowNotFoundException()
+    {
+        // given
+        Category category = new Category("11", "Video Games");
+
+        Product foundProduct = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                new BigDecimal("69.99"),
+                19,
+                "http://image_url",
+                category,
+                false,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(productRepository.findById(anyString())).willReturn(Optional.of(foundProduct));
+
+        int requestedQuantity = 2;
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestProductService.subtractProductQuantity(anyString(), requestedQuantity))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Product: [" + foundProduct.getId() + "] is not in stock anymore");
 
     }
 }
