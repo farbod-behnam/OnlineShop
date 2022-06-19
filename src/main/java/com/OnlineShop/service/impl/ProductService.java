@@ -144,6 +144,9 @@ public class ProductService implements IProductService
     {
         Product product = getProductById(productId);
 
+        if (!product.isActive())
+            throw new NotFoundException("Product: [" + product.getId() + "] is not in stock anymore");
+
         if (product.getQuantity() < quantity)
             throw new LimitExceedException("Requested quantity: [" + quantity + "] for Product: [" + product.getName() +"] exceeds the limit of [" + product.getQuantity() + "]");
 
