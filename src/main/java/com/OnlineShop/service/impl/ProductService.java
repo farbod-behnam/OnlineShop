@@ -4,7 +4,7 @@ import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
-import com.OnlineShop.exception.LimitExceedException;
+import com.OnlineShop.exception.LimitExceededException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IProductRepository;
 import com.OnlineShop.service.ICategoryService;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.naming.LimitExceededException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -148,7 +147,7 @@ public class ProductService implements IProductService
             throw new NotFoundException("Product: [" + product.getId() + "] is not in stock anymore");
 
         if (product.getQuantity() < quantity)
-            throw new LimitExceedException("Requested quantity: [" + quantity + "] for Product: [" + product.getName() +"] exceeds the limit of [" + product.getQuantity() + "]");
+            throw new LimitExceededException("Requested quantity: [" + quantity + "] for Product: [" + product.getName() +"] exceeds the limit of [" + product.getQuantity() + "]");
 
 
         product.setQuantity(product.getQuantity() - quantity);

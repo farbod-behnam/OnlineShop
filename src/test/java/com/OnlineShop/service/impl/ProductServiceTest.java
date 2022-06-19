@@ -4,7 +4,7 @@ import com.OnlineShop.dto.request.ProductRequest;
 import com.OnlineShop.entity.Category;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.exception.AlreadyExistsException;
-import com.OnlineShop.exception.LimitExceedException;
+import com.OnlineShop.exception.LimitExceededException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IProductRepository;
 import com.OnlineShop.service.ICategoryService;
@@ -487,7 +487,7 @@ class ProductServiceTest
 
         // then
         assertThatThrownBy(() -> underTestProductService.subtractProductQuantity(anyString(), requestedQuantity))
-                .isInstanceOf(LimitExceedException.class)
+                .isInstanceOf(LimitExceededException.class)
                 .hasMessageContaining("Requested quantity: [" + requestedQuantity + "] for Product: [" + foundProduct.getName() +"] exceeds the limit of [" + foundProduct.getQuantity() + "]");
 
     }

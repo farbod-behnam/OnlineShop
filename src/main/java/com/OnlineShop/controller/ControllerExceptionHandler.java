@@ -3,7 +3,7 @@ package com.OnlineShop.controller;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.dto.response.ErrorListResponse;
 import com.OnlineShop.dto.response.ErrorResponse;
-import com.OnlineShop.exception.LimitExceedException;
+import com.OnlineShop.exception.LimitExceededException;
 import com.OnlineShop.exception.NotFoundException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.http.HttpStatus;
@@ -169,7 +169,7 @@ public class ControllerExceptionHandler
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleException(LimitExceedException exception)
+    public ResponseEntity<ErrorResponse> handleException(LimitExceededException exception)
     {
         ErrorResponse errorResponse = new ErrorResponse();
 
