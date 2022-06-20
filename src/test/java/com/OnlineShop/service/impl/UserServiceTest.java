@@ -217,9 +217,28 @@ class UserServiceTest
     }
 
     @Test
-    void getLoggedInUser_shouldThrowUsernameNotFoundException()
+    void getLoggedInUser_nullAuthentication_shouldThrowUsernameNotFoundException()
     {
         // given
+        SecurityContextHolder.getContext().setAuthentication(null);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.getLoggedInUser())
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("User is not logged in");
+    }
+
+    @Test
+    void getLoggedInUser_anonymousAuthentication_shouldThrowUsernameNotFoundException()
+    {
+        // given
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new AnonymousAuthenticationToken("123", "anonymousUser", authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // when
 
