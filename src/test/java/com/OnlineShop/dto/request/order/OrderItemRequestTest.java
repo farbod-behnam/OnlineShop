@@ -65,7 +65,7 @@ class OrderItemRequestTest
         assertThat(violations.size()).isEqualTo(1);
 
         ConstraintViolation<OrderItemRequest> violation = violations.iterator().next();
-        assertThat(violation.getMessage()).isEqualTo("Product id is required");
+        assertThat(violation.getMessage()).isEqualTo("product id is required");
         assertThat(violation.getPropertyPath().toString()).isEqualTo("productId");
         assertThat(violation.getInvalidValue()).isEqualTo(null);
     }
