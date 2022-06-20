@@ -12,7 +12,6 @@ import com.OnlineShop.repository.IUserRepository;
 import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.IRoleService;
 import com.OnlineShop.service.IUserService;
-import com.OnlineShop.service.impl.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -508,7 +508,31 @@ class UserServiceTest
                 LocalDateTime.now()
         );
 
+        AppUser loggedInUser = new AppUser(
+                "2020",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
         given(userRepository.findById(anyString())).willReturn(Optional.of(userToBeDeleted));
+
+        // user need to be authenticated for this test
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken("john.wick", null,authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(loggedInUser));
 
         // when
         underTestUserService.deleteUserById(userToBeDeleted.getId());
@@ -533,5 +557,53 @@ class UserServiceTest
                 .hasMessageContaining("User with id: [" + userId + "] cannot be found");
     }
 
+    @Test
+    void deleteUserById_deletingYourOwnAccount_shouldThrowUnsupportedOperationException()
+    {
+        // given
+        String userId = "19";
 
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser userToBeDeleted = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findById(anyString())).willReturn(Optional.of(userToBeDeleted));
+
+
+        // user need to be authenticated for this test
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken("john.wick", null,authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(userToBeDeleted));
+
+
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.deleteUserById(userId))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessageContaining("You cannot delete your own user account");
+    }
 }
