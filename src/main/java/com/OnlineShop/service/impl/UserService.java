@@ -188,6 +188,12 @@ public class UserService implements IUserService
         if (result.isEmpty())
             throw new NotFoundException("User with id: [" + userId + "] cannot be found");
 
+        AppUser loggedInUser = getLoggedInUser();
+
+        if (loggedInUser.getId().equals(result.get().getId()))
+            throw new UnsupportedOperationException("You cannot delete your own user account");
+
+
         userRepository.deleteById(userId);
     }
 
