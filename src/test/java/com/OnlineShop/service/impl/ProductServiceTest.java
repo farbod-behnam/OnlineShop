@@ -493,7 +493,7 @@ class ProductServiceTest
     }
 
     @Test
-    void subtractProductQuantity_shouldThrowNotFoundException()
+    void subtractProductQuantity_inactiveProduct_shouldThrowNotFoundException()
     {
         // given
         Category category = new Category("11", "Video Games");
