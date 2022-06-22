@@ -111,12 +111,18 @@ public class TokenService implements ITokenService
     @Override
     public String getUsernameDecodedJWT()
     {
+        if (decodedJWT == null)
+            throw new IllegalStateException("JWT is not decoded");
+
         return decodedJWT.getSubject();
     }
 
     @Override
     public String[] getRolesDecodedJWT()
     {
+        if (decodedJWT == null)
+            throw new IllegalStateException("JWT is not decoded");
+
         return decodedJWT.getClaim("roles").asArray(String.class);
     }
 
