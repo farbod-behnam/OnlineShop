@@ -1,5 +1,6 @@
-package com.OnlineShop.security.service;
+package com.OnlineShop.security.service.impl;
 
+import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -110,12 +111,18 @@ public class TokenService implements ITokenService
     @Override
     public String getUsernameDecodedJWT()
     {
+        if (decodedJWT == null)
+            throw new IllegalStateException("JWT is not decoded");
+
         return decodedJWT.getSubject();
     }
 
     @Override
     public String[] getRolesDecodedJWT()
     {
+        if (decodedJWT == null)
+            throw new IllegalStateException("JWT is not decoded");
+
         return decodedJWT.getClaim("roles").asArray(String.class);
     }
 

@@ -1,4 +1,4 @@
-package com.OnlineShop.service;
+package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.AppUserRequest;
 import com.OnlineShop.entity.AppRole;
@@ -9,6 +9,9 @@ import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
+import com.OnlineShop.service.ICountryService;
+import com.OnlineShop.service.IRoleService;
+import com.OnlineShop.service.IUserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +19,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -162,6 +171,81 @@ class UserServiceTest
         assertThatThrownBy(() -> underTestUserService.getUserByUsername(username))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("User with username: [" + username + "] cannot be found");
+    }
+
+    @Test
+    void getLoggedInUser_shouldReturnLoggedInUser()
+    {
+        // given
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "johnwick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        // user need to be authenticated for this test
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken("john.wick", null,authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(user));
+
+        // when
+        AppUser foundLoggedInUser = underTestUserService.getLoggedInUser();
+
+        // then
+        verify(userRepository).findByUsername(anyString());
+        assertThat(foundLoggedInUser).isEqualTo(user);
+    }
+
+    @Test
+    void getLoggedInUser_nullAuthentication_shouldThrowUsernameNotFoundException()
+    {
+        // given
+        SecurityContextHolder.getContext().setAuthentication(null);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.getLoggedInUser())
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("User is not logged in");
+    }
+
+    @Test
+    void getLoggedInUser_anonymousAuthentication_shouldThrowUsernameNotFoundException()
+    {
+        // given
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new AnonymousAuthenticationToken("123", "anonymousUser", authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.getLoggedInUser())
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("User is not logged in");
     }
 
     @Test
@@ -443,7 +527,31 @@ class UserServiceTest
                 LocalDateTime.now()
         );
 
+        AppUser loggedInUser = new AppUser(
+                "2020",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
         given(userRepository.findById(anyString())).willReturn(Optional.of(userToBeDeleted));
+
+        // user need to be authenticated for this test
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken("john.wick", null,authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(loggedInUser));
 
         // when
         underTestUserService.deleteUserById(userToBeDeleted.getId());
@@ -468,5 +576,53 @@ class UserServiceTest
                 .hasMessageContaining("User with id: [" + userId + "] cannot be found");
     }
 
+    @Test
+    void deleteUserById_deletingYourOwnAccount_shouldThrowUnsupportedOperationException()
+    {
+        // given
+        String userId = "19";
 
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser userToBeDeleted = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "password1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        given(userRepository.findById(anyString())).willReturn(Optional.of(userToBeDeleted));
+
+
+        // user need to be authenticated for this test
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(RoleEnum.ROLE_USER.name()));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken("john.wick", null,authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        given(userRepository.findByUsername(anyString())).willReturn(Optional.of(userToBeDeleted));
+
+
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestUserService.deleteUserById(userId))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessageContaining("You cannot delete your own user account");
+    }
 }

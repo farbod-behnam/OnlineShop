@@ -1,4 +1,4 @@
-package com.OnlineShop.security.service;
+package com.OnlineShop.security.service.impl;
 
 import com.OnlineShop.dto.request.LoginRequest;
 import com.OnlineShop.dto.request.RegisterRequest;
@@ -11,6 +11,8 @@ import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IUserRepository;
+import com.OnlineShop.security.service.IAuthService;
+import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.security.userdetails.UserDetailsImpl;
 import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.IRoleService;
