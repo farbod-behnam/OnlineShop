@@ -25,4 +25,7 @@ public interface IProductService
 
     @Transactional
     boolean productNameExists(String productName);
+
+    @Transactional
+    Product subtractProductQuantity(String productId, Integer quantity);
 }

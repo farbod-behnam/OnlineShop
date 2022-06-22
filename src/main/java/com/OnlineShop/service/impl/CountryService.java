@@ -1,9 +1,10 @@
-package com.OnlineShop.service;
+package com.OnlineShop.service.impl;
 
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.ICountryRepository;
+import com.OnlineShop.service.ICountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
