@@ -6,6 +6,7 @@ import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
+import com.OnlineShop.enums.OrderStatusEnum;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.service.IOrderService;
@@ -101,7 +102,7 @@ public class OrderService implements IOrderService
                 null,
                 orderItemList,
                 loggedInUser,
-                false
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
         // TODO: add rabbitMQ to send the order to Payment Application

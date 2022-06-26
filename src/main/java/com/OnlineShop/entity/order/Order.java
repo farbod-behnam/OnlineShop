@@ -24,20 +24,20 @@ public class Order
 
     private LocalDateTime createdAt;
 
-    private boolean isPaymentSuccessful;
+    private String orderStatus;
 
     public Order()
     {
     }
 
-    public Order(String id, List<OrderItem> orderItemList, AppUser user, boolean isPaymentSuccessful)
+    public Order(String id, List<OrderItem> orderItemList, AppUser user, String orderStatus)
     {
         this.id = id;
         this.orderItemList = orderItemList;
         this.user = user;
         this.totalPrice = calculateTotalPrice();
         this.createdAt = LocalDateTime.now();
-        this.isPaymentSuccessful = isPaymentSuccessful;
+        this.orderStatus = orderStatus;
     }
 
     public String getId()
@@ -90,14 +90,14 @@ public class Order
         this.createdAt = createdAt;
     }
 
-    public boolean isPaymentSuccessful()
+    public String getOrderStatus()
     {
-        return isPaymentSuccessful;
+        return orderStatus;
     }
 
-    public void setPaymentSuccessful(boolean paymentSuccessful)
+    public void setOrderStatus(String orderStatus)
     {
-        isPaymentSuccessful = paymentSuccessful;
+        this.orderStatus = orderStatus;
     }
 
     /**
@@ -129,7 +129,7 @@ public class Order
                 ", user=" + user +
                 ", totalPrice=" + totalPrice +
                 ", createdAt=" + createdAt +
-                ", isPaymentSuccessful=" + isPaymentSuccessful +
+                ", orderStatus=" + orderStatus +
                 ']';
     }
 }

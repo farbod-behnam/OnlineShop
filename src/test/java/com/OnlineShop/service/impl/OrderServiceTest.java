@@ -6,6 +6,7 @@ import com.OnlineShop.entity.*;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CountryEnum;
+import com.OnlineShop.enums.OrderStatusEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
@@ -125,7 +126,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
 
@@ -138,7 +139,7 @@ class OrderServiceTest
                 "12",
                 orderItemList2,
                 user,
-                true
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -209,7 +210,7 @@ class OrderServiceTest
                 "12",
                 orderItemList,
                 user,
-                true
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
         given(orderRepository.findById(anyString())).willReturn(Optional.of(order));
@@ -307,7 +308,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
 
@@ -320,7 +321,7 @@ class OrderServiceTest
                 "12",
                 orderItemList2,
                 user,
-                true
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
         List<Order> userOrders = new ArrayList<>();
@@ -409,7 +410,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
         given(userService.getLoggedInUser()).willReturn(user);
@@ -549,7 +550,7 @@ class OrderServiceTest
                 "11",
                 orderItemList,
                 user,
-                false
+                OrderStatusEnum.IN_PROGRESS.name()
         );
 
         given(productService.subtractProductQuantity(anyString(), any())).willReturn(product1);
@@ -577,7 +578,7 @@ class OrderServiceTest
         assertThat(capturedOrder.getOrderItemList().get(0).getProduct().isActive()).isEqualTo(createdOrder.getOrderItemList().get(0).getProduct().isActive());
         assertThat(capturedOrder.getUser()).isEqualTo(createdOrder.getUser());
         assertThat(capturedOrder.getTotalPrice()).isEqualTo(createdOrder.getTotalPrice());
-        assertThat(capturedOrder.isPaymentSuccessful()).isEqualTo(createdOrder.isPaymentSuccessful());
+        assertThat(capturedOrder.getOrderStatus()).isEqualTo(createdOrder.getOrderStatus());
 
     }
 }
