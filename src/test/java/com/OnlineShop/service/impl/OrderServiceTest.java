@@ -126,7 +126,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -139,7 +139,7 @@ class OrderServiceTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -210,7 +210,7 @@ class OrderServiceTest
                 "12",
                 orderItemList,
                 user,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         given(orderRepository.findById(anyString())).willReturn(Optional.of(order));
@@ -308,7 +308,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -321,7 +321,7 @@ class OrderServiceTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> userOrders = new ArrayList<>();
@@ -410,7 +410,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         given(userService.getLoggedInUser()).willReturn(user);
@@ -550,7 +550,7 @@ class OrderServiceTest
                 "11",
                 orderItemList,
                 user,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         given(productService.subtractProductQuantity(anyString(), any())).willReturn(product1);

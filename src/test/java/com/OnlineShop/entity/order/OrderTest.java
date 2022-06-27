@@ -45,7 +45,7 @@ class OrderTest
                 "11",
                 orderItemList,
                 null,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         // when
@@ -100,7 +100,7 @@ class OrderTest
                 "11",
                 orderItemList,
                 null,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         // when

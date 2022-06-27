@@ -2,7 +2,7 @@ package com.OnlineShop.enums;
 
 public enum OrderStatusEnum
 {
-    IN_PROGRESS,
+    IN_PROCESS,
     PURCHASED,
     NOT_ENOUGH_CREDITS
 }

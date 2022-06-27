@@ -102,7 +102,7 @@ public class OrderService implements IOrderService
                 null,
                 orderItemList,
                 loggedInUser,
-                OrderStatusEnum.IN_PROGRESS.name()
+                OrderStatusEnum.IN_PROCESS.name()
         );
 
         // TODO: add rabbitMQ to send the order to Payment Application
