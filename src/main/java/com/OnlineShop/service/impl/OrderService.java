@@ -6,10 +6,11 @@ import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
-import com.OnlineShop.enums.OrderStatusEnum;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.service.IOrderService;
+import com.OnlineShop.service.IPaymentService;
 import com.OnlineShop.service.IProductService;
 import com.OnlineShop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,15 @@ public class OrderService implements IOrderService
     private final IOrderRepository orderRepository;
     private final IUserService userService;
     private final IProductService productService;
+    private final IPaymentService paymentService;
 
     @Autowired
-    public OrderService(IOrderRepository orderRepository, IUserService userService, IProductService productService)
+    public OrderService(IOrderRepository orderRepository, IUserService userService, IProductService productService, IPaymentService paymentService)
     {
         this.orderRepository = orderRepository;
         this.userService = userService;
         this.productService = productService;
+        this.paymentService = paymentService;
     }
 
     @Override
@@ -102,13 +105,24 @@ public class OrderService implements IOrderService
                 null,
                 orderItemList,
                 loggedInUser,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
-        // TODO: add rabbitMQ to send the order to Payment Application
+        Order createdOrder = orderRepository.save(order);
 
-        // TODO: receive the order back from rabbitMQ to see if the payment was successful
+        paymentService.chargeCard(createdOrder);
 
-        return orderRepository.save(order);
+        return createdOrder;
+    }
+
+    @Override
+    public void deleteOrderById(String orderId)
+    {
+        Optional<Order> result = orderRepository.findById(orderId);
+
+        if (result.isEmpty())
+            throw new NotFoundException("Order with id: [" + orderId + "] cannot be found");
+
+        orderRepository.deleteById(orderId);
     }
 }

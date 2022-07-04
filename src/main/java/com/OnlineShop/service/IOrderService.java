@@ -22,4 +22,7 @@ public interface IOrderService
 
     @Transactional
     Order createUserOrder(OrderRequest orderRequest);
+
+    @Transactional
+    void deleteOrderById(String orderId);
 }
