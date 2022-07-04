@@ -6,11 +6,12 @@ import com.OnlineShop.entity.*;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CountryEnum;
-import com.OnlineShop.enums.OrderStatusEnum;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.service.IOrderService;
+import com.OnlineShop.service.IPaymentService;
 import com.OnlineShop.service.IProductService;
 import com.OnlineShop.service.IUserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,12 +49,15 @@ class OrderServiceTest
     @Mock
     private IProductService productService;
 
+    @Mock
+    private IPaymentService paymentService;
+
 
     @BeforeEach
     void setUp()
     {
         MockitoAnnotations.openMocks(this);
-        underTestOrderService = new OrderService(orderRepository, userService, productService);
+        underTestOrderService = new OrderService(orderRepository, userService, productService, paymentService);
     }
 
     @Test
@@ -126,7 +130,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -139,7 +143,7 @@ class OrderServiceTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -210,7 +214,7 @@ class OrderServiceTest
                 "12",
                 orderItemList,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         given(orderRepository.findById(anyString())).willReturn(Optional.of(order));
@@ -308,7 +312,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -321,7 +325,7 @@ class OrderServiceTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> userOrders = new ArrayList<>();
@@ -410,7 +414,7 @@ class OrderServiceTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         given(userService.getLoggedInUser()).willReturn(user);
@@ -550,7 +554,7 @@ class OrderServiceTest
                 "11",
                 orderItemList,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         given(productService.subtractProductQuantity(anyString(), any())).willReturn(product1);
@@ -578,7 +582,142 @@ class OrderServiceTest
         assertThat(capturedOrder.getOrderItemList().get(0).getProduct().isActive()).isEqualTo(createdOrder.getOrderItemList().get(0).getProduct().isActive());
         assertThat(capturedOrder.getUser()).isEqualTo(createdOrder.getUser());
         assertThat(capturedOrder.getTotalPrice()).isEqualTo(createdOrder.getTotalPrice());
-        assertThat(capturedOrder.getOrderStatus()).isEqualTo(createdOrder.getOrderStatus());
+        assertThat(capturedOrder.getTransactionStatus()).isEqualTo(createdOrder.getTransactionStatus());
 
+    }
+
+    @Test
+    void deleteOrder_shouldDeleteOrder()
+    {
+
+        // given
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        OrderItem item1 = new OrderItem(product1, 9);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(item1);
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Order order = new Order(
+                "11",
+                orderItemList,
+                user,
+                TransactionStatusEnum.IN_PROCESS.name()
+        );
+
+        given(orderRepository.findById(anyString())).willReturn(Optional.of(order));
+
+        // when
+        underTestOrderService.deleteOrderById(order.getId());
+
+        // then
+        verify(orderRepository).deleteById(order.getId());
+    }
+
+    @Test
+    void deleteOrder_shouldThrowNotFoundException()
+    {
+
+        // given
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        OrderItem item1 = new OrderItem(product1, 9);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(item1);
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Order order = new Order(
+                "11",
+                orderItemList,
+                user,
+                TransactionStatusEnum.IN_PROCESS.name()
+        );
+
+        given(orderRepository.findById(anyString())).willReturn(Optional.empty());
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestOrderService.deleteOrderById(order.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Order with id: [" + order.getId() + "] cannot be found");
     }
 }
