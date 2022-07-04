@@ -6,7 +6,7 @@ import com.OnlineShop.entity.*;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CountryEnum;
-import com.OnlineShop.enums.OrderStatusEnum;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.service.IOrderService;
@@ -171,7 +171,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -184,7 +184,7 @@ class OrderControllerTest
                "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -222,7 +222,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[0].orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[0].orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$[0].orderStatus").value(equalTo(OrderStatusEnum.IN_PROCESS.name())))
+                .andExpect(jsonPath("$[0].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[0].user.username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$[0].totalPrice").value(equalTo(new BigDecimal("769.89"))))
 
@@ -236,7 +236,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[1].orderItemList[0].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[1].orderItemList[0].quantity").value(equalTo(19)))
 
-                .andExpect(jsonPath("$[1].orderStatus").value(equalTo(OrderStatusEnum.IN_PROCESS.name())))
+                .andExpect(jsonPath("$[1].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[1].user.username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$[1].totalPrice").value(equalTo(new BigDecimal("1329.81"))));
 
@@ -313,7 +313,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -326,7 +326,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -414,7 +414,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -427,7 +427,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -517,7 +517,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -550,7 +550,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$.orderStatus").value(equalTo(OrderStatusEnum.IN_PROCESS.name())))
+                .andExpect(jsonPath("$.orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))));
 
@@ -628,7 +628,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -713,7 +713,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -800,7 +800,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -813,7 +813,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -851,7 +851,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[0].orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[0].orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$[0].orderStatus").value(equalTo(OrderStatusEnum.IN_PROCESS.name())))
+                .andExpect(jsonPath("$[0].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[0].user.username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$[0].totalPrice").value(equalTo(new BigDecimal("769.89"))))
 
@@ -865,7 +865,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[1].orderItemList[0].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[1].orderItemList[0].quantity").value(equalTo(19)))
 
-                .andExpect(jsonPath("$[1].orderStatus").value(equalTo(OrderStatusEnum.IN_PROCESS.name())))
+                .andExpect(jsonPath("$[1].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[1].user.username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$[1].totalPrice").value(equalTo(new BigDecimal("1329.81"))));
 
@@ -942,7 +942,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -955,7 +955,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -1045,7 +1045,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1058,7 +1058,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -1150,7 +1150,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1183,7 +1183,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$.orderStatus").value(equalTo(OrderStatusEnum.IN_PROCESS.name())))
+                .andExpect(jsonPath("$.orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))));
 
@@ -1261,7 +1261,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1347,7 +1347,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1445,7 +1445,7 @@ class OrderControllerTest
                 "11",
                 orderItemList,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1480,7 +1480,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(orderItemRequest2.getQuantity())))
 
-                .andExpect(jsonPath("$.orderStatus").value(equalTo(OrderStatusEnum.IN_PROCESS.name())))
+                .andExpect(jsonPath("$.orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))))
                 .andDo(print());
@@ -1568,7 +1568,7 @@ class OrderControllerTest
                 "11",
                 orderItemList,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1667,7 +1667,7 @@ class OrderControllerTest
                 "11",
                 orderItemList,
                 user,
-                OrderStatusEnum.IN_PROCESS.name()
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 

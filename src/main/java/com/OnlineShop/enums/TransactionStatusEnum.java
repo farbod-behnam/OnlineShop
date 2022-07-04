@@ -1,6 +1,6 @@
 package com.OnlineShop.enums;
 
-public enum OrderStatusEnum
+public enum TransactionStatusEnum
 {
     IN_PROCESS,
     PURCHASED,

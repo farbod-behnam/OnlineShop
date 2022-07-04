@@ -5,7 +5,7 @@ import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CategoryEnum;
 import com.OnlineShop.enums.CountryEnum;
-import com.OnlineShop.enums.OrderStatusEnum;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -281,7 +281,7 @@ public class SeedDatabase
                 null,
                 Arrays.asList(orderItem1, orderItem2),
                 this.johnWickUser,
-                OrderStatusEnum.NOT_ENOUGH_CREDITS.name()
+                TransactionStatusEnum.NOT_ENOUGH_CREDITS.name()
         );
 
         orderRepository.save(order1);
@@ -294,7 +294,7 @@ public class SeedDatabase
                 null,
                 Arrays.asList(orderItem3, orderItem4),
                 this.johnWickUser,
-                OrderStatusEnum.PURCHASED.name()
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order2);
@@ -305,7 +305,7 @@ public class SeedDatabase
                 null,
                 List.of(orderItem5),
                 this.johnWickUser,
-                OrderStatusEnum.NOT_ENOUGH_CREDITS.name()
+                TransactionStatusEnum.NOT_ENOUGH_CREDITS.name()
         );
 
         orderRepository.save(order3);
@@ -318,7 +318,7 @@ public class SeedDatabase
                 null,
                 Arrays.asList(orderItem6, orderItem7),
                 this.bruceLeeUser,
-                OrderStatusEnum.PURCHASED.name()
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order4);
@@ -330,7 +330,7 @@ public class SeedDatabase
                 null,
                 List.of(orderItem8),
                 this.bruceLeeUser,
-                OrderStatusEnum.PURCHASED.name()
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order5);
@@ -341,7 +341,7 @@ public class SeedDatabase
                 null,
                 List.of(orderItem9),
                 this.bruceLeeUser,
-                OrderStatusEnum.PURCHASED.name()
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order6);
