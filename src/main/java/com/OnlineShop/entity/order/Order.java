@@ -1,6 +1,7 @@
 package com.OnlineShop.entity.order;
 
 import com.OnlineShop.entity.AppUser;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,6 +18,7 @@ public class Order
 
     private List<OrderItem> orderItemList;
 
+    @JsonIgnore
     @DBRef
     private AppUser user;
 
@@ -24,20 +26,20 @@ public class Order
 
     private LocalDateTime createdAt;
 
-    private String orderStatus;
+    private String transactionStatus;
 
     public Order()
     {
     }
 
-    public Order(String id, List<OrderItem> orderItemList, AppUser user, String orderStatus)
+    public Order(String id, List<OrderItem> orderItemList, AppUser user, String transactionStatus)
     {
         this.id = id;
         this.orderItemList = orderItemList;
         this.user = user;
         this.totalPrice = calculateTotalPrice();
         this.createdAt = LocalDateTime.now();
-        this.orderStatus = orderStatus;
+        this.transactionStatus = transactionStatus;
     }
 
     public String getId()
@@ -90,14 +92,14 @@ public class Order
         this.createdAt = createdAt;
     }
 
-    public String getOrderStatus()
+    public String getTransactionStatus()
     {
-        return orderStatus;
+        return transactionStatus;
     }
 
-    public void setOrderStatus(String orderStatus)
+    public void setTransactionStatus(String transactionStatus)
     {
-        this.orderStatus = orderStatus;
+        this.transactionStatus = transactionStatus;
     }
 
     /**
@@ -105,7 +107,7 @@ public class Order
      * ({@link OrderItem}) and multiplies each product with its quantity, then returns
      * the total price of all products
      *
-     * @return total: total price of all products for this order
+     * @return totalPrice: total price of all products for this order
      */
     private BigDecimal calculateTotalPrice()
     {
@@ -129,7 +131,7 @@ public class Order
                 ", user=" + user +
                 ", totalPrice=" + totalPrice +
                 ", createdAt=" + createdAt +
-                ", orderStatus=" + orderStatus +
+                ", transactionStatus=" + transactionStatus +
                 ']';
     }
 }
