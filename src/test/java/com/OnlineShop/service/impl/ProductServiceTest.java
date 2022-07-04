@@ -373,7 +373,7 @@ class ProductServiceTest
     }
 
     @Test
-    void deleteCategory_shouldDeleteProduct()
+    void deleteProduct_shouldDeleteProduct()
     {
         // given
         BigDecimal price = new BigDecimal("69.99");
@@ -401,7 +401,7 @@ class ProductServiceTest
     }
 
     @Test
-    void deleteCategory_shouldThrowNotFoundException()
+    void deleteProduct_shouldThrowNotFoundException()
     {
         // given
         Category category = new Category("11", "Video Games");
