@@ -222,8 +222,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[0].orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[0].orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$[0].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
-                .andExpect(jsonPath("$[0].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[0].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[0].totalPrice").value(equalTo(new BigDecimal("769.89"))))
 
                 .andExpect(jsonPath("$[1].orderItemList.length()").value(orderItemList2.size()))
@@ -236,8 +235,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[1].orderItemList[0].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[1].orderItemList[0].quantity").value(equalTo(19)))
 
-                .andExpect(jsonPath("$[1].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
-                .andExpect(jsonPath("$[1].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[1].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[1].totalPrice").value(equalTo(new BigDecimal("1329.81"))));
 
     }
@@ -550,8 +548,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$.orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
-                .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))));
 
 
@@ -851,8 +848,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[0].orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[0].orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$[0].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
-                .andExpect(jsonPath("$[0].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[0].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[0].totalPrice").value(equalTo(new BigDecimal("769.89"))))
 
                 .andExpect(jsonPath("$[1].orderItemList.length()").value(orderItemList2.size()))
@@ -865,8 +861,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[1].orderItemList[0].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[1].orderItemList[0].quantity").value(equalTo(19)))
 
-                .andExpect(jsonPath("$[1].orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
-                .andExpect(jsonPath("$[1].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[1].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[1].totalPrice").value(equalTo(new BigDecimal("1329.81"))));
 
     }
@@ -1183,8 +1178,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$.orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
-                .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))));
 
 
@@ -1480,8 +1474,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(orderItemRequest2.getQuantity())))
 
-                .andExpect(jsonPath("$.orderStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
-                .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))))
                 .andDo(print());
 
