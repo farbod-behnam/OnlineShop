@@ -1,4 +1,4 @@
-package com.OnlineShop.service.impl;
+package com.OnlineShop.rabbitmq.service.impl;
 
 import com.OnlineShop.dto.request.payment.PaymentOrderRequest;
 import com.OnlineShop.dto.request.payment.PaymentUserRequest;
@@ -8,7 +8,6 @@ import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.enums.TransactionStatusEnum;
-import com.OnlineShop.rabbitmq.service.impl.PaymentService;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.repository.IUserRepository;
 import com.OnlineShop.rabbitmq.service.IPaymentService;
