@@ -419,6 +419,7 @@ class OrderServiceTest
 
         // then
         verify(orderRepository).findOrderByUserAndId(any(AppUser.class), anyString());
+        verify(userService).getLoggedInUser();
         assertThat(foundUserOrder).isEqualTo(userOrder);
     }
 
@@ -465,6 +466,140 @@ class OrderServiceTest
                 .hasMessageContaining("Order with id: [" + orderId + "] and username: [" + user.getUsername() + "]  cannot be found");
 
     }
+
+
+    @Test
+    void getOrderByIdAndUsername_shouldReturnUserOrder()
+    {
+        // given
+
+        // order
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "18",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Product product2 = new Product(
+                "19",
+                "The Last of Us",
+                "A narrative game with action sequences",
+                price,
+                19,
+                "http://image_url",
+                category,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        OrderItem item1 = new OrderItem(product1, 9);
+        OrderItem item2 = new OrderItem(product2, 2);
+
+        List<OrderItem> orderItemList1 = new ArrayList<>();
+        orderItemList1.add(item1);
+        orderItemList1.add(item2);
+
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Order userOrder = new Order(
+                "11",
+                orderItemList1,
+                user,
+                TransactionStatusEnum.IN_PROCESS.name()
+        );
+
+        given(userService.getUserByUsername(anyString())).willReturn(user);
+
+        given(orderRepository.findOrderByUserAndId(any(AppUser.class), anyString())).willReturn(Optional.of(userOrder));
+
+        // when
+        Order foundUserOrder = underTestOrderService.getOrderByIdAndUsername("11", "john");
+
+        // then
+        verify(orderRepository).findOrderByUserAndId(any(AppUser.class), anyString());
+        verify(userService).getUserByUsername(anyString());
+        assertThat(foundUserOrder).isEqualTo(userOrder);
+    }
+
+    @Test
+    void getOrderByIdAndUsername_shouldThrowNotFoundException()
+    {
+        // given
+
+        // order
+        String orderId = "11";
+
+
+
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+
+        given(userService.getUserByUsername(anyString())).willReturn(user);
+
+
+        // when
+
+        // then
+        assertThatThrownBy(() -> underTestOrderService.getOrderByIdAndUsername(orderId, user.getUsername()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Order with id: [" + orderId + "] and username: [" + user.getUsername() + "]  cannot be found");
+
+    }
+
 
     @Test
     void createUserOrder_shouldReturnAnOrder()
