@@ -2,6 +2,7 @@ package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.order.OrderItemRequest;
 import com.OnlineShop.dto.request.order.OrderRequest;
+import com.OnlineShop.dto.request.payment.PaymentOrderRequest;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.entity.order.Order;
@@ -14,7 +15,6 @@ import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.service.IProductService;
 import com.OnlineShop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.aggregation.BooleanOperators;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,6 +127,16 @@ public class OrderService implements IOrderService
         paymentService.chargeCard(createdOrder);
 
         return createdOrder;
+    }
+
+    @Override
+    public Order updateUserOrderTransactionStatus(PaymentOrderRequest orderRequest)
+    {
+        Order order = getOrderById(orderRequest.getOrderId());
+
+        order.setTransactionStatus(orderRequest.getTransactionStatus());
+
+        return orderRepository.save(order);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.OnlineShop.service;
 
 import com.OnlineShop.dto.request.order.OrderRequest;
+import com.OnlineShop.dto.request.payment.PaymentOrderRequest;
 import com.OnlineShop.entity.order.Order;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,9 @@ public interface IOrderService
 
     @Transactional
     Order createUserOrder(OrderRequest orderRequest);
+
+    @Transactional
+    Order updateUserOrderTransactionStatus(PaymentOrderRequest orderRequest);
 
     @Transactional
     void deleteOrderById(String orderId);
