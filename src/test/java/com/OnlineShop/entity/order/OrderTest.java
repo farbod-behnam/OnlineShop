@@ -29,7 +29,6 @@ class OrderTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -70,7 +69,6 @@ class OrderTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -83,7 +81,6 @@ class OrderTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

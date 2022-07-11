@@ -173,7 +173,6 @@ public class SeedDatabase
                 19,
                 "https://image_url",
                 videoGames,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -188,7 +187,6 @@ public class SeedDatabase
                 95,
                 "https://image_url",
                 videoGames,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -203,7 +201,6 @@ public class SeedDatabase
                 95,
                 "https://image_url",
                 videoGames,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -218,7 +215,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -233,7 +229,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -248,7 +243,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -263,7 +257,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

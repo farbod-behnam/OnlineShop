@@ -65,7 +65,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -78,7 +77,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -108,7 +106,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -279,7 +276,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -386,7 +382,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -414,7 +409,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -444,7 +438,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -475,7 +468,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -503,10 +495,9 @@ class ProductServiceTest
                 "Bloodborne",
                 "A souls like game",
                 new BigDecimal("69.99"),
-                19,
+                0,
                 "http://image_url",
                 category,
-                false,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

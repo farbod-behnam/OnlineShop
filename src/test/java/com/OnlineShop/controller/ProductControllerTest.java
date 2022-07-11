@@ -114,7 +114,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -127,7 +126,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -169,7 +167,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -220,7 +217,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -272,7 +268,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -317,7 +312,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -362,7 +356,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -414,7 +407,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -460,7 +452,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
