@@ -41,5 +41,5 @@ to calculate order price and subtract the quantity from user's wallet.
 - **online_shop_order_queue** to send each order request to Payment application
 - **online_shop_user_queue** to send newly created or updated user data to Payment Application
 
-### OnlineShop listens on
+### OnlineShop listens to
 - **payment_app_order_queue** to update the order transaction status
