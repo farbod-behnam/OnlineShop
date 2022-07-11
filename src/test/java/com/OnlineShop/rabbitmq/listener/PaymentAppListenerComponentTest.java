@@ -118,14 +118,16 @@ class PaymentAppListenerComponentTest
                 TransactionStatusEnum.NOT_ENOUGH_CREDITS.name()
         );
 
-        given(orderService.getOrderByIdAndUsername(userOrder.getId(), user.getUsername())).willReturn(userOrder);
 
 
         // when
         underTestPaymentAppListenerComponent.orderQueueListener(paymentOrderRequest);
 
         // then
+        ArgumentCaptor<PaymentOrderRequest> paymentOrderRequestArgumentCaptor = ArgumentCaptor.forClass(PaymentOrderRequest.class);
+        verify(orderService).updateUserOrderTransactionStatus(paymentOrderRequestArgumentCaptor.capture());
+        PaymentOrderRequest capturedPaymentOrderRequest = paymentOrderRequestArgumentCaptor.getValue();
 
-        assertThat(paymentOrderRequest.getTransactionStatus()).isEqualTo(userOrder.getTransactionStatus());
+        assertThat(capturedPaymentOrderRequest).isEqualTo(paymentOrderRequest);
     }
 }
