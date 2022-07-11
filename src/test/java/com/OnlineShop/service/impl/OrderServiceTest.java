@@ -2,6 +2,7 @@ package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.order.OrderItemRequest;
 import com.OnlineShop.dto.request.order.OrderRequest;
+import com.OnlineShop.dto.request.payment.PaymentOrderRequest;
 import com.OnlineShop.entity.*;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
@@ -776,6 +777,81 @@ class OrderServiceTest
 
         // then
         verify(orderRepository).deleteById(order.getId());
+    }
+
+    @Test
+    void updateUserOrderTransactionStatus_shouldUpdateOrderTransaction()
+    {
+        // given
+
+        BigDecimal price = new BigDecimal("69.99");
+        Category category = new Category("11", "Video Games");
+
+        Product product1 = new Product(
+                "19",
+                "Bloodborne",
+                "A souls like game",
+                price,
+                19,
+                "http://image_url",
+                category,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+
+        OrderItem item1 = new OrderItem(product1, 9);
+
+        List<OrderItem> orderItemList = new ArrayList<>();
+        orderItemList.add(item1);
+
+        // user
+        Set<AppRole> roles = new HashSet<>();
+
+        Country country = new Country("10", CountryEnum.Germany.name());
+        AppRole role = new AppRole("11", RoleEnum.ROLE_USER.name());
+
+        roles.add(role);
+
+        AppUser user = new AppUser(
+                "19",
+                "John",
+                "Wick",
+                "001666666666",
+                "john.wick@gmail.com",
+                roles,
+                "john.wick",
+                "Password!1234",
+                country,
+                "This is an address",
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        Order order = new Order(
+                "11",
+                orderItemList,
+                user,
+                TransactionStatusEnum.IN_PROCESS.name()
+        );
+
+        PaymentOrderRequest paymentOrderRequest = new PaymentOrderRequest(
+                "11",
+                "john",
+                new BigDecimal("1919"),
+                TransactionStatusEnum.PURCHASED.name()
+        );
+
+        given(orderRepository.findById(paymentOrderRequest.getOrderId())).willReturn(Optional.of(order));
+
+        // when
+        underTestOrderService.updateUserOrderTransactionStatus(paymentOrderRequest);
+
+        // then
+        assertThat(order.getTransactionStatus()).isEqualTo(paymentOrderRequest.getTransactionStatus());
+
+
+
     }
 
     @Test
