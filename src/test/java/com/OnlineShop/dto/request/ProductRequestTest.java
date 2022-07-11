@@ -80,8 +80,7 @@ class ProductRequestTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         // when
@@ -106,8 +105,7 @@ class ProductRequestTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -139,8 +137,7 @@ class ProductRequestTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -171,8 +168,7 @@ class ProductRequestTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -203,8 +199,7 @@ class ProductRequestTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -235,8 +230,7 @@ class ProductRequestTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         // when
@@ -267,8 +261,7 @@ class ProductRequestTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -298,8 +291,7 @@ class ProductRequestTest
                 null,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         // when
@@ -327,8 +319,7 @@ class ProductRequestTest
                 new BigDecimal("0.00"),
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -357,8 +348,7 @@ class ProductRequestTest
                 new BigDecimal("123456.12"),
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -387,8 +377,7 @@ class ProductRequestTest
                 new BigDecimal("12345.123"),
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -419,8 +408,7 @@ class ProductRequestTest
                 price,
                 null,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -451,8 +439,7 @@ class ProductRequestTest
                 price,
                 -1,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         // when
@@ -482,8 +469,7 @@ class ProductRequestTest
                 price,
                 1001,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         // when
@@ -511,8 +497,7 @@ class ProductRequestTest
                 new BigDecimal("59.59"),
                 19,
                 "http://image_url",
-                null,
-                true
+                null
         );
 
 
@@ -531,34 +516,5 @@ class ProductRequestTest
         assertThat(violation.getInvalidValue()).isEqualTo(null);
     }
 
-    @Test
-    public void ProductDto_nullActive_shouldNotValidate()
-    {
-        // given
-
-        ProductRequest productDto = new ProductRequest(
-                "19",
-                "Bloodborne",
-                "A souls like game",
-                new BigDecimal("59.59"),
-                19,
-                "http://image_url",
-                "11",
-                null
-        );
-
-        // when
-
-        // then
-        Set<ConstraintViolation<ProductRequest>> violations = validator.validate(productDto);
-
-        assertThat(violations.isEmpty()).isFalse();
-        assertThat(violations.size()).isEqualTo(1);
-
-        ConstraintViolation<ProductRequest> violation = violations.iterator().next();
-        assertThat(violation.getMessage()).isEqualTo("active is required");
-        assertThat(violation.getPropertyPath().toString()).isEqualTo("active");
-        assertThat(violation.getInvalidValue()).isEqualTo(null);
-    }
 
 }

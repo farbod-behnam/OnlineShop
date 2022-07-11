@@ -200,8 +200,7 @@ class ProductServiceTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Category category = new Category("11", "Video Games");
@@ -222,7 +221,6 @@ class ProductServiceTest
         assertThat(capturedProduct.getPrice()).isEqualTo(newProduct.getPrice());
         assertThat(capturedProduct.getQuantity()).isEqualTo(newProduct.getQuantity());
         assertThat(capturedProduct.getImageUrl()).isEqualTo(newProduct.getImageUrl());
-        assertThat(capturedProduct.isActive()).isEqualTo(newProduct.getActive());
     }
 
     @Test
@@ -238,8 +236,7 @@ class ProductServiceTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -287,8 +284,7 @@ class ProductServiceTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         given(categoryService.getCategoryById(anyString())).willReturn(category);
@@ -324,8 +320,7 @@ class ProductServiceTest
                 new BigDecimal("69.99"),
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -353,8 +348,7 @@ class ProductServiceTest
                 new BigDecimal("69.99"),
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 

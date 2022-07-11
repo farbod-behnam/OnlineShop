@@ -205,8 +205,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -256,8 +255,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -300,8 +298,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -344,8 +341,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -395,8 +391,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -440,8 +435,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(

@@ -34,15 +34,13 @@ public class ProductRequest
     String categoryId;
 
 
-    @NotNull(message = "active is required")
-    private Boolean active;
 
 
     public ProductRequest()
     {
     }
 
-    public ProductRequest(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, String categoryId, Boolean active)
+    public ProductRequest(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, String categoryId)
     {
         this.id = id;
         this.name = name;
@@ -51,7 +49,6 @@ public class ProductRequest
         this.quantity = quantity;
         this.imageUrl = imageUrl;
         this.categoryId = categoryId;
-        this.active = active;
     }
 
     public String getId()
@@ -124,15 +121,6 @@ public class ProductRequest
         this.categoryId = categoryId;
     }
 
-    public Boolean getActive()
-    {
-        return active;
-    }
-
-    public void setActive(Boolean active)
-    {
-        this.active = active;
-    }
 
 
 
@@ -147,7 +135,6 @@ public class ProductRequest
                 ", quantity=" + quantity +
                 ", imageUrl='" + imageUrl + '\'' +
                 ", categoryId='" + categoryId + '\'' +
-                ", active=" + active +
                 ']';
     }
 }
