@@ -2,13 +2,16 @@ package com.OnlineShop.service.impl;
 
 import com.OnlineShop.dto.request.order.OrderItemRequest;
 import com.OnlineShop.dto.request.order.OrderRequest;
+import com.OnlineShop.dto.request.payment.PaymentOrderRequest;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Product;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.service.IOrderService;
+import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.service.IProductService;
 import com.OnlineShop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +30,15 @@ public class OrderService implements IOrderService
     private final IOrderRepository orderRepository;
     private final IUserService userService;
     private final IProductService productService;
+    private final IPaymentService paymentService;
 
     @Autowired
-    public OrderService(IOrderRepository orderRepository, IUserService userService, IProductService productService)
+    public OrderService(IOrderRepository orderRepository, IUserService userService, IProductService productService, IPaymentService paymentService)
     {
         this.orderRepository = orderRepository;
         this.userService = userService;
         this.productService = productService;
+        this.paymentService = paymentService;
     }
 
     @Override
@@ -79,6 +84,19 @@ public class OrderService implements IOrderService
     }
 
     @Override
+    public Order getOrderByIdAndUsername(String orderId, String username)
+    {
+        AppUser user = userService.getUserByUsername(username);
+        Optional<Order> result = orderRepository.findOrderByUserAndId(user, orderId);
+
+        if (result.isEmpty())
+            throw new NotFoundException("Order with id: [" + orderId + "] and username: [" + user.getUsername() + "]  cannot be found");
+
+        return result.get();
+
+    }
+
+    @Override
     public Order createUserOrder(OrderRequest orderRequest)
     {
 
@@ -101,13 +119,34 @@ public class OrderService implements IOrderService
                 null,
                 orderItemList,
                 loggedInUser,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
-        // TODO: add rabbitMQ to send the order to Payment Application
+        Order createdOrder = orderRepository.save(order);
 
-        // TODO: receive the order back from rabbitMQ to see if the payment was successful
+        paymentService.chargeCard(createdOrder);
+
+        return createdOrder;
+    }
+
+    @Override
+    public Order updateUserOrderTransactionStatus(PaymentOrderRequest orderRequest)
+    {
+        Order order = getOrderById(orderRequest.getOrderId());
+
+        order.setTransactionStatus(orderRequest.getTransactionStatus());
 
         return orderRepository.save(order);
+    }
+
+    @Override
+    public void deleteOrderById(String orderId)
+    {
+        Optional<Order> result = orderRepository.findById(orderId);
+
+        if (result.isEmpty())
+            throw new NotFoundException("Order with id: [" + orderId + "] cannot be found");
+
+        orderRepository.deleteById(orderId);
     }
 }

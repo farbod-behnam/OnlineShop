@@ -6,6 +6,7 @@ import com.OnlineShop.entity.*;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CountryEnum;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.security.service.ITokenService;
 import com.OnlineShop.service.IOrderService;
@@ -35,7 +36,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -118,7 +118,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -131,7 +130,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -171,7 +169,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -184,7 +182,7 @@ class OrderControllerTest
                "12",
                 orderItemList2,
                 user,
-                true
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -222,8 +220,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[0].orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[0].orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$[0].paymentSuccessful").value(equalTo(false)))
-                .andExpect(jsonPath("$[0].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[0].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[0].totalPrice").value(equalTo(new BigDecimal("769.89"))))
 
                 .andExpect(jsonPath("$[1].orderItemList.length()").value(orderItemList2.size()))
@@ -236,8 +233,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[1].orderItemList[0].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[1].orderItemList[0].quantity").value(equalTo(19)))
 
-                .andExpect(jsonPath("$[1].paymentSuccessful").value(equalTo(true)))
-                .andExpect(jsonPath("$[1].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[1].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[1].totalPrice").value(equalTo(new BigDecimal("1329.81"))));
 
     }
@@ -260,7 +256,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -273,7 +268,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -313,7 +307,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -326,7 +320,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                true
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -361,7 +355,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -374,7 +367,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -414,7 +406,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -427,7 +419,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                true
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -464,7 +456,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -477,7 +468,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -517,7 +507,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -550,8 +540,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$.paymentSuccessful").value(equalTo(false)))
-                .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))));
 
 
@@ -575,7 +564,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -588,7 +576,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -628,7 +615,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -660,7 +647,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -673,7 +659,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -713,7 +698,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -747,7 +732,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -760,7 +744,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -800,7 +783,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -813,7 +796,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                true
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -851,8 +834,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[0].orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[0].orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$[0].paymentSuccessful").value(equalTo(false)))
-                .andExpect(jsonPath("$[0].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[0].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[0].totalPrice").value(equalTo(new BigDecimal("769.89"))))
 
                 .andExpect(jsonPath("$[1].orderItemList.length()").value(orderItemList2.size()))
@@ -865,8 +847,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$[1].orderItemList[0].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$[1].orderItemList[0].quantity").value(equalTo(19)))
 
-                .andExpect(jsonPath("$[1].paymentSuccessful").value(equalTo(true)))
-                .andExpect(jsonPath("$[1].user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$[1].transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$[1].totalPrice").value(equalTo(new BigDecimal("1329.81"))));
 
     }
@@ -889,7 +870,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -902,7 +882,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -942,7 +921,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -955,7 +934,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                true
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -992,7 +971,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1005,7 +983,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1045,7 +1022,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1058,7 +1035,7 @@ class OrderControllerTest
                 "12",
                 orderItemList2,
                 user,
-                true
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         List<Order> orders = new ArrayList<>();
@@ -1097,7 +1074,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1110,7 +1086,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1150,7 +1125,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1183,8 +1158,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(2)))
 
-                .andExpect(jsonPath("$.paymentSuccessful").value(equalTo(false)))
-                .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))));
 
 
@@ -1208,7 +1182,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1221,7 +1194,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1261,7 +1233,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1294,7 +1266,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1307,7 +1278,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1347,7 +1317,7 @@ class OrderControllerTest
                 "11",
                 orderItemList1,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1393,7 +1363,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1406,7 +1375,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1445,7 +1413,7 @@ class OrderControllerTest
                 "11",
                 orderItemList,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1480,8 +1448,7 @@ class OrderControllerTest
                 .andExpect(jsonPath("$.orderItemList[1].product.active").value(equalTo(true)))
                 .andExpect(jsonPath("$.orderItemList[1].quantity").value(equalTo(orderItemRequest2.getQuantity())))
 
-                .andExpect(jsonPath("$.paymentSuccessful").value(equalTo(false)))
-                .andExpect(jsonPath("$.user.username").value(equalTo("john.wick")))
+                .andExpect(jsonPath("$.transactionStatus").value(equalTo(TransactionStatusEnum.IN_PROCESS.name())))
                 .andExpect(jsonPath("$.totalPrice").value(equalTo(new BigDecimal("769.89"))))
                 .andDo(print());
 
@@ -1516,7 +1483,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1529,7 +1495,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1568,7 +1533,7 @@ class OrderControllerTest
                 "11",
                 orderItemList,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 
@@ -1615,7 +1580,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1628,7 +1592,6 @@ class OrderControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -1667,7 +1630,7 @@ class OrderControllerTest
                 "11",
                 orderItemList,
                 user,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
 

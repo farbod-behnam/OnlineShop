@@ -5,7 +5,9 @@ import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.entity.order.OrderItem;
 import com.OnlineShop.enums.CategoryEnum;
 import com.OnlineShop.enums.CountryEnum;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import com.OnlineShop.enums.RoleEnum;
+import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -33,6 +35,7 @@ public class SeedDatabase
     private final IProductRepository productRepository;
     private final ICategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IPaymentService paymentService;
 
     // local variables
     private AppUser johnWickUser;
@@ -47,7 +50,7 @@ public class SeedDatabase
     private Product iphone13;
 
     @Autowired
-    public SeedDatabase(IUserRepository userRepository, IRoleRepository roleRepository, ICountryRepository countryRepository, IOrderRepository orderRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, PasswordEncoder passwordEncoder)
+    public SeedDatabase(IUserRepository userRepository, IRoleRepository roleRepository, ICountryRepository countryRepository, IOrderRepository orderRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, PasswordEncoder passwordEncoder, IPaymentService paymentService)
     {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -56,6 +59,7 @@ public class SeedDatabase
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.passwordEncoder = passwordEncoder;
+        this.paymentService = paymentService;
     }
 
 
@@ -113,6 +117,8 @@ public class SeedDatabase
 
         userRepository.save(this.johnWickUser);
 
+        paymentService.saveUserRecord(this.johnWickUser);
+
         this.bruceLeeUser = new AppUser(
                 null,
                 "Bruce",
@@ -130,6 +136,8 @@ public class SeedDatabase
 
 
         userRepository.save(this.bruceLeeUser);
+
+        paymentService.saveUserRecord(this.bruceLeeUser);
 
 
         Set<AppRole> adminRoleList = new HashSet<>();
@@ -151,6 +159,7 @@ public class SeedDatabase
         );
 
         userRepository.save(admin);
+
     }
 
     private void createProducts()
@@ -172,7 +181,6 @@ public class SeedDatabase
                 19,
                 "https://image_url",
                 videoGames,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -187,7 +195,6 @@ public class SeedDatabase
                 95,
                 "https://image_url",
                 videoGames,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -202,7 +209,6 @@ public class SeedDatabase
                 95,
                 "https://image_url",
                 videoGames,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -217,7 +223,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -232,7 +237,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -247,7 +251,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -262,7 +265,6 @@ public class SeedDatabase
                 20,
                 "https://image_url",
                 digitalDevices,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -280,7 +282,7 @@ public class SeedDatabase
                 null,
                 Arrays.asList(orderItem1, orderItem2),
                 this.johnWickUser,
-                false
+                TransactionStatusEnum.NOT_ENOUGH_CREDITS.name()
         );
 
         orderRepository.save(order1);
@@ -293,7 +295,7 @@ public class SeedDatabase
                 null,
                 Arrays.asList(orderItem3, orderItem4),
                 this.johnWickUser,
-                false
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order2);
@@ -304,7 +306,7 @@ public class SeedDatabase
                 null,
                 List.of(orderItem5),
                 this.johnWickUser,
-                false
+                TransactionStatusEnum.NOT_ENOUGH_CREDITS.name()
         );
 
         orderRepository.save(order3);
@@ -317,7 +319,7 @@ public class SeedDatabase
                 null,
                 Arrays.asList(orderItem6, orderItem7),
                 this.bruceLeeUser,
-                false
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order4);
@@ -329,7 +331,7 @@ public class SeedDatabase
                 null,
                 List.of(orderItem8),
                 this.bruceLeeUser,
-                false
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order5);
@@ -340,7 +342,7 @@ public class SeedDatabase
                 null,
                 List.of(orderItem9),
                 this.bruceLeeUser,
-                false
+                TransactionStatusEnum.PURCHASED.name()
         );
 
         orderRepository.save(order6);

@@ -65,7 +65,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -78,7 +77,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -108,7 +106,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -203,8 +200,7 @@ class ProductServiceTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Category category = new Category("11", "Video Games");
@@ -225,7 +221,6 @@ class ProductServiceTest
         assertThat(capturedProduct.getPrice()).isEqualTo(newProduct.getPrice());
         assertThat(capturedProduct.getQuantity()).isEqualTo(newProduct.getQuantity());
         assertThat(capturedProduct.getImageUrl()).isEqualTo(newProduct.getImageUrl());
-        assertThat(capturedProduct.isActive()).isEqualTo(newProduct.getActive());
     }
 
     @Test
@@ -241,8 +236,7 @@ class ProductServiceTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -279,7 +273,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -291,8 +284,7 @@ class ProductServiceTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         given(categoryService.getCategoryById(anyString())).willReturn(category);
@@ -328,8 +320,7 @@ class ProductServiceTest
                 new BigDecimal("69.99"),
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -357,8 +348,7 @@ class ProductServiceTest
                 new BigDecimal("69.99"),
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
 
@@ -373,7 +363,7 @@ class ProductServiceTest
     }
 
     @Test
-    void deleteCategory_shouldDeleteProduct()
+    void deleteProduct_shouldDeleteProduct()
     {
         // given
         BigDecimal price = new BigDecimal("69.99");
@@ -386,7 +376,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -401,7 +390,7 @@ class ProductServiceTest
     }
 
     @Test
-    void deleteCategory_shouldThrowNotFoundException()
+    void deleteProduct_shouldThrowNotFoundException()
     {
         // given
         Category category = new Category("11", "Video Games");
@@ -414,7 +403,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -444,7 +432,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -475,7 +462,6 @@ class ProductServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -503,10 +489,9 @@ class ProductServiceTest
                 "Bloodborne",
                 "A souls like game",
                 new BigDecimal("69.99"),
-                19,
+                0,
                 "http://image_url",
                 category,
-                false,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

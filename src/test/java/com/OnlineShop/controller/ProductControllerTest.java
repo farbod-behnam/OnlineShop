@@ -114,7 +114,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -127,7 +126,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -169,7 +167,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -208,8 +205,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -220,7 +216,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -260,8 +255,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -272,7 +266,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -305,8 +298,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -317,7 +309,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -350,8 +341,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -362,7 +352,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -402,8 +391,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -414,7 +402,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -448,8 +435,7 @@ class ProductControllerTest
                 price,
                 19,
                 "http://image_url",
-                "11",
-                true
+                "11"
         );
 
         Product product = new Product(
@@ -460,7 +446,6 @@ class ProductControllerTest
                 19,
                 "http://image_url",
                 new Category("11", "Video Games"),
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

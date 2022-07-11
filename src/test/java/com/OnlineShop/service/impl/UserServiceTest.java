@@ -8,6 +8,7 @@ import com.OnlineShop.enums.CountryEnum;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
+import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.repository.IUserRepository;
 import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.IRoleService;
@@ -54,11 +55,14 @@ class UserServiceTest
     @Mock
     PasswordEncoder passwordEncoder;
 
+    @Mock
+    private IPaymentService paymentService;
+
     @BeforeEach
     void setUp()
     {
         MockitoAnnotations.openMocks(this);
-        underTestUserService = new UserService(userRepository, roleService, countryService, passwordEncoder);
+        underTestUserService = new UserService(userRepository, roleService, countryService, passwordEncoder, paymentService);
     }
 
     @Test

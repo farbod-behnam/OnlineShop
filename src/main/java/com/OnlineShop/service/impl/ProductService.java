@@ -71,7 +71,6 @@ public class ProductService implements IProductService
                 productDto.getQuantity(),
                 productDto.getImageUrl(),
                 category,
-                productDto.getActive(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -101,6 +100,7 @@ public class ProductService implements IProductService
 
         Category category = categoryService.getCategoryById(productDto.getCategoryId());
 
+
         Product product = new Product(
                 foundProduct.getId(),
                 productDto.getName(),
@@ -109,7 +109,6 @@ public class ProductService implements IProductService
                 productDto.getQuantity(),
                 productDto.getImageUrl(),
                 category,
-                productDto.getActive(),
                 foundProduct.getCreatedAt(),
                 LocalDateTime.now()
         );

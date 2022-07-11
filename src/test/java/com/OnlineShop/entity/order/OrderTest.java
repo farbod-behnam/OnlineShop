@@ -1,6 +1,7 @@
 package com.OnlineShop.entity.order;
 
 import com.OnlineShop.entity.*;
+import com.OnlineShop.enums.TransactionStatusEnum;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -28,7 +29,6 @@ class OrderTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -44,7 +44,7 @@ class OrderTest
                 "11",
                 orderItemList,
                 null,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         // when
@@ -69,7 +69,6 @@ class OrderTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -82,7 +81,6 @@ class OrderTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -99,7 +97,7 @@ class OrderTest
                 "11",
                 orderItemList,
                 null,
-                false
+                TransactionStatusEnum.IN_PROCESS.name()
         );
 
         // when

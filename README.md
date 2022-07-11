@@ -31,3 +31,15 @@ role: admin
 ### Postman
 I have also included a **Postman** collection: [OnlineShop-postman](OnlineShop.postman_collection.json)
 for testing the REST API.
+
+### RabbitMQ
+OnlineShop uses rabbitmq to get connected to [PaymentApplication](https://github.com/farbod-behnam/PaymentApplication) 
+to calculate order price and subtract the quantity from user's wallet.
+
+### OnlineShop uses
+
+- **online_shop_order_queue** to send each order request to Payment application
+- **online_shop_user_queue** to send newly created or updated user data to Payment Application
+
+### OnlineShop listens to
+- **payment_app_order_queue** to update the order transaction status

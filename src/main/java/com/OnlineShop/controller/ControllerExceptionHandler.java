@@ -5,6 +5,7 @@ import com.OnlineShop.dto.response.ErrorListResponse;
 import com.OnlineShop.dto.response.ErrorResponse;
 import com.OnlineShop.exception.LimitExceededException;
 import com.OnlineShop.exception.NotFoundException;
+import com.OnlineShop.exception.RabbitMQException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -202,6 +203,18 @@ public class ControllerExceptionHandler
         errorResponse.setTimeStamp(System.currentTimeMillis());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleException(RabbitMQException exception)
+    {
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        errorResponse.setMessage(exception.getMessage());
+        errorResponse.setTimeStamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

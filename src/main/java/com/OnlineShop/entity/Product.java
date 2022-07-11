@@ -36,7 +36,7 @@ public class Product
     {
     }
 
-    public Product(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, Category category, Boolean active, LocalDateTime createdAt, LocalDateTime updatedAt)
+    public Product(String id, String name, String description, BigDecimal price, Integer quantity, String imageUrl, Category category, LocalDateTime createdAt, LocalDateTime updatedAt)
     {
         this.id = id;
         this.name = name;
@@ -45,7 +45,7 @@ public class Product
         this.quantity = quantity;
         this.imageUrl = imageUrl;
         this.category = category;
-        this.active = active;
+        this.active = isActive();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -122,6 +122,7 @@ public class Product
 
     public boolean isActive()
     {
+        this.active = this.quantity > 0;
         return active;
     }
 
