@@ -6,6 +6,7 @@ import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.Country;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
+import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.repository.IUserRepository;
 import com.OnlineShop.service.ICountryService;
 import com.OnlineShop.service.IRoleService;
@@ -31,14 +32,16 @@ public class UserService implements IUserService
     private final IRoleService roleService;
     private final ICountryService countryService;
     private final PasswordEncoder passwordEncoder;
+    private final IPaymentService paymentService;
 
     @Autowired
-    public UserService(IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder)
+    public UserService(IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder, IPaymentService paymentService)
     {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.countryService = countryService;
         this.passwordEncoder = passwordEncoder;
+        this.paymentService = paymentService;
     }
 
     @Override
@@ -133,8 +136,11 @@ public class UserService implements IUserService
         );
 
 
+        AppUser createdUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        paymentService.saveUserRecord(createdUser);
+
+        return createdUser;
     }
 
     @Override
@@ -175,9 +181,11 @@ public class UserService implements IUserService
                 LocalDateTime.now() // update the updatedAt Date
         );
 
+        AppUser updatedUser = userRepository.save(user);
 
+        paymentService.saveUserRecord(updatedUser);
 
-        return userRepository.save(user);
+        return updatedUser;
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.OnlineShop.entity.Country;
 import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.AlreadyExistsException;
 import com.OnlineShop.exception.NotFoundException;
+import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.repository.IUserRepository;
 import com.OnlineShop.security.service.IAuthService;
 import com.OnlineShop.security.service.ITokenService;
@@ -47,8 +48,10 @@ public class AuthService implements IAuthService
 
     private final ITokenService tokenService;
 
+    private final IPaymentService paymentService;
+
     @Autowired
-    public AuthService(AuthenticationManager authenticationManager, IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, ITokenService tokenService)
+    public AuthService(AuthenticationManager authenticationManager, IUserRepository userRepository, IRoleService roleService, ICountryService countryService, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, ITokenService tokenService, IPaymentService paymentService)
     {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -56,6 +59,7 @@ public class AuthService implements IAuthService
         this.countryService = countryService;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
+        this.paymentService = paymentService;
     }
 
 
@@ -150,6 +154,9 @@ public class AuthService implements IAuthService
 
         AppUser createdAppUser = userRepository.save(user);
 
+        // send the created user to Payment Application
+        paymentService.saveUserRecord(createdAppUser);
+
         // Now we need to build the authenticated user
         UserDetailsImpl userDetails = UserDetailsImpl.buildUserDetails(createdAppUser);
 
@@ -219,6 +226,9 @@ public class AuthService implements IAuthService
         );
 
         AppUser updatedUser = userRepository.save(user);
+
+        // send the updated user to Payment application
+        paymentService.saveUserRecord(updatedUser);
 
         // create a string list to add string role name to it
         List<String> stringListRoles = new ArrayList<>();
