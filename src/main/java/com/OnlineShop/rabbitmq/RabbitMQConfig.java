@@ -46,7 +46,7 @@ public class RabbitMQConfig
     private String PAYMENT_APP_ORDER_ROUTING_KEY;
 
     // #############################
-    // ONLINE SHOP
+    // ONLINE SHOP CONFIG
     // #############################
 
     @Bean
@@ -80,7 +80,7 @@ public class RabbitMQConfig
     }
 
     // #############################
-    // PAYMENT APPLICATION
+    // PAYMENT APPLICATION CONFIG
     // #############################
 
     @Bean
