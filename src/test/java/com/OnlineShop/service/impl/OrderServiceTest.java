@@ -11,7 +11,7 @@ import com.OnlineShop.enums.RoleEnum;
 import com.OnlineShop.exception.NotFoundException;
 import com.OnlineShop.repository.IOrderRepository;
 import com.OnlineShop.service.IOrderService;
-import com.OnlineShop.service.IPaymentService;
+import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.service.IProductService;
 import com.OnlineShop.service.IUserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,7 +77,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -90,7 +89,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -177,7 +175,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -259,7 +256,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -272,7 +268,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -361,7 +356,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -374,7 +368,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -501,7 +494,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -514,7 +506,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -603,7 +594,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -670,7 +660,6 @@ class OrderServiceTest
                 19,
                 "http://image_url",
                 category,
-                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

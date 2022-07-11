@@ -1,4 +1,4 @@
-package com.OnlineShop.service;
+package com.OnlineShop.rabbitmq.service;
 
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.order.Order;

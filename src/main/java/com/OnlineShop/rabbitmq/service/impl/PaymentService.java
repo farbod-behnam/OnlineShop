@@ -1,22 +1,25 @@
-package com.OnlineShop.service.impl;
+package com.OnlineShop.rabbitmq.service.impl;
 
 import com.OnlineShop.dto.request.payment.PaymentOrderRequest;
 import com.OnlineShop.dto.request.payment.PaymentUserRequest;
 import com.OnlineShop.entity.AppUser;
 import com.OnlineShop.entity.order.Order;
 import com.OnlineShop.exception.RabbitMQException;
-import com.OnlineShop.service.IOrderService;
-import com.OnlineShop.service.IPaymentService;
-import com.OnlineShop.service.IUserService;
+import com.OnlineShop.repository.IOrderRepository;
+import com.OnlineShop.repository.IUserRepository;
+import com.OnlineShop.rabbitmq.service.IPaymentService;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PaymentService implements IPaymentService
 {
+
 
     @Value("${onlineshop.app.rabbitmq.exchange}")
     private String EXCHANGE;
@@ -28,15 +31,15 @@ public class PaymentService implements IPaymentService
     private String USER_ROUTING_KEY;
 
     private final RabbitTemplate rabbitTemplate;
-    private final IOrderService orderService;
-    private final IUserService userService;
+    private final IOrderRepository orderRepository;
+    private final IUserRepository userRepository;
 
     @Autowired
-    public PaymentService(RabbitTemplate template, IOrderService orderService, IUserService userService)
+    public PaymentService(RabbitTemplate template, IOrderRepository orderRepository, IUserRepository userRepository)
     {
         this.rabbitTemplate = template;
-        this.orderService = orderService;
-        this.userService = userService;
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class PaymentService implements IPaymentService
         catch (AmqpException e)
         {
             e.printStackTrace();
-            orderService.deleteOrderById(order.getId());
+            orderRepository.deleteById(order.getId());
             throw new RabbitMQException("Transaction cannot be completed");
         }
     }
@@ -86,7 +89,7 @@ public class PaymentService implements IPaymentService
         catch (AmqpException e)
         {
             e.printStackTrace();
-            userService.deleteUserById(user.getId());
+            userRepository.deleteById(user.getId());
             throw new RabbitMQException("User record cannot be saved");
         }
     }
