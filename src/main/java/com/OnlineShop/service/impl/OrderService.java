@@ -14,6 +14,7 @@ import com.OnlineShop.rabbitmq.service.IPaymentService;
 import com.OnlineShop.service.IProductService;
 import com.OnlineShop.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.BooleanOperators;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +81,19 @@ public class OrderService implements IOrderService
             throw new NotFoundException("Order with id: [" + orderId + "] and username: [" + loggedInUser.getUsername() + "]  cannot be found");
 
         return result.get();
+    }
+
+    @Override
+    public Order getOrderByIdAndUsername(String orderId, String username)
+    {
+        AppUser user = userService.getUserByUsername(username);
+        Optional<Order> result = orderRepository.findOrderByUserAndId(user, orderId);
+
+        if (result.isEmpty())
+            throw new NotFoundException("Order with id: [" + orderId + "] and username: [" + user.getUsername() + "]  cannot be found");
+
+        return result.get();
+
     }
 
     @Override

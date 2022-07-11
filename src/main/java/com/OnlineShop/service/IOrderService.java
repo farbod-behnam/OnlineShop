@@ -21,6 +21,9 @@ public interface IOrderService
     Order getUserOrderById(String orderId);
 
     @Transactional
+    Order getOrderByIdAndUsername(String orderId, String username);
+
+    @Transactional
     Order createUserOrder(OrderRequest orderRequest);
 
     @Transactional
