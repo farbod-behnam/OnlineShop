@@ -13,49 +13,92 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig
 {
 
+    // #############################
+    // ONLINE SHOP STRINGS
+    // #############################
+
     @Value("${onlineshop.app.rabbitmq.exchange}")
-    private String EXCHANGE;
+    private String ONLINE_SHOP_EXCHANGE;
 
     @Value("${onlineshop.app.rabbitmq.queue.order}")
-    private String ORDER_QUEUE;
+    private String ONLINE_SHOP_ORDER_QUEUE;
 
     @Value("${onlineshop.app.rabbitmq.routingKey.order}")
-    private String ORDER_ROUTING_KEY;
+    private String ONLINE_SHOP_ORDER_ROUTING_KEY;
 
     @Value("${onlineshop.app.rabbitmq.queue.user}")
-    private String USER_QUEUE;
+    private String ONLINE_SHOP_USER_QUEUE;
 
     @Value("${onlineshop.app.rabbitmq.routingKey.user}")
-    private String USER_ROUTING_KEY;
+    private String ONLINE_SHOP_USER_ROUTING_KEY;
+
+    // #############################
+    // PAYMENT APPLICATION STRINGS
+    // #############################
+
+    @Value("${payment.app.rabbitmq.exchange}")
+    private String PAYMENT_APP_EXCHANGE;
+
+    @Value("${payment.app.rabbitmq.queue.order}")
+    private String PAYMENT_APP_ORDER_QUEUE;
+
+    @Value("${payment.app.rabbitmq.routingKey.order}")
+    private String PAYMENT_APP_ORDER_ROUTING_KEY;
+
+    // #############################
+    // ONLINE SHOP
+    // #############################
 
     @Bean
-    public TopicExchange exchange()
+    public TopicExchange onlineShopExchange()
     {
-        return new TopicExchange(EXCHANGE);
+        return new TopicExchange(ONLINE_SHOP_EXCHANGE);
     }
 
     @Bean
-    public Queue orderQueue()
+    public Queue onlineShopOrderQueue()
     {
-        return new Queue(ORDER_QUEUE);
+        return new Queue(ONLINE_SHOP_ORDER_QUEUE);
     }
 
     @Bean
-    public Queue userQueue()
+    public Queue onlineShopUserQueue()
     {
-        return new Queue(USER_QUEUE);
+        return new Queue(ONLINE_SHOP_USER_QUEUE);
     }
 
     @Bean
-    public Binding orderBinding(Queue orderQueue, TopicExchange exchange)
+    public Binding onlineShopOrderBinding(Queue onlineShopOrderQueue, TopicExchange onlineShopExchange)
     {
-        return BindingBuilder.bind(orderQueue).to(exchange).with(ORDER_ROUTING_KEY);
+        return BindingBuilder.bind(onlineShopOrderQueue).to(onlineShopExchange).with(ONLINE_SHOP_ORDER_ROUTING_KEY);
     }
 
     @Bean
-    public Binding userBinding(Queue userQueue, TopicExchange exchange)
+    public Binding onlineShopUserBinding(Queue onlineShopUserQueue, TopicExchange onlineShopExchange)
     {
-        return BindingBuilder.bind(userQueue).to(exchange).with(USER_ROUTING_KEY);
+        return BindingBuilder.bind(onlineShopUserQueue).to(onlineShopExchange).with(ONLINE_SHOP_USER_ROUTING_KEY);
+    }
+
+    // #############################
+    // PAYMENT APPLICATION
+    // #############################
+
+    @Bean
+    public TopicExchange paymentAppExchange()
+    {
+        return new TopicExchange(PAYMENT_APP_EXCHANGE);
+    }
+
+    @Bean
+    public Queue paymentAppOrderQueue()
+    {
+        return new Queue(PAYMENT_APP_ORDER_QUEUE);
+    }
+
+    @Bean
+    public Binding paymentAppOrderBinding(Queue paymentAppOrderQueue, TopicExchange paymentAppExchange)
+    {
+        return BindingBuilder.bind(paymentAppOrderQueue).to(paymentAppExchange).with(PAYMENT_APP_ORDER_ROUTING_KEY);
     }
 
     /**
